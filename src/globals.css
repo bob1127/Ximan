@@ -1,0 +1,23 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@font-face {
+  font-family: "FuturaCyr";
+  src: url("/fonts/FuturaCyrillicBook.ttf") format("truetype");
+  font-weight: 100 !important;
+  font-style: normal;
+}
+body {
+   font-family: "FuturaCyr", sans-serif !important;
+
+}
+
+
+
+:root{
+  /* 購買按鈕 */
+  --color-buy-dark:#2c81db;
+    /* 卡片 */
+    --color-card-1:#ef4023;
+      --color-card-2:#2382ef;
+}
