@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
   return (
     <>
       <Head>
-        <title>精品網站</title>
+        <title>喜曼精品</title>
         <meta name="description" content="Speed-eSIM | International eSIM" />
         <meta name="keywords" content="產品, 購物, 優惠" />
         <meta name="author" content="" />
