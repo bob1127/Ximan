@@ -6,7 +6,7 @@ export const slides = [
     type: "Performance",
     field: "All-Season",
     date: "2025",
-    image: "/Hirotaka1.jpeg",
+    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg",
   },
   {
     title: "Urban Precision",
@@ -15,7 +15,7 @@ export const slides = [
     type: "Touring",
     field: "Urban Mobility",
     date: "2024",
-    image: "/lighter.jpeg",
+    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_25.jpg",
   },
   {
     title: "Off-Road Mastery",
@@ -24,7 +24,7 @@ export const slides = [
     type: "Adventure",
     field: "All-Terrain",
     date: "2023",
-    image: "/1200x.webp",
+    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_29.jpg",
   },
   {
     title: "Racing Spirit",
@@ -33,6 +33,6 @@ export const slides = [
     type: "Sport",
     field: "Ultra High Performance",
     date: "2022",
-    image: "/20250610_11_bororo4486-scaled.jpg",
+    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_22.jpg",
   },
 ];

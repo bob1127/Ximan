@@ -40,36 +40,118 @@ export default function RootLayout({ children }) {
     });
   }, []);
 
+  // === SEO & 結構化資料設定 ===
+  const siteUrl = "https://ximan-test.vercel.app";
+  const siteName = "CIÉMAN 喜曼精品";
+  const siteTitle = "CIÉMAN 喜曼精品｜台中二手精品買賣・寄賣・置換";
+  const siteDescription =
+    "CIÉMAN 喜曼精品位於台中，專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務。所有商品皆經專業鑑定與品況分級，僅販售 100% 正品。";
+  const siteImage = `${siteUrl}/default-og-image.jpg`; // 之後可替換成你的 Hero 圖
+  const storePhone = "0938-535-870";
+
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    name: siteName,
+    url: siteUrl,
+    image: siteImage,
+    telephone: storePhone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "中清路一段 428 號",
+      addressLocality: "台中市北區",
+      addressRegion: "台中市",
+      postalCode: "404",
+      addressCountry: "TW",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ],
+        opens: "13:00",
+        closes: "20:00",
+      },
+    ],
+    sameAs: [
+      "https://www.instagram.com/hello.cieman", // IG
+      // LINE 沒有公開網址就先不放，之後若有 LINE OA 可加上
+    ],
+    priceRange: "$$-$$$$",
+    description: siteDescription,
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteName,
+    url: siteUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteUrl}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <>
       <Head>
-        <title>喜曼精品</title>
-        <meta name="description" content="Speed-eSIM | International eSIM" />
-        <meta name="keywords" content="產品, 購物, 優惠" />
-        <meta name="author" content="" />
+        {/* 基本 SEO */}
+        <title>{siteTitle}</title>
+        <meta name="description" content={siteDescription} />
+        <meta
+          name="keywords"
+          content="CIÉMAN, 喜曼精品, 台中精品, 二手精品, 精品收購, 精品寄賣, 精品置換, Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard"
+        />
+        <meta name="author" content="CIÉMAN Boutique" />
         <link rel="icon" href="/logo.ico" />
-        <meta property="og:title" content="Speed-eSIM | International eSIM" />
-        <meta property="og:description" content="Speed-eSIM | International eSIM" />
-        <meta property="og:image" content="/default-og-image.jpg" />
-        <meta property="og:url" content="https://www.starislandbaby.com" />
+        <link rel="canonical" href={siteUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:locale" content="zh_TW" />
         <meta property="og:type" content="website" />
+        <meta property="og:title" content={siteTitle} />
+        <meta property="og:description" content={siteDescription} />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="og:site_name" content={siteName} />
+        <meta property="og:image" content={siteImage} />
+
+        {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Speed-eSIM | International eSIM" />
-        <meta name="twitter:description" content="Speed-eSIM | International eSIM" />
-        <meta name="twitter:image" content="/default-og-image.jpg" />
+        <meta name="twitter:title" content={siteTitle} />
+        <meta name="twitter:description" content={siteDescription} />
+        <meta name="twitter:image" content={siteImage} />
+
+        {/* JSON-LD：品牌 / 門市資訊 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        {/* JSON-LD：網站搜尋 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </Head>
 
       <NextUIProvider>
         <NextThemesProvider attribute="class" defaultTheme="light">
           <UserProvider>
             <Navbar />
-            <Sidebar sidebarProduct={sidebarProduct} onAddToCart={handleAddToCart} />
+            <Sidebar
+              sidebarProduct={sidebarProduct}
+              onAddToCart={handleAddToCart}
+            />
 
-            {/* ✅ 淡霧散開動畫區塊 */}
-            <div className=" transition duration-1000 ease-out">
-              <ReactLenis root>
-                {children}
-              </ReactLenis>
+            {/* 內容 + Lenis 滾動 */}
+            <div className="transition duration-1000 ease-out">
+              <ReactLenis root>{children}</ReactLenis>
               <Banner />
               <Footer />
             </div>

@@ -1,23 +1,38 @@
 // pages/_app.js
-import '../src/globals.css';
-import { NextUIProvider } from '@nextui-org/react';
-import { AuthProvider } from '../components/AuthProvider';
+import "../src/globals.css";
+import { NextUIProvider } from "@nextui-org/react";
+import { AuthProvider } from "../components/AuthProvider";
 import { CartProvider } from "../components/context/CartContext";
 
-// ✅ 引入字體變數
-import { bodoni, notoSerifTC } from '../lib/fonts';
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }) {
+  const router = useRouter();
+
   return (
-    <div >
-      <AuthProvider>
-        <NextUIProvider>
-          <CartProvider>
-            <Component {...pageProps} />
-          </CartProvider>
-        </NextUIProvider>
-      </AuthProvider>
-    </div>
+    <AuthProvider>
+      <NextUIProvider>
+        <CartProvider>
+          {/* 🔥 全站頁面轉場：淡入淡出 + 輕微位移 */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={router.asPath}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{
+                duration: 0.6,
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              className="min-h-screen"
+            >
+              <Component {...pageProps} />
+            </motion.div>
+          </AnimatePresence>
+        </CartProvider>
+      </NextUIProvider>
+    </AuthProvider>
   );
 }
 

@@ -37,7 +37,7 @@
   "components/ui/footer.jsx",
   "pages/Layout.js",
   "pages/_app.jsx"
-, "pages/Cart.jsx", "pages/checkout.jsx", "pages/api/create-order.js", "components/ScrollShowcase.jsx"]
+, "pages/Cart.jsx", "pages/checkout.jsx", "pages/api/create-order.js", "components/ScrollShowcase.jsx", "pages/api/categories.js"]
 ,
   "exclude": ["node_modules"]
 }

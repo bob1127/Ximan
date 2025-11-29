@@ -2,24 +2,24 @@ const path = require("path");
 
 module.exports = {
   images: {
-    remotePatterns: [
+   // 這裡設定允許所有 HTTPS 和 HTTP 的來源
+   remotePatterns: [
       {
         protocol: "https",
-        hostname: "dyx.wxv.mybluehost.me",
-        pathname: "/website_a8bfc44c/wp-content/uploads/**",
+        hostname: "hfa-mqt-qoqix3fm.landinghub.site",
       },
       {
         protocol: "https",
-        hostname: "images.pexels.com",
-        pathname: "/**",
+        hostname: "d2w53g1q050m78.cloudfront.net", // 你的圖片網址中也有這個 CDN，建議一併加入
       },
+      // 保留萬用字元以備不時之需
       {
         protocol: "https",
-        hostname: "i0.wp.com",
-        pathname: "/**",
+        hostname: "**",
       },
     ],
   },
+  transpilePackages: ["gsap"], // <--- ADD THIS
   trailingSlash: true,
   webpackDevMiddleware: (config) => {
     config.watchOptions = {

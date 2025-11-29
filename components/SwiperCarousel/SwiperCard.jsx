@@ -1,101 +1,102 @@
 "use client";
-// import Swiper core and required modules
-import { Navigation, Pagination, Scrollbar, A11y } from "swiper/modules";
-import { Card, CardHeader, CardBody } from "@nextui-org/react";
+
+import { useState } from "react";
+import { Pagination, A11y, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import Link from "next/link";
-import Image from "next/image";
-import { useEffect } from "react";
-import AOS from "aos";
-import "aos/dist/aos.css";
+import { Card, CardBody } from "@nextui-org/react";
+import { motion, AnimatePresence } from "framer-motion";
+import AnimatedLink from "../AnimatedLink";
+import YouTubeHoverPlayer from "../../components/YOutubeEmbed";
 
-// Import Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-const myLoader01 = ({ src, width, quality, placeholder }) => {
-  return `https://cdn1.beams.co.jp/special/kids_summer_2024/assets/images/chapter_1/${src}?w=${width}?p=${placeholder}`;
-};
-const food01 = ({ src, width, quality, placeholder }) => {
-  return `https://cdn1.beams.co.jp/special/kids_summer_2024/assets/images/chapter_1/${src}?w=${width}?p=${placeholder}`;
-};
-export default () => {
-  // const sliderRef = useRef(null);
-  // const handlePrev = useCallback(() => {
-  //     if (!sliderRef.current) return;
-  //     sliderRef.current.swiper.slidePrev();
-  // }, []);
 
-  // const handleNext = useCallback(() => {
-  //     if (!sliderRef.current) return;
-  //     sliderRef.current.swiper.slideNext();
-  // }, []);
+export default function SwiperCardAbout() {
+  const [currentIndex, setCurrentIndex] = useState(1);
+  const totalSlides = 8;
+  const videoIds = [
+    "cb2NdZVYjp8",
+    "Gc4qO1J_pfE",
+    "ww1dUuoFEMY",
+    "3FHjCOFHlKk",
+    "gTPCpUNXyek",
+    "cb2NdZVYjp8",
+    "Gc4qO1J_pfE",
+    "ww1dUuoFEMY",
+    "3FHjCOFHlKk",
+    "gTPCpUNXyek",
+  ];
 
   return (
-    <>
-      <div data-aos="fade-up" className=" e-full  mt-[60px] m-0 p-0">
-        <Swiper
-          // install Swiper modules
-
-          breakpoints={{
-            0: {
-              slidesPerView: 1,
-            },
-            500: {
-              slidesPerView: 1,
-            },
-            768: {
-              slidesPerView: 1,
-            },
-            1024: {
-              slidesPerView: 1,
-            },
-          }}
-          modules={[Navigation, Pagination, A11y]}
-          spaceBetween={1}
-          className="m-0 p-0  h-auto "
-          navigation
-          autoplay
-          pagination={{ clickable: false }}
-          onSwiper={(swiper) => console.log(swiper)}
-          onSlideChange={() => console.log("slide change")}
-        >
-          <SwiperSlide className="  ">
-            <div className="relative w-full aspect-[21/9] hidden sm:block">
-              <Image
-                src="/images/banner04.png"
-                alt="hero-img"
-                fill
-                className="object-cover"
-                sizes="100vw"
-              />
+    <div className="py-[100px]">
+      {/* 左側：文字區 */}
+      <div className="flex justify-start z-[99999999] static w-full pl-50px">
+        <div className="txt flex ml-[50px] flex-col">
+          {/* 數字顯示在文字下方 */}
+          <div className="count-project mt-4 items-center flex">
+            <span className="mr-4 text-gray-600 text-[1.2rem]">PROJECT</span>
+            <div className="flex items-center gap-1  text-gray-600 text-[1.2rem]">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={currentIndex}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3 }}
+                  className=""
+                >
+                  {currentIndex}
+                </motion.span>
+              </AnimatePresence>
+              <span className="text-[1.2rem]">/ {totalSlides}</span>
             </div>
-          </SwiperSlide>
-          <SwiperSlide className="  ">
-            <div className="relative w-full aspect-[21/9] hidden sm:block">
-              <Image
-                src="/images/banner04.png"
-                alt="hero-img"
-                fill
-                className="object-cover"
-                sizes="100vw"
-              />
-            </div>
-          </SwiperSlide>
-          <SwiperSlide className="  ">
-            <div className="relative w-full aspect-[21/9] hidden sm:block">
-              <Image
-                src="/images/banner04.png"
-                alt="hero-img"
-                fill
-                className="object-cover"
-                sizes="100vw"
-              />
-            </div>
-          </SwiperSlide>
-        </Swiper>
+          </div>
+          <div className="flex">
+            <h2 className="text-[2.5rem] md:text-[4rem] mt-4 text-[#ffffff] font-normal border-b border-dashed border-black w-fit whitespace-nowrap">
+              NIGHT<br></br>MARKET
+            </h2>
+          </div>
+        </div>
       </div>
-    </>
+
+      {/* 右側：輪播區 */}
+      <div className="w-full relative z-10  lg:px-0">
+        <div className="w-full lg:px-0">
+          <Swiper
+            modules={[Pagination, A11y, Autoplay]}
+            autoplay={{ delay: 4000, disableOnInteraction: false }}
+            loop={true}
+            speed={1200}
+            spaceBetween={16}
+            pagination={{ clickable: true }}
+            onSlideChange={(swiper) => {
+              setCurrentIndex(((swiper.realIndex ?? 0) % totalSlides) + 1);
+            }}
+            breakpoints={{
+              0: { slidesPerView: 1.2 },
+              480: { slidesPerView: 4 },
+              640: { slidesPerView: 4 },
+              768: { slidesPerView: 4 },
+              1024: { slidesPerView: 5.4 },
+              1280: { slidesPerView: 5.4 },
+            }}
+            className="m-0 p-0 !overflow-visible sm:!overflow-hidden"
+          >
+            {videoIds.map((id, idx) => (
+              <SwiperSlide
+                key={idx}
+                className="mx-2 overflow-hidden group relative duration-1000"
+              >
+                <div className="relative w-[320px] h-[400px]">
+                  <div className="absolute w-full h-full z-30 left-0 top-0">
+                    <YouTubeHoverPlayer videoId={id} />
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </div>
+    </div>
   );
-};
+}

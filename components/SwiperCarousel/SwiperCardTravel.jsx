@@ -4,7 +4,7 @@ import { Card, CardHeader, CardBody } from "@nextui-org/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link"; // Import Link for internal navigation
 import "aos/dist/aos.css";
-import Image from "next/image";
+
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
@@ -51,16 +51,6 @@ export default function ProductCarousel() {
 
   return (
     <>
-      {/* <div>
-        <Image
-          src="/images/"
-          width={700}
-          height={300}
-          placeholder="empty"
-          loading="lazy"
-          alt="for_HotSale_title"
-        ></Image>
-      </div> */}
       <div className="e-full m-0 py-5 xl:py-[100px]">
         <Swiper
           breakpoints={{
@@ -77,7 +67,7 @@ export default function ProductCarousel() {
           loop={true} // Enable loop for infinite scrolling
         >
           {products.map((product) => (
-            <SwiperSlide key={product.id} className="group px-0">
+            <SwiperSlide key={product.id} className="group ">
               <Link href={`/product/${product.slug}`}>
                 {/* Use Link to navigate to product page */}
                 <Card className=" bg-transparent bg-white  p-0 m-0 shadow-none">
@@ -98,10 +88,15 @@ export default function ProductCarousel() {
                       {/* 顯示產品名稱 */}
                       <div className="p-4 flex flex-col">
                         <b className="text-black">{product.name}</b>
-                        <div className="text-black bg-[#1993e5] inline-flex  ">
-                          Price: ${product.price}
-                        </div>
+                        <b className="text-black">Price: ${product.price}</b>
                       </div>
+
+                      <a
+                        href="#"
+                        className="border  border-gray-400 text-black p-1 text-[12px] font-bold rounded-[30px] w-1/2 mx-auto mt-4 text-center bg-[#91AD9E]"
+                      >
+                        BUY NOW
+                      </a>
                     </div>
                   </CardBody>
                 </Card>
