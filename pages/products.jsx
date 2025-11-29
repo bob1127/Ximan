@@ -49,138 +49,162 @@ export default function Home() {
           </div>
           <FeatureCarousel />
         </section>
-        <section className="section_category py-20 h-[700px]">
-          <div className="title  flex-col flex  justify-center items-center ">
+        <section className="section_category py-10 lg:py-20 h-auto">
+          <div className="title flex-col flex justify-center items-center mb-8">
             <div className="relative group">
-              <div className=" absolute left-1/2 z-50 -translate-x-1/2 bottom-[-30%] rotate-[90deg] bg-black group-hover:bg-[#6f6f6f] duration-400 h-[.5px] w-[70px]"></div>
+              {/* 裝飾線：手機版縮短一點 w-[50px] -> lg:w-[70px] */}
+              <div className="absolute left-1/2 z-50 -translate-x-1/2 bottom-[-20px] lg:bottom-[-30%] rotate-[90deg] bg-black group-hover:bg-[#6f6f6f] duration-400 h-[.5px] w-[50px] lg:w-[70px]"></div>
               <div className="flex flex-col justify-center items-center pb-4">
-                <h2 className="text-4xl ">CATEGORY</h2>
-                <p className="text-[14px] font-bold">商品種類</p>
+                <h2 className="text-3xl lg:text-4xl">CATEGORY</h2>
+                <p className="text-[12px] lg:text-[14px] font-bold mt-1">
+                  商品種類
+                </p>
               </div>
-              <div className="border py-3 text-center duration-400 group-hover:text-[#ffffff] group-hover:bg-[#cbcbcb] px-5 border-[#6f6f6f] group-hover:border-[#c1c1c1]">
+              <div className="border py-2 lg:py-3 text-[12px] lg:text-base text-center duration-400 group-hover:text-[#ffffff] group-hover:bg-[#cbcbcb] px-4 lg:px-5 border-[#6f6f6f] group-hover:border-[#c1c1c1] cursor-pointer">
                 PICK UP ITEMS
               </div>
             </div>
           </div>
-          <div className="category-products justify-center max-w-[1670px] mt-10 mx-auto flex flex-wrap">
-            <div className="category-item mx-3 pt-10">
-              <div className="w-[280px] group  h-[350px] overflow-hidden  relative">
-                <div className="absolute h-full block group-hover:hidden transition-all duration-500 w-full  top-0 left-0 z-20">
+
+          {/* 列表區：改用 Grid 佈局，實現手機版一排兩個 */}
+          <div className="category-products justify-center max-w-[1670px] mt-6 lg:mt-10 mx-auto px-4 lg:px-0 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 lg:gap-6">
+            {/* Item 1 */}
+            <div className="category-item w-full pt-4 lg:pt-10 group cursor-pointer">
+              <div className="w-full aspect-[4/5] overflow-hidden relative">
+                <div className="absolute h-full block lg:group-hover:hidden transition-all duration-500 w-full top-0 left-0 z-20">
                   <Image
                     src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace_bw.jpg"
-                    className="w-full"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Handbags"
+                  />
                 </div>
-                <div className="absolute h-full w-full hidden group-hover:block transition-all duration-500 top-0 left-0 z-20">
+                <div className="absolute h-full w-full hidden lg:group-hover:block transition-all duration-500 top-0 left-0 z-20">
                   <Image
                     src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace.jpg"
-                    className="w-full"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Handbags"
+                  />
                 </div>
               </div>
-              <div className="flex py-4 justify-between w-full">
-                <p>Handbags</p>
-                <b>NEWS</b>
+              <div className="flex py-3 lg:py-4 justify-between w-full items-center">
+                <p className="text-sm lg:text-base">Handbags</p>
+                <b className="text-xs lg:text-sm">NEWS</b>
               </div>
             </div>
-            <div className="category-item mx-3 pt-10">
-              <div className="w-[280px] group  h-[350px] overflow-hidden  relative">
-                <div className="absolute h-full block group-hover:hidden transition-all duration-500 w-full  top-0 left-0 z-20">
+
+            {/* Item 2 */}
+            <div className="category-item w-full pt-4 lg:pt-10 group cursor-pointer">
+              <div className="w-full aspect-[4/5] overflow-hidden relative">
+                <div className="absolute h-full block lg:group-hover:hidden transition-all duration-500 w-full top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace_bw.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_earring_bw.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Jewelry"
+                  />
                 </div>
-                <div className="absolute h-full w-full hidden group-hover:block transition-all duration-500 top-0 left-0 z-20">
+                <div className="absolute h-full w-full hidden lg:group-hover:block transition-all duration-500 top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_earring.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
-                </div>
-              </div>
-              <div className="flex py-4 justify-between w-full">
-                <p>Handbags</p>
-                <b>NEWS</b>
-              </div>
-            </div>
-            <div className="category-item mx-3 pt-10">
-              <div className="w-[280px] group  h-[350px] overflow-hidden  relative">
-                <div className="absolute h-full block group-hover:hidden transition-all duration-500 w-full  top-0 left-0 z-20">
-                  <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace_bw.jpg"
-                    className="w-full"
-                    width={800}
-                    height={800}
-                  ></Image>
-                </div>
-                <div className="absolute h-full w-full hidden group-hover:block transition-all duration-500 top-0 left-0 z-20">
-                  <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace.jpg"
-                    className="w-full"
-                    width={800}
-                    height={800}
-                  ></Image>
+                    alt="Jewelry"
+                  />
                 </div>
               </div>
-              <div className="flex py-4 justify-between w-full">
-                <p>Handbags</p>
-                <b>NEWS</b>
+              <div className="flex py-3 lg:py-4 justify-between w-full items-center">
+                <p className="text-sm lg:text-base">Jewelry</p>
+                <b className="text-xs lg:text-sm">NEWS</b>
               </div>
             </div>
-            <div className="category-item mx-3 pt-10">
-              <div className="w-[280px] group  h-[350px] overflow-hidden  relative">
-                <div className="absolute h-full block group-hover:hidden transition-all duration-500 w-full  top-0 left-0 z-20">
+
+            {/* Item 3 */}
+            <div className="category-item w-full pt-4 lg:pt-10 group cursor-pointer">
+              <div className="w-full aspect-[4/5] overflow-hidden relative">
+                <div className="absolute h-full block lg:group-hover:hidden transition-all duration-500 w-full top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace_bw.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_ring_bw.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Shoes"
+                  />
                 </div>
-                <div className="absolute h-full w-full hidden group-hover:block transition-all duration-500 top-0 left-0 z-20">
+                <div className="absolute h-full w-full hidden lg:group-hover:block transition-all duration-500 top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_ring.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Shoes"
+                  />
                 </div>
               </div>
-              <div className="flex py-4 justify-between w-full">
-                <p>Handbags</p>
-                <b>NEWS</b>
+              <div className="flex py-3 lg:py-4 justify-between w-full items-center">
+                <p className="text-sm lg:text-base">Shoes</p>
+                <b className="text-xs lg:text-sm">NEWS</b>
               </div>
             </div>
-            <div className="category-item mx-3 pt-10">
-              <div className="w-[280px] group  h-[350px] overflow-hidden  relative">
-                <div className="absolute h-full block group-hover:hidden transition-all duration-500 w-full  top-0 left-0 z-20">
+
+            {/* Item 4 */}
+            <div className="category-item w-full pt-4 lg:pt-10 group cursor-pointer">
+              <div className="w-full aspect-[4/5] overflow-hidden relative">
+                <div className="absolute h-full block lg:group-hover:hidden transition-all duration-500 w-full top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace_bw.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_blacelet_bw.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Accessories"
+                  />
                 </div>
-                <div className="absolute h-full w-full hidden group-hover:block transition-all duration-500 top-0 left-0 z-20">
+                <div className="absolute h-full w-full hidden lg:group-hover:block transition-all duration-500 top-0 left-0 z-20">
                   <Image
-                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_necklace.jpg"
-                    className="w-full"
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_blacelet.jpg"
+                    className="w-full h-full object-cover"
                     width={800}
                     height={800}
-                  ></Image>
+                    alt="Accessories"
+                  />
                 </div>
               </div>
-              <div className="flex py-4 justify-between w-full">
-                <p>Handbags</p>
-                <b>NEWS</b>
+              <div className="flex py-3 lg:py-4 justify-between w-full items-center">
+                <p className="text-sm lg:text-base">Accessories</p>
+                <b className="text-xs lg:text-sm">NEWS</b>
+              </div>
+            </div>
+
+            {/* Item 5 */}
+            <div className="category-item w-full pt-4 lg:pt-10 group cursor-pointer">
+              <div className="w-full aspect-[4/5] overflow-hidden relative">
+                <div className="absolute h-full block lg:group-hover:hidden transition-all duration-500 w-full top-0 left-0 z-20">
+                  <Image
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_bridal_bw.jpg"
+                    className="w-full h-full object-cover"
+                    width={800}
+                    height={800}
+                    alt="Wallets"
+                  />
+                </div>
+                <div className="absolute h-full w-full hidden lg:group-hover:block transition-all duration-500 top-0 left-0 z-20">
+                  <Image
+                    src="https://file002.shop-pro.jp/PA01372/068/ver2.0.0/cmn/img/assets/category_bridal.jpg"
+                    className="w-full h-full object-cover"
+                    width={800}
+                    height={800}
+                    alt="Wallets"
+                  />
+                </div>
+              </div>
+              <div className="flex py-3 lg:py-4 justify-between w-full items-center">
+                <p className="text-sm lg:text-base">Wallets</p>
+                <b className="text-xs lg:text-sm">NEWS</b>
               </div>
             </div>
           </div>
@@ -236,8 +260,8 @@ export default function Home() {
           </div>
         </section>
         <section className="w-full pt-20 bg-[#bcbcba] section-content overflow-hidden">
-          <div className="max-w-[550px] mx-auto flex justify-center items-center flex-col">
-            <h2 className="text-2xl tracking-wider font-bold text-stone-700">
+          <div className="max-w-[550px] mx-auto flex px-6 justify-center items-center flex-col">
+            <h2 className="text-[2rem] tracking-wider font-bold text-stone-700">
               PHILOSOPHY
             </h2>
             <p className="leading-loose tracking-wider text-[14px] text-stone-600">

@@ -17,66 +17,68 @@ const newsItems = [
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/20251111_12_bororo7847-scaled.jpg",
     title: "「A&D Awards 2024」受賞",
+    // 移除 text-white，統一用深色或讓 CSS 控制，這裡保留你的資料結構但做微調
     titleColor: "text-stone-800",
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[33vh] group-hover:h-[40vh]",
+    // ✅ 重點：只在 md (桌機) 以上套用高度，手機版由 CSS 統一控制
+    desktopHeightClass: "md:h-[33vh]",
   },
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/Insta_26SS_JOINT_m2028-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
+    title: "New Collection Released",
+    titleColor: "text-stone-800", // 修正為深色以確保可讀性
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[36vh] group-hover:h-[44vh]",
+    desktopHeightClass: "md:h-[36vh]",
   },
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/20250924_25_bororo4741-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
-    body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
-    placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[26vh] group-hover:h-[33vh]",
-  },
-  {
-    img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/Insta_JOINT_k9591-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
-    body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
-    placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[30vh] group-hover:h-[35vh]",
-  },
-  {
-    img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/20250924_25_bororo4741-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
+    title: "Craftsmanship Workshop",
     titleColor: "text-stone-800",
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[33vh] group-hover:h-[40vh]",
+    desktopHeightClass: "md:h-[26vh]",
+  },
+  {
+    img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/Insta_JOINT_k9591-scaled.jpg",
+    title: "Limited Edition",
+    titleColor: "text-stone-800",
+    body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
+    placeDate: "Taichung - 2025.03.23",
+    desktopHeightClass: "md:h-[30vh]",
+  },
+  {
+    img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/20250924_25_bororo4741-scaled.jpg",
+    title: "Summer Sale",
+    titleColor: "text-stone-800",
+    body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
+    placeDate: "Taichung - 2025.03.23",
+    desktopHeightClass: "md:h-[33vh]",
   },
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/himie_main4%C3%975-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
+    title: "Designer Interview",
+    titleColor: "text-stone-800",
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[36vh] group-hover:h-[44vh]",
+    desktopHeightClass: "md:h-[36vh]",
   },
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/10/IMG_1445-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
+    title: "Global Exhibition",
+    titleColor: "text-stone-800",
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[26vh] group-hover:h-[33vh]",
+    desktopHeightClass: "md:h-[26vh]",
   },
   {
     img: "https://culet-web.jp/2018/wp/wp-content/uploads/2025/10/IMG_1446-scaled.jpg",
-    title: "「A&D Awards 2024」受賞",
-    titleColor: "text-white",
+    title: "Sustainability",
+    titleColor: "text-stone-800",
     body: "太陽印刷製造 InnoValley 在最佳工作場所類別中獲得了最高獎項。",
     placeDate: "Taichung - 2025.03.23",
-    imgWrapperClass: "h-auto md:h-[30vh] group-hover:h-[35vh]",
+    desktopHeightClass: "md:h-[30vh]",
   },
 ];
 
@@ -84,6 +86,8 @@ const NewsCarousel = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     align: "start",
+    slidesToScroll: 1, // 每次滑動一張，體驗較好
+    containScroll: "trimSnaps", // 避免右側過多留白
   });
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } =
@@ -96,57 +100,98 @@ const NewsCarousel = () => {
   } = usePrevNextButtons(emblaApi);
 
   return (
-    <div className="embla-news relative mt-6">
-      {/* viewport */}
-      <div className="embla__viewport" ref={emblaRef}>
-        <div className="embla__container flex">
+    <div
+      className="embla-news relative mt-6 w-full py-10"
+      style={{
+        // 預設 (手機版) 變數
+        "--slide-size": "80%",
+        "--slide-spacing": "1rem",
+      }}
+    >
+      <style>
+        {`
+          /* Mobile First */
+          .embla__viewport { --slide-size: 80%; }
+          
+          /* Tablet */
+          @media (min-width: 640px) { .embla__viewport { --slide-size: 50%; } }
+          
+          /* Desktop */
+          @media (min-width: 1024px) { .embla__viewport { --slide-size: 30%; } }
+          
+          /* Large Desktop */
+          @media (min-width: 1280px) { .embla__viewport { --slide-size: 25%; } }
+        `}
+      </style>
+
+      {/* Viewport
+          pl-5: 手機版給一點左邊距，不要貼死
+          md:pl-0: 桌機版歸零，由外層容器控制
+      */}
+      <div
+        className="embla__viewport pl-5 md:pl-0 overflow-hidden"
+        ref={emblaRef}
+      >
+        <div
+          className="embla__container flex touch-pan-y"
+          style={{
+            marginLeft: "calc(var(--slide-spacing) * -1)",
+            gap: "var(--slide-spacing)", // 使用 gap 取代 padding-left trick，排版更直覺
+          }}
+        >
           {newsItems.map((item, index) => (
             <div
               key={index}
-              className="
-                embla__slide
-                flex-[0_0_90%]
-                sm:flex-[0_0_60%]
-                md:flex-[0_0_40%]
-                xl:flex-[0_0_25%]
-                px-2
-              "
+              className="embla__slide relative flex-none min-w-0"
+              style={{ flex: "0 0 var(--slide-size)" }}
             >
-              <div className="w-full mx-auto md:w-[200px] lg:w-[230px] 2xl:w-[280px] xl:w-[230px] group">
+              <div className="group cursor-pointer flex flex-col h-full">
+                {/* 圖片容器
+                    1. 手機版：aspect-[3/4] 統一比例
+                    2. 桌機版：item.desktopHeightClass (保留高低錯落感)
+                */}
                 <div
-                  className={`img mx-auto overflow-hidden transition-all duration-500 ${item.imgWrapperClass}`}
+                  className={`
+                    img-wrapper w-full relative overflow-hidden bg-gray-100 mb-4
+                    aspect-[3/4] ${item.desktopHeightClass}
+                  `}
                 >
-                  <div className="animate-image-wrapper mx-auto relative w-full aspect-[4/5] md:h-full overflow-hidden ">
-                    <div className="image-container relative w-full h-full">
-                      <Image
-                        src={item.img}
-                        alt={item.title}
-                        fill
-                        className="object-cover group-hover:scale-[1.05] duration-700"
-                        sizes="(max-width: 768px) 90vw, (max-width: 1024px) 550px, 85vw"
-                      />
-                    </div>
-                  </div>
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 768px) 80vw, (max-width: 1200px) 40vw, 25vw"
+                  />
                 </div>
-                <div className="flex flex-col px-3 py-4">
-                  <div className="inline-block pb-4">
+
+                {/* 文字內容 */}
+                <div className="flex flex-col px-1 flex-grow">
+                  <div className="mb-2">
                     <button
                       type="button"
-                      className="relative inline-block after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-neutral-100 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.65,0.05,0.36,1)] group-hover:after:origin-bottom-left group-hover:after:scale-x-100"
+                      className="relative inline-block text-left"
                     >
-                      <b
-                        className={`text-[.9rem] font-bold ${item.titleColor}`}
+                      {/* 裝飾線條效果 */}
+                      <span className="absolute bottom-0 left-0 h-[1px] w-0 bg-black transition-all duration-300 group-hover:w-full"></span>
+                      <h3
+                        className={`text-[1rem] md:text-[1.1rem] font-bold leading-tight ${item.titleColor}`}
                       >
                         {item.title}
-                      </b>
+                      </h3>
                     </button>
                   </div>
-                  <span className="text-[.75rem] text-gray-100">
+
+                  {/* 使用 line-clamp 限制行數，避免長短不一 */}
+                  <p className="text-[0.8rem] text-gray-500 font-light leading-relaxed line-clamp-2 mb-2">
                     {item.body}
-                  </span>
-                  <span className="text-[.75rem] text-gray-100">
-                    {item.placeDate}
-                  </span>
+                  </p>
+
+                  <div className="mt-auto">
+                    <span className="text-[0.7rem] text-gray-400 uppercase tracking-wider">
+                      {item.placeDate}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -154,10 +199,14 @@ const NewsCarousel = () => {
         </div>
       </div>
 
-      {/* 控制區：左右箭頭 + dots */}
-      <div className="mt-6 flex items-center justify-between">
+      {/* 控制區：箭頭與圓點 */}
+      <div className="mt-8 px-5 md:px-0 flex items-center justify-between max-w-[1440px] mx-auto">
         <div className="flex gap-3">
-          <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+          <PrevButton
+            onClick={onPrevButtonClick}
+            disabled={prevBtnDisabled}
+            // 這裡可以加自定義樣式
+          />
           <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
         </div>
 
