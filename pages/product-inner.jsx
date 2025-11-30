@@ -1,5 +1,5 @@
 "use client";
-import Layout from "./Layout";
+
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
@@ -144,7 +144,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <Layout>
+    <>
       {/* ✅ 顯示 Toast */}
       <SuccessToast show={showToast} />
 
@@ -677,7 +677,7 @@ export default function ProductDetail() {
             document.body
           )}
       </main>
-    </Layout>
+    </>
   );
 }
 

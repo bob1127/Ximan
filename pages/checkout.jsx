@@ -2,35 +2,140 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useCart } from "../components/context/CartContext";
+import { useUser } from "../components/context/UserContext";
 import { ChevronDown, ChevronUp, ShoppingBag } from "lucide-react";
 
 export default function Checkout() {
   const { cartItems } = useCart();
+  const { userInfo } = useUser();
+  const router = useRouter();
+
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    lastName: "",
+    firstName: "",
+    company: "",
+    address: "",
+    apartment: "",
+    city: "",
+    postcode: "",
+    phone: "",
+  });
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (userInfo) {
+      setFormData((prev) => ({
+        ...prev,
+        email: userInfo.email || "",
+        firstName: userInfo.first_name || "",
+        lastName: userInfo.last_name || "",
+      }));
+    }
+  }, [userInfo]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const subtotal = cartItems.reduce((acc, item) => {
     const priceNum = parseInt(item.price.replace(/[^\d]/g, ""), 10) || 0;
     return acc + priceNum * item.quantity;
   }, 0);
-
   const shippingCost = 0;
   const total = subtotal + shippingCost;
+
+  // 結帳送出邏輯
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return alert("購物車是空的");
+    if (
+      !formData.email ||
+      !formData.lastName ||
+      !formData.firstName ||
+      !formData.address ||
+      !formData.phone
+    ) {
+      return alert("請填寫完整聯絡資訊與運送地址");
+    }
+
+    setIsLoading(true);
+
+    const payload = {
+      customer_id: userInfo ? userInfo.id : 0,
+      billing: {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        company: formData.company,
+        address_1: formData.address,
+        address_2: formData.apartment,
+        city: formData.city,
+        state: "",
+        postcode: formData.postcode,
+        country: "TW",
+        email: formData.email,
+        phone: formData.phone,
+      },
+      shipping: {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        company: formData.company,
+        address_1: formData.address,
+        address_2: formData.apartment,
+        city: formData.city,
+        state: "",
+        postcode: formData.postcode,
+        country: "TW",
+      },
+      // ✅ 修改處：強制傳送名稱與價格，避開假 ID 找不到商品的問題
+      line_items: cartItems.map((item) => {
+        // 1. 把價格字串 "NT$ 880,000" 轉成純數字 880000
+        const priceNum = parseInt(item.price.replace(/[^\d]/g, ""), 10) || 0;
+
+        return {
+          product_id: 0, // ⚠️ 設為 0，代表這是「自訂商品」，WooCommerce 就不會去查 ID
+          name: item.title, // 強制寫入商品名稱
+          quantity: item.quantity,
+          total: String(priceNum * item.quantity), // 強制寫入總金額 (字串格式)
+        };
+      }),
+    };
+
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.removeItem("shopping-cart");
+        // 如果有 context 的 clearCart 也可在此呼叫
+        router.push(`/thankyou?orderId=${data.orderId}`);
+      } else {
+        alert("結帳失敗: " + data.message);
+      }
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("發生錯誤，請稍後再試");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!mounted) return null;
 
   return (
     <div className="min-h-screen bg-white flex flex-col md:flex-row font-sans text-[#333]">
-      {/* =========================================
-          1. Mobile Header & Summary Toggle (手機版專用)
-         ========================================= */}
+      {/* Mobile Header */}
       <div className="md:hidden border-b border-gray-200 bg-white sticky top-0 z-50">
-        {/* Logo Area */}
         <div className="p-4 flex justify-center bg-white">
           <Link
             href="/"
@@ -39,8 +144,6 @@ export default function Checkout() {
             CIÉMAN
           </Link>
         </div>
-
-        {/* Toggle Summary Button */}
         <div className="bg-[#fafafa] border-t border-gray-200 p-4">
           <button
             onClick={() => setIsSummaryOpen(!isSummaryOpen)}
@@ -62,8 +165,6 @@ export default function Checkout() {
             </span>
           </button>
         </div>
-
-        {/* Mobile Summary Content */}
         {isSummaryOpen && (
           <div className="bg-[#fafafa] border-t border-gray-200 p-4 animate-fadeIn">
             <OrderSummary
@@ -76,14 +177,18 @@ export default function Checkout() {
         )}
       </div>
 
-      {/* =========================================
-          2. Left Column: Form (資料填寫區)
-         ========================================= */}
-      <div className="w-full md:w-[58%]  lg:w-[60%] pt-8 pb-12 px-6 md:px-12 lg:px-20 order-2 md:order-1">
+      {/* Left Column: Form */}
+      <div className="w-full md:w-[58%] lg:w-[60%] pt-8 pb-12 px-6 md:px-12 lg:px-20 order-2 md:order-1">
         <div className="md:p-10 p-4 xl:p-20">
-          {/* Desktop Logo */}
+          <div className="hidden md:block mb-8">
+            <Link
+              href="/"
+              className="text-3xl font-bold tracking-widest text-black uppercase"
+            >
+              CIÉMAN
+            </Link>
+          </div>
 
-          {/* Breadcrumb */}
           <nav className="flex items-center text-xs mb-8 text-gray-500">
             <Link
               href="/cart"
@@ -99,8 +204,7 @@ export default function Checkout() {
             <span>付款</span>
           </nav>
 
-          {/* Express Checkout */}
-          <div className="mb-8 ">
+          <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
               <div className="h-[1px] flex-1 bg-gray-200"></div>
               <span className="text-xs text-gray-500">快速結帳</span>
@@ -125,53 +229,73 @@ export default function Checkout() {
             <div className="h-[1px] flex-1 bg-gray-200"></div>
           </div>
 
-          {/* 聯絡資訊 */}
           <div className="mb-8">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-gray-800">聯絡資訊</h2>
-              <div className="text-sm">
-                已經有帳號了嗎？{" "}
-                <Link href="/login" className="text-[#ef4628] hover:underline">
-                  登入
-                </Link>
-              </div>
+              {!userInfo && (
+                <div className="text-sm">
+                  已經有帳號了嗎？{" "}
+                  <Link
+                    href="/login"
+                    className="text-[#ef4628] hover:underline"
+                  >
+                    登入
+                  </Link>
+                </div>
+              )}
             </div>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="電子郵件"
               className="w-full border border-gray-300 rounded px-3 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
             />
-            <div className="mt-3 flex items-center">
-              <input
-                type="checkbox"
-                id="newsletter"
-                className="w-4 h-4 text-black border-gray-300 rounded focus:ring-black"
-              />
-              <label
-                htmlFor="newsletter"
-                className="ml-2 text-sm text-gray-600"
-              >
-                訂閱最新消息與優惠
-              </label>
-            </div>
           </div>
 
-          {/* 運送地址 */}
           <div className="mb-10">
             <h2 className="text-lg font-bold text-gray-800 mb-4">運送地址</h2>
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <input type="text" placeholder="姓氏" className="form-input" />
-                <input type="text" placeholder="名字" className="form-input" />
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  placeholder="姓氏"
+                  className="form-input"
+                />
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  placeholder="名字"
+                  className="form-input"
+                />
               </div>
               <input
                 type="text"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
                 placeholder="公司 (選填)"
                 className="form-input"
               />
-              <input type="text" placeholder="地址" className="form-input" />
               <input
                 type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="地址"
+                className="form-input"
+              />
+              <input
+                type="text"
+                name="apartment"
+                value={formData.apartment}
+                onChange={handleChange}
                 placeholder="公寓、套房、大樓等 (選填)"
                 className="form-input"
               />
@@ -184,11 +308,17 @@ export default function Checkout() {
                 </div>
                 <input
                   type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
                   placeholder="城市/地區"
                   className="form-input"
                 />
                 <input
                   type="text"
+                  name="postcode"
+                  value={formData.postcode}
+                  onChange={handleChange}
                   placeholder="郵遞區號"
                   className="form-input"
                 />
@@ -196,19 +326,16 @@ export default function Checkout() {
               <div className="relative">
                 <input
                   type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   placeholder="電話號碼"
                   className="form-input"
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 group cursor-help">
-                  <span className="bg-gray-200 text-gray-500 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">
-                    ?
-                  </span>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Footer Actions */}
           <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-4 mt-8">
             <Link
               href="/cart"
@@ -216,8 +343,12 @@ export default function Checkout() {
             >
               &lt; 返回購物車
             </Link>
-            <button className="w-full md:w-auto bg-black text-white px-8 py-4 rounded-[5px] text-sm font-bold tracking-wide hover:opacity-80 transition-opacity">
-              結帳
+            <button
+              onClick={handleCheckout}
+              disabled={isLoading}
+              className="w-full md:w-auto bg-black text-white px-8 py-4 rounded-[5px] text-sm font-bold tracking-wide hover:opacity-80 transition-opacity disabled:opacity-50"
+            >
+              {isLoading ? "處理中..." : "結帳"}
             </button>
           </div>
 
@@ -235,10 +366,7 @@ export default function Checkout() {
         </div>
       </div>
 
-      {/* =========================================
-          3. Right Column: Order Summary (Desktop Sticky)
-         ========================================= */}
-      {/* ✅ Sticky 設定在這裡：sticky top-0 h-screen */}
+      {/* Right Column: Order Summary */}
       <div className="hidden md:block w-full md:w-[42%] lg:w-[40%] bg-[#fafafa] border-l border-gray-200 pt-12 px-6 md:px-10 lg:px-14 min-h-screen sticky top-20 h-screen overflow-y-auto order-1 md:order-2">
         <OrderSummary
           cartItems={cartItems}
@@ -267,11 +395,10 @@ export default function Checkout() {
   );
 }
 
-// --- Order Summary Component (中文版) ---
+// Order Summary Component (不變)
 const OrderSummary = ({ cartItems, subtotal, shippingCost, total }) => {
   return (
     <div className="max-w-[450px] mx-auto w-full">
-      {/* Product List */}
       <div className="space-y-4 mb-6">
         {cartItems.map((item) => (
           <div key={item.id} className="flex items-center gap-4">
@@ -284,7 +411,6 @@ const OrderSummary = ({ cartItems, subtotal, shippingCost, total }) => {
                   className="object-cover"
                 />
               </div>
-              {/* Badge */}
               <span className="absolute -top-2 -right-2 bg-gray-500/90 text-white text-xs font-medium w-5 h-5 flex items-center justify-center rounded-full z-10">
                 {item.quantity}
               </span>
@@ -301,24 +427,7 @@ const OrderSummary = ({ cartItems, subtotal, shippingCost, total }) => {
           </div>
         ))}
       </div>
-
       <div className="border-t border-gray-200 my-6"></div>
-
-      {/* Discount Code */}
-      <div className="flex gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="禮物卡或折扣碼"
-          className="flex-1 border border-gray-300 rounded px-3 py-3 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
-        />
-        <button className="bg-[#c8c8c8] text-white px-5 rounded text-sm font-bold hover:bg-[#b0b0b0] transition-colors disabled:opacity-50">
-          套用
-        </button>
-      </div>
-
-      <div className="border-t border-gray-200 my-6"></div>
-
-      {/* Totals */}
       <div className="space-y-2 text-sm text-gray-600">
         <div className="flex justify-between">
           <span>小計</span>
@@ -331,9 +440,7 @@ const OrderSummary = ({ cartItems, subtotal, shippingCost, total }) => {
           <span className="text-xs text-gray-500">下一步計算</span>
         </div>
       </div>
-
       <div className="border-t border-gray-200 my-6"></div>
-
       <div className="flex justify-between items-baseline">
         <span className="text-base font-bold text-gray-800">總計</span>
         <div className="flex items-baseline gap-2">

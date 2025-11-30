@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import SwiperEsim from "../components/EmblaCarousel01/index";
 import HeroSlider from "../components/Slider/Slider";
-import Layout from "./Layout";
+
 import ParallaxImage from "../components/ParallaxImage";
 import Marquee from "react-marquee-slider";
 import Image from "next/image";
@@ -25,7 +25,7 @@ export default function Home() {
   const y3 = useTransform(scrollY, [0, 1000], [0, 80]); // 更慢
 
   return (
-    <Layout>
+    <>
       {/* 背景圖片 - Parallax */}
 
       {/* 1. 左上角：手機 w-20 (80px), 桌機 w-[150px] */}
@@ -425,6 +425,6 @@ export default function Home() {
           </ParallaxProvider>
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

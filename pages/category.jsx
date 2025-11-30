@@ -1,5 +1,5 @@
 "use client";
-import Layout from "./Layout";
+
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState, useMemo, useRef, useEffect } from "react";
@@ -495,7 +495,7 @@ export default function Category() {
   }, [activeFilter]);
 
   return (
-    <Layout>
+    <>
       <main className="py-20 bg-white text-black font-sans min-h-screen">
         {/* Title & SEO Section */}
         <section>
@@ -656,6 +656,6 @@ export default function Category() {
         {/* 🔥 新增的 CompanyLocation 組件 */}
         <CompanyLocation />
       </main>
-    </Layout>
+    </>
   );
 }

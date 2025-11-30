@@ -1,6 +1,6 @@
 "use client";
 import StickyColumns from "../components/SwiperCarousel/SwiperCardFood";
-import Layout from "./Layout";
+
 import GsapText from "@/components/RevealText/index";
 import Link from "next/link";
 import Image from "next/image";
@@ -29,7 +29,7 @@ export default function Home() {
   }, [currentIndex]);
 
   return (
-    <Layout>
+    <>
       <main className="py-20">
         <section className="">
           <StickyColumns />
@@ -295,6 +295,6 @@ export default function Home() {
           </section>
         </section>
       </main>
-    </Layout>
+    </>
   );
 }
