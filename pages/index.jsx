@@ -92,8 +92,8 @@ export default function Home() {
         />
       </motion.div>
       {/* Parallax 參考容器 */}
-      <div ref={scrollRef} className="relative z-10">
-        <div className="flex flex-col lg:flex-row lg:mt-0 mt-[100px] w-[95%]  mx-auto relative lg:w-full lg:h-screen h-auto overflow-hidden lg:overflow-visible">
+      <div ref={scrollRef} className="relative pt-0 lg:pt-20 z-10">
+        <div className="flex flex-col lg:flex-row lg:mt-0 mt-[100px] w-[95%]  mx-auto relative lg:w-full   h-auto overflow-hidden lg:overflow-visible">
           {/* 1. 左側欄位 (大螢幕是 1/3, 手機是滿版覆蓋層) */}
           <div className="absolute inset-0 z-30 pointer-events-none lg:static lg:block lg:w-1/3 lg:relative lg:pointer-events-auto">
             {/* 文字定位容器 */}
@@ -135,8 +135,8 @@ export default function Home() {
           </div>
 
           {/* 2. 中間 Slider 欄位 */}
-          <div className="relative z-10 w-full h-full lg:w-1/3 lg:h-auto">
-            <div className="w-full h-full lg:min-h-[90vh]">
+          <div className="relative z-10  w-full h-full lg:w-1/3 lg:h-auto">
+            <div className="w-full    ">
               <HeroSlider />
             </div>
           </div>
@@ -144,7 +144,10 @@ export default function Home() {
           {/* 3. 右側留白欄位 (僅在桌機顯示) */}
           <div className="hidden lg:block lg:w-1/3"></div>
         </div>
-        <Gallery />
+        <section className="feature sm:mt-10 xl:mt-20">
+          {" "}
+          <Gallery />
+        </section>
         <section className=" h-full  py-5 md:py-20">
           <div className="container flex lg:flex-row flex-col  max-w-[1920px] w-full xl:w-[85%] mx-auto">
             <div className="left   w-full lg:w-1/2 p-10">

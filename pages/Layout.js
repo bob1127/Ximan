@@ -1,36 +1,17 @@
-import { useState, useEffect } from "react";
+// components/Layout.js
+import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { NextUIProvider } from "@nextui-org/react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
-import Navbar from "@/components/Navbar/Navbar.jsx";
+import Navbar from "@/components/Navbar/Navbar.jsx"; // 請確認你的 Navbar 路徑
 import Banner from "@/components/banner";
 import Footer from "@/components/ui/footer.jsx";
 import Head from "next/head";
-import Sidebar from "@/components/Sidebar.js";
-import { UserProvider } from "../components/context/UserContext";
+import CartSidebar from "@/components/CartSidebar"; // ✅ 引入我們剛做好的側邊購物車 UI
 import { ReactLenis } from "@studio-freight/react-lenis";
 
-export default function RootLayout({ children }) {
-  const [sidebarProduct, setSidebarProduct] = useState(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  const handleAddToCart = (product, quantity, selectedAttributes) => {
-    const totalPrice = product.price * quantity;
-    const variantId = getVariantId(selectedAttributes);
-
-    setSidebarProduct({
-      name: product.name,
-      price: product.price,
-      quantity,
-      totalPrice,
-      variant: selectedAttributes,
-      variantId,
-    });
-
-    setIsSidebarOpen(true);
-  };
-
+export default function Layout({ children }) {
+  
+  // AOS 初始化
   useEffect(() => {
     AOS.init({
       once: true,
@@ -46,7 +27,7 @@ export default function RootLayout({ children }) {
   const siteTitle = "CIÉMAN 喜曼精品｜台中二手精品買賣・寄賣・置換";
   const siteDescription =
     "CIÉMAN 喜曼精品位於台中，專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務。所有商品皆經專業鑑定與品況分級，僅販售 100% 正品。";
-  const siteImage = `${siteUrl}/default-og-image.jpg`; // 之後可替換成你的 Hero 圖
+  const siteImage = `${siteUrl}/default-og-image.jpg`; 
   const storePhone = "0938-535-870";
 
   const orgJsonLd = {
@@ -80,8 +61,7 @@ export default function RootLayout({ children }) {
       },
     ],
     sameAs: [
-      "https://www.instagram.com/hello.cieman", // IG
-      // LINE 沒有公開網址就先不放，之後若有 LINE OA 可加上
+      "https://www.instagram.com/hello.cieman",
     ],
     priceRange: "$$-$$$$",
     description: siteDescription,
@@ -128,36 +108,37 @@ export default function RootLayout({ children }) {
         <meta name="twitter:description" content={siteDescription} />
         <meta name="twitter:image" content={siteImage} />
 
-        {/* JSON-LD：品牌 / 門市資訊 */}
+        {/* JSON-LD */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
-        {/* JSON-LD：網站搜尋 */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </Head>
 
-      <NextUIProvider>
-        <NextThemesProvider attribute="class" defaultTheme="light">
-          <UserProvider>
-            <Navbar />
-            <Sidebar
-              sidebarProduct={sidebarProduct}
-              onAddToCart={handleAddToCart}
-            />
+      {/* 1. 導覽列 */}
+      <Navbar />
 
-            {/* 內容 + Lenis 滾動 */}
-            <div className="transition duration-1000 ease-out">
-              <ReactLenis root>{children}</ReactLenis>
-              <Banner />
-              <Footer />
-            </div>
-          </UserProvider>
-        </NextThemesProvider>
-      </NextUIProvider>
+      {/* 2. 側邊購物車 (由 CartContext 控制開關，這裡負責渲染 UI) */}
+      <CartSidebar />
+
+      {/* 3. 主要內容 + 平滑捲動 */}
+      <ReactLenis root>
+        <div className="min-h-screen flex flex-col justify-between">
+           <main>
+             {children}
+           </main>
+           
+           {/* Banner 和 Footer 放在這裡 */}
+           <div>
+             <Banner />
+             <Footer />
+           </div>
+        </div>
+      </ReactLenis>
     </>
   );
 }

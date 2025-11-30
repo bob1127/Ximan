@@ -1,95 +1,72 @@
-import { createContext, useState, useContext, useEffect } from "react";
+"use client";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
+export const useCart = () => useContext(CartContext);
+
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  
+  // 用來標記「是否已經從 LocalStorage 讀取過資料」
+  const [isInitialized, setIsInitialized] = useState(false);
 
+  // ✅ 1. 初始讀取：從 LocalStorage 撈資料
   useEffect(() => {
-    const storedCartItems = localStorage.getItem("cartItems");
-    if (storedCartItems) {
-      setCartItems(JSON.parse(storedCartItems));
+    if (typeof window !== "undefined") {
+      const storedCart = localStorage.getItem("shopping-cart");
+      if (storedCart) {
+        try {
+          setCartItems(JSON.parse(storedCart));
+        } catch (error) {
+          console.error("Failed to parse cart data", error);
+        }
+      }
+      setIsInitialized(true); 
     }
   }, []);
 
+  // ✅ 2. 自動存檔：當 cartItems 變動時，寫入 LocalStorage
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  useEffect(() => {
-    const total = cartItems.reduce(
-      (acc, item) => acc + parseFloat(item.price) * item.quantity,
-      0
-    );
-    setTotalPrice(total);
-  }, [cartItems]);
-
-  const addToCart = (product) => {
-    // 只有存在 color/size 才驗證
-    if (
-      ("color" in product && !product.color) ||
-      ("size" in product && !product.size)
-    ) {
-      return;
+    if (isInitialized) {
+      localStorage.setItem("shopping-cart", JSON.stringify(cartItems));
     }
+  }, [cartItems, isInitialized]);
 
-    const existingItem = cartItems.find((item) => {
-      return (
-        item.id === product.id &&
-        (item.color ?? null) === (product.color ?? null) &&
-        (item.size ?? null) === (product.size ?? null)
-      );
-    });
-
-    if (existingItem) {
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === product.id &&
-          (item.color ?? null) === (product.color ?? null) &&
-          (item.size ?? null) === (product.size ?? null)
-            ? { ...item, quantity: item.quantity + product.quantity }
+  // 加入購物車邏輯
+  const addToCart = (product, quantity) => {
+    setCartItems((prevItems) => {
+      const existingItem = prevItems.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevItems.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
             : item
-        )
-      );
-    } else {
-      setCartItems((prevItems) => [...prevItems, product]);
-    }
-
-    setIsOpen(true);
+        );
+      }
+      return [...prevItems, { ...product, quantity }];
+    });
+    setIsCartOpen(true);
   };
 
-  const removeFromCart = (productId, color, size) => {
-    setCartItems((prevItems) =>
-      prevItems.filter(
-        (item) =>
-          item.id !== productId ||
-          (item.color ?? null) !== (color ?? null) ||
-          (item.size ?? null) !== (size ?? null)
-      )
-    );
-  };
-
-  const updateQuantity = (productId, color, size, newQuantity) => {
-    if (newQuantity <= 0) return;
-
+  // ✅ 新增：直接更新數量 (用於 + - 按鈕)
+  const updateQuantity = (id, newQuantity) => {
+    if (newQuantity < 1) return; // 防止數量小於 1
     setCartItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === productId &&
-        (item.color ?? null) === (color ?? null) &&
-        (item.size ?? null) === (size ?? null)
-          ? { ...item, quantity: newQuantity }
-          : item
+        item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-    localStorage.removeItem("cartItems");
-    setIsOpen(false);
+  // 移除商品
+  const removeFromCart = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
+
+  // 計算總數量
+  const totalQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -97,16 +74,13 @@ export const CartProvider = ({ children }) => {
         cartItems,
         addToCart,
         removeFromCart,
-        updateQuantity,
-        totalPrice,
-        isOpen,
-        setIsOpen,
-        clearCart,
+        updateQuantity, // ✅ 記得匯出這個 function
+        isCartOpen,
+        setIsCartOpen,
+        totalQty,
       }}
     >
       {children}
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);
