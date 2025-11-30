@@ -80,7 +80,7 @@ export default function Checkout() {
           2. Left Column: Form (資料填寫區)
          ========================================= */}
       <div className="w-full md:w-[58%]  lg:w-[60%] pt-8 pb-12 px-6 md:px-12 lg:px-20 order-2 md:order-1">
-        <div className="p-20">
+        <div className="md:p-10 p-4 xl:p-20">
           {/* Desktop Logo */}
 
           {/* Breadcrumb */}
