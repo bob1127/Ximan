@@ -15,14 +15,8 @@ const data = [
     description: "每件商品皆經三重檢查與來源確認。",
     detail:
       "CIÉMAN 嚴格把關每一件商品的來源，並透過專業鑑定團隊進行多重細節檢驗，杜絕任何仿冒可能，確保您收到的每一件精品皆為真品，讓您買得安心。",
-    mainImages: [
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_4.jpg",
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_22.jpg",
-    ],
-    subImages: [
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_19.jpg",
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_16.jpg",
-    ],
+    mainImages: ["/images/index/DSCF6018.webp", "/images/index/DSCF6006.webp"],
+    subImages: ["/images/index/DSCF7086.webp", "/images/index/DSCF7047.webp"],
   },
   {
     title: "嚴選品況",
@@ -31,14 +25,8 @@ const data = [
     description: "僅販售值得收藏、品況完整的精品。",
     detail:
       "我們深知品況的重要性。CIÉMAN 剔除狀況不佳的商品，專注於挑選成色優良、保養得宜的珍稀包款，讓您以最理想的狀態擁有心儀的時尚單品。",
-    mainImages: [
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_27.jpg",
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_14.jpg",
-    ],
-    subImages: [
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_23.jpg",
-      "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_22.jpg",
-    ],
+    mainImages: ["/images/index/DSCF7130.webp", "/images/index/DSCF7097.webp"],
+    subImages: ["/images/index/DSCF7051.webp", "/images/index/DSCF6008.webp"],
   },
   {
     title: "快速出貨",

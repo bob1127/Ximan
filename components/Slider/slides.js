@@ -6,7 +6,7 @@ export const slides = [
     type: "Performance",
     field: "All-Season",
     date: "2025",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg",
+    image: "/images/index/DSCF5921-2.webp",
   },
   {
     title: "Urban Precision",
@@ -15,7 +15,7 @@ export const slides = [
     type: "Touring",
     field: "Urban Mobility",
     date: "2024",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_25.jpg",
+    image: "/images/index/DSCF5890-2.webp",
   },
   {
     title: "Off-Road Mastery",
@@ -24,7 +24,7 @@ export const slides = [
     type: "Adventure",
     field: "All-Terrain",
     date: "2023",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_29.jpg",
+    image: "/images/index/DSCF6006.webp",
   },
   {
     title: "Racing Spirit",
@@ -33,6 +33,6 @@ export const slides = [
     type: "Sport",
     field: "Ultra High Performance",
     date: "2022",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_22.jpg",
+    image: "/images/index/DSCF7179.webp",
   },
 ];

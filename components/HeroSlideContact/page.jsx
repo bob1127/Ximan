@@ -16,11 +16,11 @@ const Photos = () => {
 
   // 1. 定義圖片路徑
   const imagePaths = [
-    "/images/index/shutterstock_1212005629.webp",
+    "/images/index/DSCF7015.webp",
 
-    "/images/index/shutterstock_1055319287.webp",
-    "/images/index/shutterstock_772593202.webp",
-    "/images/index/shutterstock_2449167989.webp",
+    "/images/index/DSCF6001.jpg",
+    "/images/index/DSCF6016.webp",
+    "/images/index/DSCF7126.webp",
   ];
 
   // 2. 定義標題

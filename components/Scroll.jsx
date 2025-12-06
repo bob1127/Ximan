@@ -7,22 +7,22 @@ const team = [
   {
     name: "Ava Sinclair",
     role: "Creative Director",
-    img: "/img-index10.jpg.webp",
+    img: "/images/index/DSCF7132.webp",
   },
   {
     name: "Liam Archer",
     role: "Brand Strategist",
-    img: "/Hirotaka1.jpeg",
+    img: "/images/index/DSCF7130.webp",
   },
   {
     name: "Zoe Clementine",
     role: "Lead Designer",
-    img: "/img-index05.jpg.webp",
+    img: "/images/index/DSCF7126.webp",
   },
   {
     name: "Ethan Hawthorne",
     role: "Chief Innovation Officer",
-    img: "/12.webp",
+    img: "/images/index/DSCF7160.webp",
   },
 ];
 

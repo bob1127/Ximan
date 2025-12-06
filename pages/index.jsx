@@ -223,10 +223,7 @@ export default function Home() {
             <div className="relative w-full lg:w-1/2 flex justify-center">
               <div className="relative top-0 left-0 w-full h-[60vh] lg:h-auto overflow-hidden">
                 {/* 增加一個遮罩讓白色文字在手機上也清楚，或是手機版改文字顏色 */}
-                <ParallaxImage
-                  src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_12.jpg"
-                  alt=""
-                />
+                <ParallaxImage src="/images/index/DSCF7013.webp" alt="" />
               </div>
 
               {/* RWD 處理重點：
@@ -303,10 +300,7 @@ export default function Home() {
           <section className="relative w-screen mt-5 h-screen overflow-hidden flex justify-center items-center">
             {/* 修改處：這裡補上 h-full，讓它跟 section 一樣高 */}
             <div className="w-full h-full absolute top-0 left-0 overflow-hidden">
-              <ParallaxImage
-                src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg"
-                alt=""
-              />
+              <ParallaxImage src="/images/index/DSCF6016.webp" alt="" />
             </div>
 
             <div className="relative text-center z-10">
@@ -392,31 +386,31 @@ export default function Home() {
               <Marquee>
                 <Parallax speed={10}>
                   <img
-                    src="https://culet-web.jp/2018/wp/wp-content/uploads/2025/11/Insta_26SS_JOINT_m2028-scaled.jpg"
+                    src="/images/index/DSCF7094.webp"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={5}>
                   <img
-                    src="https://img07.shop-pro.jp/PA01372/068/etc_base64/VE1fUENfMjAyNTA5XzI.jpg?cmsp_timestamp=20251027152717"
+                    src="/images/index/DSCF7032.webp"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={3}>
                   <img
-                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg"
+                    src="/images/index/DSCF7109.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={10}>
                   <img
-                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_12.jpg"
+                    src="/images/index/DSCF6018.webp"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={5}>
                   <img
-                    src="https://img07.shop-pro.jp/PA01372/068/etc_base64/MjNDVUxFVF9PTF90b3BfdGFsa2F0aXZlXzAyMjQ.jpg?cmsp_timestamp=20240818182413"
+                    src="/images/index/DSCF7010.webp"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
