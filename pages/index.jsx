@@ -321,63 +321,6 @@ export default function Home() {
             </div>
           </section>
 
-          <section className="flex lg:flex-row flex-col p-4 bg-[#F9F9F9] py-20">
-            <div className="flex-[4] w-[90%] lg:w-1/2  mx-auto   flex flex-col lg:justify-center lg:items-center  justify-start items-start">
-              <div>
-                <p className="uppercase text-[#191919] mb-4 text-[14px] font-medium leading-none">
-                  Hermès / Chanel / Louis Vuitton / Dior
-                </p>
-                <div>
-                  <h1 className="uppercase text-[6vmin] font-normal tracking-[-1px] leading-none">
-                    CIÉMAN 喜曼精品
-                  </h1>
-                  <h1 className="uppercase text-[4vmin] mt-2 font-normal tracking-[-1px] leading-none">
-                    台中精品買賣
-                  </h1>
-                  <h1 className="uppercase text-[4vmin] mt-2 font-normal tracking-[-1px] leading-none">
-                    寄賣、置換
-                  </h1>
-                  <h1 className="uppercase text-[6vmin] mt-8 font-normal tracking-[-1px] leading-none">
-                    Contact
-                  </h1>
-                </div>
-                <p className="uppercase text-[#191919] mt-2 text-[14px] font-medium leading-none">
-                  地址｜台灣省台中市北區中清路一段 428 號
-                </p>
-                <p className="uppercase text-[#191919] mt-2 text-[14px] font-medium leading-none">
-                  營業時間｜週一至週六 13:00–20:00
-                </p>
-                <p className="uppercase text-[#191919] mt-2 text-[14px] font-medium leading-none">
-                  電話｜0938-535-870
-                </p>
-              </div>
-            </div>
-            <div className="flex-[2] w-[90%] mx-auto mt-[50px] lg:mt-0  lg:w-1/2 flex flex-col justify-start items-start  h-full">
-              <div className="flex flex-col items-start justify-start lg:w-full w-[90%]">
-                {" "}
-                <p className="uppercase text-[#191919] text-[14px] font-medium leading-none">
-                  Store Information
-                  <br />
-                  <button className="border-none outline-none uppercase text-[12px] font-semibold mt-1 mb-1 px-3 py-1 text-[#ebebeb] bg-[#F83F23] rounded-full">
-                    門市資訊
-                  </button>
-                </p>
-              </div>
-              <a
-                href="https://www.google.com/maps/place/No.+428%E8%99%9F,+Section+1,+Zhongqing+Rd,+North+District,+Taichung+City,+404/@24.1633645,120.6748013,17z/data=!3m1!4b1!4m6!3m5!1s0x34693d7d75007ab1:0x831f28a3bf0a4416!8m2!3d24.1633645!4d120.6748013!16s%2Fg%2F11nnk_dhck?entry=ttu&g_ep=EgoyMDI1MTEyMy4xIKXMDSoASAFQAw%3D%3D"
-                target="_blank"
-                className="relative w-[90%] lg:w-[60%] max-w-[600px] max-h-[600px] h-[60%] overflow-hidden"
-              >
-                <ParallaxImage
-                  src="https://lee.hpplus.jp/wp-content/uploads/2025/05/29/87141ec1861c4f3ff2b77dfec9da0df4.jpg"
-                  alt=""
-                />
-              </a>
-              <p className="uppercase text-[#191919] mt-4 text-[14px] font-medium leading-none">
-                嚴選精品 / 二手精品 / 精品選購
-              </p>
-            </div>
-          </section>
           <ParallaxProvider>
             <section className="flex relative gap-4 my-[100px]">
               <div className="text absolute left-1/2 -translate-x-1/2 top-[40%] -translate-y-1/2 z-50">
@@ -386,31 +329,31 @@ export default function Home() {
               <Marquee>
                 <Parallax speed={10}>
                   <img
-                    src="/images/index/DSCF7094.webp"
+                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_19.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={5}>
                   <img
-                    src="/images/index/DSCF7032.webp"
+                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_3.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={3}>
                   <img
-                    src="/images/index/DSCF7109.jpg"
+                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_2.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={10}>
                   <img
-                    src="/images/index/DSCF6018.webp"
+                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_27.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
                 <Parallax speed={5}>
                   <img
-                    src="/images/index/DSCF7010.webp"
+                    src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_4.jpg"
                     className="w-[480px] h-[700px] object-cover"
                   />
                 </Parallax>
