@@ -43,7 +43,7 @@ export default function CartPage() {
           {/* Header */}
           <div className="flex justify-between items-end mb-10 md:mb-16">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
-              購物車
+              購物車1
             </h1>
             <Link
               href="/category"
