@@ -1,5 +1,5 @@
 "use client";
-import StickyColumns from "../components/SwiperCarousel/SwiperCardFood";
+import StickyColumns from "../components/SwiperCarousel/SwiperCardChanel";
 
 import GsapText from "@/components/RevealText/index";
 import Link from "next/link";

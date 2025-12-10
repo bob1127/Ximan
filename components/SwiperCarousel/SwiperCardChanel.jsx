@@ -10,11 +10,10 @@ import "swiper/css/pagination";
 
 // 修正：直接使用網址，不添加額外路徑
 const images = [
-  "https://img07.shop-pro.jp/PA01372/068/etc_base64/bmFva29vZ2F3YV8yMDI1MTFfcGM.jpg?cmsp_timestamp=20251111124052",
-  "https://img07.shop-pro.jp/PA01372/068/etc_base64/MjRDVUxFVF9PTF90b3BfSGlyb3Rha2FfMDMyMQ.jpg?cmsp_timestamp=20240327182604",
-  "https://img07.shop-pro.jp/PA01372/068/etc_base64/VE1fUENfMjAyNTA5XzI.jpg?cmsp_timestamp=20251027152717",
-  "https://img07.shop-pro.jp/PA01372/068/etc_base64/MjNDVUxFVF9PTF90b3BfdGFsa2F0aXZlXzAyMjQ.jpg?cmsp_timestamp=20240818182413",
-  "https://img07.shop-pro.jp/PA01372/068/etc_base64/QUxMSVRBLTI.png?cmsp_timestamp=20250502093207",
+  "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_18.jpg",
+  "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_15.jpg",
+  "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_4.jpg",
+  "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_2.jpg",
 ];
 
 export default function ProjectSwiper() {

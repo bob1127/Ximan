@@ -174,9 +174,8 @@ export const SlideTabsExample = () => {
       </AnimatePresence>
 
       <div className="fixed top-0 left-0 w-full z-[1000] bg-white/95 backdrop-blur-md border-b border-gray-100 transition-colors duration-300 bg-white">
-        {/* ✅ 修改：這裡改用 gap-0 並透過 w-[140px] 來控制左右平衡 */}
         <div className="relative flex justify-between items-center px-5 md:px-[50px] py-4 md:py-0 md:h-[80px] max-w-[1920px] mx-auto">
-          {/* 1. Left Area (Logo & Mobile Toggle) - 固定寬度 */}
+          {/* 1. Left Area */}
           <div className="flex items-center w-[140px] flex-shrink-0">
             <button
               className="md:hidden text-black p-1 -ml-1 mr-2"
@@ -201,8 +200,7 @@ export const SlideTabsExample = () => {
             </Link>
           </div>
 
-          {/* 2. Center: Desktop Nav - Flex-1 置中 */}
-          {/* ✅ 修改：使用 flex-1 justify-center 讓它自然置中，移除 absolute */}
+          {/* 2. Center: Desktop Nav */}
           <div className="hidden md:flex flex-1 justify-center items-center h-full gap-1 lg:gap-4">
             {navLinks.map((link) => {
               const isMega = link.key === "categories" || link.key === "brand";
@@ -216,7 +214,6 @@ export const SlideTabsExample = () => {
                     if (link.key === "brand") setOpenMega("brand");
                   }}
                 >
-                  {/* ✅ 修改：移除 min-w，加入 whitespace-nowrap 與 px-3 */}
                   <Link
                     href={link.href}
                     className="group relative h-10 rounded-full bg-transparent px-3 lg:px-5 text-neutral-950 flex items-center justify-center"
@@ -235,7 +232,7 @@ export const SlideTabsExample = () => {
             })}
           </div>
 
-          {/* Mobile Logo (Absolute Center for Mobile only) */}
+          {/* Mobile Logo */}
           <Link
             href="/"
             className="md:hidden absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-widest text-black uppercase"
@@ -243,7 +240,7 @@ export const SlideTabsExample = () => {
             CIÉMAN
           </Link>
 
-          {/* 3. Right: Icons - 固定寬度，靠右對齊 */}
+          {/* 3. Right: Icons */}
           <div className="flex items-center justify-end w-[140px] flex-shrink-0 gap-3 md:gap-5">
             <Link
               href="/wishlist"
@@ -362,33 +359,121 @@ export const SlideTabsExample = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-6 gap-8">
-                  {(openMega === "categories"
-                    ? categoriesChildren
-                    : brandChildren
-                  ).map((cat) => (
-                    <Link
-                      key={cat.id}
-                      href="/category"
-                      className="group/item flex flex-col gap-3 text-center"
-                      onClick={() => setOpenMega("none")}
-                    >
-                      {cat.image && cat.image.src && (
-                        <div className="overflow-hidden rounded-full relative aspect-square bg-gray-50 mb-2 border border-gray-100 group-hover/item:border-black transition-colors">
-                          <Image
-                            src={cat.image.src}
-                            alt={cat.name}
-                            fill
-                            className="object-cover transform group-hover/item:scale-110 transition-transform duration-500"
-                          />
+                {/* --- 修改開始：針對 Brand 進行特殊排版 --- */}
+                {openMega === "brand" ? (
+                  (() => {
+                    // ✅ 1. 改為物件陣列，包含名稱與對應連結
+                    const featuredBrandsData = [
+                      { name: "Hermès", href: "/category/Hermes" },
+                      { name: "Chanel", href: "/category/Chanel" },
+                      { name: "Louis Vuitton", href: "/category/LouisVuitton" },
+                      { name: "Dior", href: "/category/Dior" },
+                    ];
+
+                    // 2. 篩選資料 (同時找出對應的 API 資料與連結)
+                    const featuredBrands = brandChildren
+                      .filter((cat) =>
+                        featuredBrandsData.some((f) =>
+                          cat.name.toLowerCase().includes(f.name.toLowerCase())
+                        )
+                      )
+                      .map((cat) => {
+                        // 找到對應的連結
+                        const linkData = featuredBrandsData.find((f) =>
+                          cat.name.toLowerCase().includes(f.name.toLowerCase())
+                        );
+                        return { ...cat, customHref: linkData?.href };
+                      });
+
+                    const otherBrands = brandChildren.filter(
+                      (cat) =>
+                        !featuredBrandsData.some((f) =>
+                          cat.name.toLowerCase().includes(f.name.toLowerCase())
+                        )
+                    );
+
+                    // 3. 共用的渲染 Item 函式
+                    const renderItem = (cat, isFeatured = false) => (
+                      <Link
+                        key={cat.id}
+                        // ✅ 使用自定義連結，若無則回退預設
+                        href={cat.customHref || "/category"}
+                        className="group/item flex flex-col gap-3 text-center"
+                        onClick={() => setOpenMega("none")}
+                      >
+                        {cat.image && cat.image.src && (
+                          <div
+                            className={`overflow-hidden rounded-full relative aspect-square bg-gray-50 mb-2 border border-gray-100 group-hover/item:border-black transition-colors ${
+                              isFeatured ? "w-full" : ""
+                            }`}
+                          >
+                            <Image
+                              src={cat.image.src}
+                              alt={cat.name}
+                              fill
+                              className="object-cover transform group-hover/item:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                        )}
+                        <span
+                          className={`font-bold tracking-wide text-gray-800 group-hover/item:text-black transition-colors uppercase ${
+                            isFeatured ? "text-base" : "text-sm"
+                          }`}
+                        >
+                          {cat.name}
+                        </span>
+                      </Link>
+                    );
+
+                    return (
+                      <div className="flex flex-col gap-10">
+                        {/* A. 置頂品牌區 */}
+                        {featuredBrands.length > 0 && (
+                          <div className="grid grid-cols-4 gap-12 px-20">
+                            {featuredBrands.map((cat) => renderItem(cat, true))}
+                          </div>
+                        )}
+
+                        {/* 分隔線 */}
+                        {featuredBrands.length > 0 &&
+                          otherBrands.length > 0 && (
+                            <div className="w-full h-[1px] bg-gray-100" />
+                          )}
+
+                        {/* B. 其他品牌區 */}
+                        <div className="grid grid-cols-6 gap-8">
+                          {otherBrands.map((cat) => renderItem(cat, false))}
                         </div>
-                      )}
-                      <span className="text-sm font-bold tracking-wide text-gray-800 group-hover/item:text-black transition-colors uppercase">
-                        {cat.name}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  /* Categories 邏輯維持不變 */
+                  <div className="grid grid-cols-6 gap-8">
+                    {categoriesChildren.map((cat) => (
+                      <Link
+                        key={cat.id}
+                        href="/category"
+                        className="group/item flex flex-col gap-3 text-center"
+                        onClick={() => setOpenMega("none")}
+                      >
+                        {cat.image && cat.image.src && (
+                          <div className="overflow-hidden rounded-full relative aspect-square bg-gray-50 mb-2 border border-gray-100 group-hover/item:border-black transition-colors">
+                            <Image
+                              src={cat.image.src}
+                              alt={cat.name}
+                              fill
+                              className="object-cover transform group-hover/item:scale-110 transition-transform duration-500"
+                            />
+                          </div>
+                        )}
+                        <span className="text-sm font-bold tracking-wide text-gray-800 group-hover/item:text-black transition-colors uppercase">
+                          {cat.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -440,16 +525,36 @@ export const SlideTabsExample = () => {
 
                     {link.key === "brand" && brandChildren.length > 0 && (
                       <div className="mt-4 grid grid-cols-2 gap-2">
-                        {brandChildren.map((cat) => (
-                          <Link
-                            key={cat.id}
-                            href="/category"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="text-xs text-gray-600 bg-gray-50 py-2 px-3 rounded text-center hover:bg-black hover:text-white transition-colors"
-                          >
-                            {cat.name}
-                          </Link>
-                        ))}
+                        {/* 手機版也需要對應的連結邏輯，這裡我們可以簡單處理，或者也套用上面的邏輯 */}
+                        {brandChildren.map((cat) => {
+                          // 簡單對應：如果有符合的就用，沒有就預設
+                          const featuredBrandsData = [
+                            { name: "Hermès", href: "/category/Hermes" },
+                            { name: "Chanel", href: "/category/Chanel" },
+                            {
+                              name: "Louis Vuitton",
+                              href: "/category/LouisVuitton",
+                            },
+                            { name: "Dior", href: "/category/Dior" },
+                          ];
+                          const linkData = featuredBrandsData.find((f) =>
+                            cat.name
+                              .toLowerCase()
+                              .includes(f.name.toLowerCase())
+                          );
+                          const href = linkData ? linkData.href : "/category";
+
+                          return (
+                            <Link
+                              key={cat.id}
+                              href={href}
+                              onClick={() => setIsMenuOpen(false)}
+                              className="text-xs text-gray-600 bg-gray-50 py-2 px-3 rounded text-center hover:bg-black hover:text-white transition-colors"
+                            >
+                              {cat.name}
+                            </Link>
+                          );
+                        })}
                       </div>
                     )}
                     <div className="w-full h-[1px] bg-gray-100 mt-4"></div>

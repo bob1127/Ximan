@@ -1,18 +1,18 @@
 "use client";
-import StickyColumns from "../components/SwiperCarousel/SwiperCardChanel";
-import Layout from "./Layout";
+import StickyColumns from "../../components/SwiperCarousel/SwiperCardDior";
+
 import GsapText from "@/components/RevealText/index";
 import Link from "next/link";
 import Image from "next/image";
-import NewsCarousel from "../components/EmblaCarouselFeatureCarousel/NewsCarousel"; // 檔案路徑依你的實際放置調整
+import NewsCarousel from "../../components/EmblaCarouselFeatureCarousel/NewsCarousel"; // 檔案路徑依你的實際放置調整
 
 import React from "react";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import Marquee from "react-fast-marquee";
-import Slider from "../components/FullSlider/Slider";
-import FeatureCarousel from "../components/EmblaCarouselFeatureCarousel/index";
+import Slider from "../../components/FullSlider/Slider";
+import FeatureCarousel from "../../components/EmblaCarouselFeatureCarousel/index";
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState(null);
@@ -29,10 +29,26 @@ export default function Home() {
   }, [currentIndex]);
 
   return (
-    <Layout>
+    <>
       <main className="py-20">
         <section className="">
           <StickyColumns />
+        </section>
+
+        <section className="my-20 max-w-[1200px] mx-auto">
+          <div className="title flex justify-center flex-col items-center">
+            <h1 className="text-[40px] font-normal">
+              Dior<br></br>
+            </h1>
+            <p>品牌館</p>
+          </div>
+          <div className="brand-info">
+            <p className="max-w-[500px] mx-auto text-center">
+              Lady Dior、Caro、Bobby、Book Tote
+              等系列皆可選購。透明品況、完整細節，是日常搭配與收藏的最佳選擇。
+            </p>
+          </div>
+          <div className="chanel-feature-img"></div>
         </section>
         <section className="section_features py-10 overflow-hidden">
           <div className="title  flex-col flex  justify-center items-center ">
@@ -295,6 +311,6 @@ export default function Home() {
           </section>
         </section>
       </main>
-    </Layout>
+    </>
   );
 }

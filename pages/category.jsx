@@ -1,12 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import Image from "next/image";
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
-
-// --- 1. 品牌館資料 (Brands) ---
+import https from "https";
+// --- 1. 品牌館資料 (靜態篩選用) ---
 const BRANDS = [
   { name: "Hermès", count: 12 },
   { name: "Chanel", count: 28 },
@@ -22,7 +19,7 @@ const BRANDS = [
   { name: "Others", count: 10 },
 ];
 
-// --- 2. 商品類別資料 (Categories) ---
+// --- 2. 商品類別資料 ---
 const CATEGORIES = [
   { label: "Handbags 包款", key: "Handbags" },
   { label: "SLG 小皮件", key: "SLG" },
@@ -32,101 +29,10 @@ const CATEGORIES = [
   { label: "Others 配件", key: "Others" },
 ];
 
-// --- 3. 快速連結 (Quick Links) ---
+// --- 3. 快速連結 ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
-// --- 4. 原始精品資料 (Base Products) ---
-const BASE_PRODUCTS = [
-  {
-    id: 1,
-    title: "HERMÈS BIRKIN 25 TOGO",
-    brand: "Hermès",
-    category: "Handbags",
-    price: "NT$ 880,000",
-    tags: ["最新現貨", "全配"],
-    status: "RANK S",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_12.jpg",
-  },
-  {
-    id: 2,
-    title: "CHANEL CLASSIC FLAP MEDIUM",
-    brand: "Chanel",
-    category: "Handbags",
-    price: "NT$ 320,000",
-    tags: ["經典包款"],
-    status: "RANK A",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_8.jpg",
-  },
-  {
-    id: 3,
-    title: "LOUIS VUITTON SPEEDY 20",
-    brand: "Louis Vuitton",
-    category: "Handbags",
-    price: "NT$ 68,000",
-    tags: ["熱門小皮件"],
-    status: "RANK SA",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_8.jpg",
-  },
-  {
-    id: 4,
-    title: "DIOR LADY DIOR MINI",
-    brand: "Dior",
-    category: "Handbags",
-    price: "NT$ 145,000",
-    tags: ["經典包款"],
-    status: "RANK AB",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_13.jpg",
-  },
-  {
-    id: 5,
-    title: "CELINE TRIOMPHE SHOULDER BAG",
-    brand: "Celine",
-    category: "Handbags",
-    price: "NT$ 85,000",
-    tags: ["最新現貨"],
-    status: "RANK S",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_24.jpg",
-  },
-  {
-    id: 6,
-    title: "HERMÈS CONSTANCE 18",
-    brand: "Hermès",
-    category: "Handbags",
-    price: "NT$ 450,000",
-    tags: ["全配頂級收藏"],
-    status: "RANK S",
-    image: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_14.jpg",
-  },
-  {
-    id: 7,
-    title: "HERMÈS SILK SCARF 90",
-    brand: "Hermès",
-    category: "Silk",
-    price: "NT$ 15,000",
-    tags: ["全配頂級收藏"],
-    status: "RANK SA",
-    image: "/images/placeholder-hermes.jpg",
-  },
-  {
-    id: 8,
-    title: "CHANEL CARD HOLDER",
-    brand: "Chanel",
-    category: "SLG",
-    price: "NT$ 25,000",
-    tags: ["熱門小皮件", "最新現貨"],
-    status: "RANK S",
-    image: "/images/placeholder-chanel.jpg",
-  },
-];
-
-const ALL_PRODUCTS = [...BASE_PRODUCTS, ...BASE_PRODUCTS, ...BASE_PRODUCTS].map(
-  (item, index) => ({
-    ...item,
-    id: index + 100,
-  })
-);
-
-// --- 🔥 商品卡片組件 (修改為 Link) ---
+// --- 商品卡片組件 ---
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
@@ -140,9 +46,9 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    // ✅ 這裡改成 Link 並且 href 指向 /product-inner
+    // 使用 Link 指向動態路由，例如 /product/[slug]
     <Link
-      href="/product-inner"
+      href={`/product/${product.slug || product.id}`}
       className="group border-b border-gray-400 md:border-r border-gray-400 last:border-r-0 relative flex flex-col bg-white"
     >
       <div
@@ -155,14 +61,15 @@ const ProductCard = ({ product }) => {
         onMouseMove={handleMouseMove}
       >
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20 pointer-events-none">
-          {product.tags.map((tag) => (
-            <span
-              key={tag}
-              className="bg-black/80 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-sm font-medium tracking-wide"
-            >
-              {tag}
-            </span>
-          ))}
+          {product.tags &&
+            product.tags.map((tag) => (
+              <span
+                key={tag}
+                className="bg-black/80 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-sm font-medium tracking-wide"
+              >
+                {tag}
+              </span>
+            ))}
         </div>
         <div className="absolute top-3 right-3 z-20 pointer-events-none">
           <span className="text-[10px] font-bold text-gray-500 border border-gray-400 px-1.5 py-0.5 rounded bg-white/80">
@@ -203,7 +110,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- 🔥 FilterSidebar 組件 ---
+// --- FilterSidebar 組件 ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
@@ -328,7 +235,7 @@ const FilterSidebar = ({
   );
 };
 
-// --- 🔥 CompanyLocation 組件 ---
+// --- CompanyLocation 組件 ---
 const CompanyLocation = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -412,36 +319,12 @@ const CompanyLocation = () => {
                   href="#"
                   className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider hover:text-[#ef4628] transition-colors"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                  </svg>
                   Instagram
                 </a>
                 <a
                   href="#"
                   className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider hover:text-[#06c755] transition-colors"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M24 10.304c0-5.687-5.373-10.304-12-10.304S0 4.617 0 10.304c0 5.068 4.27 9.306 10.029 10.156.389.085.917.26.917.601 0 .208-.056.783-.184 1.442-.166.857-.765 2.341-.981 2.845-.059.139.017.346.203.346.112 0 .245-.029.393-.076 3.281-1.056 7.155-4.212 8.351-5.79C21.873 17.58 24 14.159 24 10.304z" />
-                  </svg>
                   LINE
                 </a>
               </div>
@@ -461,8 +344,8 @@ const CompanyLocation = () => {
   );
 };
 
-// --- 🔥 Main Component ---
-export default function Category() {
+// --- 🔥 主要頁面 Component ---
+export default function Category({ products }) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState({
     type: "all",
@@ -478,9 +361,11 @@ export default function Category() {
     }
   };
 
+  // 前端過濾邏輯 (基於從 SSG 抓取到的 products)
   const filteredProducts = useMemo(() => {
-    if (activeFilter.type === "all") return ALL_PRODUCTS;
-    return ALL_PRODUCTS.filter((product) => {
+    if (!products) return [];
+    if (activeFilter.type === "all") return products;
+    return products.filter((product) => {
       if (activeFilter.type === "brand") {
         return product.brand === activeFilter.value;
       }
@@ -492,7 +377,7 @@ export default function Category() {
       }
       return true;
     });
-  }, [activeFilter]);
+  }, [activeFilter, products]);
 
   return (
     <>
@@ -653,9 +538,112 @@ export default function Category() {
           </Link>
         </div>
 
-        {/* 🔥 新增的 CompanyLocation 組件 */}
+        {/* CompanyLocation 組件 */}
         <CompanyLocation />
       </main>
     </>
   );
+}
+
+export async function getStaticProps() {
+  // 1. 讀取環境變數
+  const WC_URL = process.env.WC_SITE_URL;
+  const CK = process.env.WC_CONSUMER_KEY;
+  const CS = process.env.WC_CONSUMER_SECRET;
+
+  // 2. 檢查變數
+  if (!WC_URL || !CK || !CS) {
+    console.error("❌ 環境變數讀取失敗，請確認 .env.local 設定並重啟伺服器");
+    return { props: { products: [] }, revalidate: 10 };
+  }
+
+  try {
+    console.log("🔥 [Server] 開始抓取 WooCommerce 資料...");
+
+    // 3. 設定 Agent (忽略 SSL 錯誤)
+    const agent = new https.Agent({
+      rejectUnauthorized: false,
+    });
+
+    // 4. 組合 API 網址
+    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`;
+
+    // 5. 🔥【關鍵修改】加入 User-Agent 標頭來騙過防火牆
+    const res = await fetch(apiUrl, {
+      agent,
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        Accept: "application/json",
+      },
+    });
+
+    // 6. 檢查回應狀態
+    if (!res.ok) {
+      // 嘗試讀取錯誤訊息以便除錯
+      const errorText = await res.text();
+      console.error(
+        `❌ [Server] API 請求被拒絕: ${res.status} ${res.statusText}`
+      );
+      console.error(`❌ [Server] 回應內容: ${errorText.slice(0, 200)}...`); // 只印出前200字避免洗版
+      throw new Error(`Failed to fetch products: ${res.status}`);
+    }
+
+    const wcProducts = await res.json();
+    console.log(`✅ [Server] 成功抓取到 ${wcProducts.length} 筆商品`);
+
+    // 7. 資料轉換
+    const formattedProducts = wcProducts.map((p) => {
+      const brandAttr = p.attributes.find(
+        (attr) => attr.name.toLowerCase() === "brand"
+      );
+      const categoryObj =
+        p.categories.length > 0 ? p.categories[0].name : "Others";
+
+      let uiCategory = "Others";
+      const catName = categoryObj.toLowerCase();
+      if (catName.includes("handbag") || catName.includes("包"))
+        uiCategory = "Handbags";
+      else if (
+        catName.includes("slg") ||
+        catName.includes("夾") ||
+        catName.includes("wallet")
+      )
+        uiCategory = "SLG";
+      else if (catName.includes("shoes") || catName.includes("鞋"))
+        uiCategory = "Shoes";
+      else if (catName.includes("silk") || catName.includes("絲"))
+        uiCategory = "Silk";
+      else if (catName.includes("accessory") || catName.includes("飾"))
+        uiCategory = "Accessories";
+
+      return {
+        id: p.id,
+        slug: p.slug,
+        title: p.name.toUpperCase(),
+        brand: brandAttr ? brandAttr.options[0] : "Ciéman Select",
+        category: uiCategory,
+        price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
+        tags: p.tags.length > 0 ? p.tags.map((t) => t.name) : ["最新現貨"],
+        status: p.stock_status === "instock" ? "RANK S" : "SOLD",
+        image:
+          p.images.length > 0 ? p.images[0].src : "/images/placeholder.jpg",
+      };
+    });
+
+    return {
+      props: {
+        products: formattedProducts,
+      },
+      revalidate: 10,
+    };
+  } catch (error) {
+    console.error("❌ [Server] 抓取過程發生錯誤:", error);
+    return {
+      props: {
+        products: [],
+      },
+      revalidate: 10,
+    };
+  }
 }
