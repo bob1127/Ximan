@@ -324,7 +324,7 @@ export default function Home() {
           <ParallaxProvider>
             <section className="flex relative gap-4 my-[100px]">
               <div className="text absolute left-1/2 -translate-x-1/2 top-[40%] -translate-y-1/2 z-50">
-                <h3 className="text-xl text-stone-100">Professional</h3>
+                <h3 className="text-xl text-stone-100">Professionald</h3>
               </div>
               <Marquee>
                 <Parallax speed={10}>

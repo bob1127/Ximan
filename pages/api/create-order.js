@@ -3,7 +3,7 @@ import crypto from "crypto";
 
 // 1. 初始化 WooCommerce
 const api = new WooCommerceRestApi({
-  url: process.env.WC_SITE_URL,
+  url: process.env.WC_SITE_URL, // 確保這也是對的，或這裡也可以先寫死
   consumerKey: process.env.WC_CONSUMER_KEY,
   consumerSecret: process.env.WC_CONSUMER_SECRET,
   version: "wc/v3",
@@ -73,9 +73,10 @@ export default async function handler(req, res) {
 
     // --- C. 準備藍新金流參數 ---
     const timestamp = Math.floor(Date.now() / 1000);
-    console.log(`建立訂單: ${orderId}, 金額: ${totalAmount}`);
-
     const merchantOrderNo = `${orderId}_${timestamp}`; 
+
+    // 🔥 DEBUG LOG: 確認訂單產生
+    console.log(`[DEBUG] 訂單建立成功 ID: ${orderId}, 金額: ${totalAmount}`);
 
     const tradeInfo = {
       MerchantID: process.env.NEWEBPAY_MERCHANT_ID,
@@ -88,12 +89,17 @@ export default async function handler(req, res) {
       Email: customer.email,
       LoginType: 0,
       
-      // 👇👇👇 重點修改：這裡改成指向 API，而不是直接指向頁面
-      ReturnURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-return`,
+      // 👇👇👇 這裡直接寫死 (Hardcode) 你的正式網址，確保萬無一失
+      ReturnURL: "https://www.cieman.tw/api/payment-return",
       
-      ClientBackURL: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/failed`, 
-      NotifyURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-notify`, 
+      ClientBackURL: "https://www.cieman.tw/checkout/failed", 
+      NotifyURL: "https://www.cieman.tw/api/payment-notify", 
     };
+
+    // 🔥 DEBUG LOG: 在加密前，把送給藍新的網址印出來看！
+    console.log("==========================================");
+    console.log("[DEBUG] 送給藍新的 ReturnURL:", tradeInfo.ReturnURL);
+    console.log("==========================================");
 
     // --- D. 加密資料 ---
     const aesString = encryptNewebPay(tradeInfo);
@@ -113,7 +119,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("Order creation failed:", error.response ? error.response.data : error.message);
+    console.error("[ERROR] 建立訂單失敗:", error.response ? error.response.data : error.message);
     res.status(500).json({ error: "建立訂單失敗", details: error.message });
   }
 }
