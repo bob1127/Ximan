@@ -3,8 +3,7 @@ import crypto from "crypto";
 
 // 1. 初始化 WooCommerce
 const api = new WooCommerceRestApi({
-  // 👇 修改這裡：將 WC_API_URL 改為 WC_SITE_URL (對應你的 .env)
-  url: process.env.WC_SITE_URL, 
+  url: process.env.WC_SITE_URL,
   consumerKey: process.env.WC_CONSUMER_KEY,
   consumerSecret: process.env.WC_CONSUMER_SECRET,
   version: "wc/v3",
@@ -15,10 +14,8 @@ function encryptNewebPay(data) {
   const key = process.env.NEWEBPAY_HASH_KEY;
   const iv = process.env.NEWEBPAY_HASH_IV;
   
-  // 將參數轉為 Query String
   const params = new URLSearchParams(data).toString();
 
-  // AES 加密
   const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
   let encrypted = cipher.update(params, "utf8", "hex");
   encrypted += cipher.final("hex");
@@ -43,7 +40,6 @@ export default async function handler(req, res) {
     const { cartItems, customer } = req.body;
 
     // --- A. 準備 WooCommerce 訂單資料 ---
-    // 檢查 cartItems 是否存在，避免 crash
     if (!cartItems || cartItems.length === 0) {
         throw new Error("購物車是空的");
     }
@@ -72,14 +68,12 @@ export default async function handler(req, res) {
     // --- B. 在 WooCommerce 建立訂單 ---
     const { data: wcOrder } = await api.post("orders", orderData);
     
-    // 取得 WC 產生的訂單編號
     const orderId = wcOrder.id;
     const totalAmount = wcOrder.total; 
 
     // --- C. 準備藍新金流參數 ---
     const timestamp = Math.floor(Date.now() / 1000);
-    // 建議：可以在這裡 log 一下，方便之後除錯
-    console.log(`正在建立藍新訂單，WC Order ID: ${orderId}, 金額: ${totalAmount}`);
+    console.log(`建立訂單: ${orderId}, 金額: ${totalAmount}`);
 
     const merchantOrderNo = `${orderId}_${timestamp}`; 
 
@@ -93,8 +87,10 @@ export default async function handler(req, res) {
       ItemDesc: "CIEMAN 精品包訂單", 
       Email: customer.email,
       LoginType: 0,
-      // 確保 process.env.NEXT_PUBLIC_SITE_URL 在 .env 裡是正確的 (且沒有多餘文字)
-      ReturnURL: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success`,
+      
+      // 👇👇👇 重點修改：這裡改成指向 API，而不是直接指向頁面
+      ReturnURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-return`,
+      
       ClientBackURL: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/failed`, 
       NotifyURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-notify`, 
     };
