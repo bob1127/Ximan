@@ -1,129 +1,128 @@
+// pages/api/create-order.js
+import crypto from 'crypto';
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
-import crypto from "crypto";
 
-// 初始化 WooCommerce
+// 初始化 Woo API
 const api = new WooCommerceRestApi({
-  url: process.env.WC_SITE_URL || process.env.NEXT_PUBLIC_WORDPRESS_URL, // 增加容錯
-  consumerKey: process.env.WC_CONSUMER_KEY,
-  consumerSecret: process.env.WC_CONSUMER_SECRET,
-  version: "wc/v3",
+  url: process.env.WOO_URL,
+  consumerKey: process.env.WOO_CK,
+  consumerSecret: process.env.WOO_CS,
+  version: "wc/v3"
 });
 
-// 加密函式
-function encryptNewebPay(data) {
-  const key = process.env.NEWEBPAY_HASH_KEY;
-  const iv = process.env.NEWEBPAY_HASH_IV;
-  const params = new URLSearchParams(data).toString();
-  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-  let encrypted = cipher.update(params, "utf8", "hex");
-  encrypted += cipher.final("hex");
-  return encrypted;
-}
-
-// 壓碼函式
-function hashNewebPay(aesString) {
-  const key = process.env.NEWEBPAY_HASH_KEY;
-  const iv = process.env.NEWEBPAY_HASH_IV;
-  const raw = `HashKey=${key}&${aesString}&HashIV=${iv}`;
-  return crypto.createHash("sha256").update(raw).digest("hex").toUpperCase();
-}
-
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
-    console.log("🚀 [DEBUG] 開始建立訂單...");
-    
-    // 1. 檢查環境變數是否讀取成功 (除錯 500 錯誤用)
-    if (!process.env.WC_CONSUMER_KEY || !process.env.NEWEBPAY_MERCHANT_ID) {
-      console.error("❌ [ERROR] 環境變數缺失！請檢查 .env.local");
-      throw new Error("伺服器配置錯誤：環境變數遺失");
-    }
-
     const { cartItems, customer } = req.body;
 
-    // 2. 建立 WooCommerce 訂單
-    const lineItems = cartItems.map((item) => ({
-      product_id: item.id,
-      quantity: item.quantity,
+    // ==========================================
+    // 1. 先在 WooCommerce 建立訂單
+    // ==========================================
+    
+    // 整理購物車格式給 Woo
+    const line_items = cartItems.map(item => ({
+      product_id: item.id, // 確保前端有傳 product_id
+      quantity: item.quantity
     }));
 
     const orderData = {
-      payment_method: "newebpay",
-      payment_method_title: "藍新金流",
-      set_paid: false,
+      payment_method: "ecpay",
+      payment_method_title: "綠界科技 ECPay",
+      set_paid: false, // 先設為未付款
       billing: {
-        first_name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address_1: customer.address,
-        city: customer.city,
-        state: customer.city,
-        country: "TW",
+        first_name: customer?.name || "Guest",
+        email: customer?.email || "guest@example.com",
+        phone: customer?.phone || "",
+        // ...其他地址欄位
       },
-      line_items: lineItems,
+      line_items: line_items,
     };
 
-    const { data: wcOrder } = await api.post("orders", orderData);
-    console.log(`✅ [DEBUG] WC 訂單建立成功 ID: ${wcOrder.id}`);
-
-    // 3. 準備藍新參數
-    const timestamp = Math.floor(Date.now() / 1000);
-    const merchantOrderNo = `${wcOrder.id}_${timestamp}`;
+    // 呼叫 Woo API 建立訂單
+    const wooResponse = await api.post("orders", orderData);
     
-    // ⚡️ 關鍵修正：判斷網址是否為 localhost
-    const currentSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-    const isLocalhost = currentSiteUrl.includes("localhost");
-
-    const tradeInfo = {
-      MerchantID: process.env.NEWEBPAY_MERCHANT_ID,
-      RespondType: "JSON",
-      TimeStamp: timestamp,
-      Version: process.env.NEWEBPAY_VERSION,
-      MerchantOrderNo: merchantOrderNo,
-      Amt: Math.floor(wcOrder.total),
-      ItemDesc: "CIEMAN 精品訂單",
-      Email: customer.email,
-      LoginType: 0,
-      
-      // ReturnURL: 支付完成跳轉 (localhost 可以用)
-      ReturnURL: `${currentSiteUrl}/api/payment-return`,
-      
-      // ClientBackURL: 失敗返回 (localhost 可以用)
-      ClientBackURL: `${currentSiteUrl}/checkout/failed`,
-    };
-
-    // ⚡️ 只有在「非」localhost 時，才加入 NotifyURL
-    // 這樣你在本機測試就不會報 Port 3000 錯誤了
-    if (!isLocalhost) {
-      tradeInfo.NotifyURL = `${currentSiteUrl}/api/payment-notify`;
-      console.log("ℹ️ [DEBUG] 正式環境：已加入 NotifyURL");
-    } else {
-      console.log("⚠️ [DEBUG] 本地環境：已自動移除 NotifyURL 以避免錯誤");
+    if (wooResponse.status !== 201) {
+      throw new Error("無法在 WooCommerce 建立訂單");
     }
 
-    // 4. 加密
-    const aesString = encryptNewebPay(tradeInfo);
-    const shaString = hashNewebPay(aesString);
+    const wooOrder = wooResponse.data;
+    const orderId = wooOrder.id; // 拿到真正的訂單編號 (例如: 1502)
+    const totalAmount = parseInt(wooOrder.total); // 拿到真正的總金額
 
-    // 5. 回傳 (強制指定正式環境網址 core)
+    // ==========================================
+    // 2. 準備綠界參數 (使用 Woo 的訂單編號)
+    // ==========================================
+    
+    // 注意：MerchantTradeNo 必須唯一。
+    // 為了避免重複 (例如同一張單重複結帳)，通常會加上時間戳記或後綴
+    // 例如: "Woo_1502_170238123"
+    const MerchantTradeNo = `Woo_${orderId}_${Date.now().toString().slice(-6)}`;
+    
+    // 處理時間格式
+    const date = new Date();
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const MerchantTradeDate = `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+
+    // 從環境變數讀取綠界設定
+    const { ECPAY_MERCHANT_ID, ECPAY_HASH_KEY, ECPAY_HASH_IV, ECPAY_BASE_URL } = process.env;
+
+    const params = {
+      MerchantID: ECPAY_MERCHANT_ID,
+      MerchantTradeNo: MerchantTradeNo,
+      MerchantTradeDate: MerchantTradeDate,
+      PaymentType: 'aio',
+      TotalAmount: totalAmount,
+      TradeDesc: 'CIEMAN Store Order',
+      ItemName: `Order #${orderId}`, // 簡單顯示訂單號碼即可，避免特殊字元過長
+      ReturnURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-return`, // 背景通知網址
+      ClientBackURL: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success`, // 前端成功頁面
+      ChoosePayment: 'Credit', // 正式環境視需求改為 'ALL'
+      EncryptType: 1,
+      CustomField1: orderId.toString(), // ★重要：把 Woo 訂單 ID 藏在這裡，方便 ReturnURL 抓回來更新狀態
+    };
+
+    // ==========================================
+    // 3. 計算 CheckMacValue
+    // ==========================================
+    const keys = Object.keys(params).filter(k => k !== 'CheckMacValue').sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+    });
+    
+    let rawString = `HashKey=${ECPAY_HASH_KEY}`;
+    keys.forEach(key => {
+      rawString += `&${key}=${params[key]}`;
+    });
+    rawString += `&HashIV=${ECPAY_HASH_IV}`;
+
+    let encodedString = encodeURIComponent(rawString).toLowerCase();
+    encodedString = encodedString
+      .replace(/%2d/g, '-')
+      .replace(/%5f/g, '_')
+      .replace(/%2e/g, '.')
+      .replace(/%21/g, '!')
+      .replace(/%2a/g, '*')
+      .replace(/%28/g, '(')
+      .replace(/%29/g, ')')
+      .replace(/%20/g, '+');
+
+    params.CheckMacValue = crypto.createHash('sha256').update(encodedString).digest('hex').toUpperCase();
+
+    // ==========================================
+    // 4. 回傳
+    // ==========================================
+    console.log(`Woo 訂單 #${orderId} 建立成功，準備前往綠界`);
+
     res.status(200).json({
-      status: "success",
-      orderId: wcOrder.id,
-      paymentData: {
-        MerchantID: process.env.NEWEBPAY_MERCHANT_ID,
-        TradeInfo: aesString,
-        TradeSha: shaString,
-        Version: process.env.NEWEBPAY_VERSION,
-        // 強制使用正式環境網址，避免跑到 ccore
-        Url: "https://core.newebpay.com/MPG/mpg_gateway" 
-      }
+      status: 'success',
+      paymentUrl: ECPAY_BASE_URL,
+      paymentParams: params
     });
 
   } catch (error) {
-    console.error("❌ [ERROR] 處理失敗:", error);
-    res.status(500).json({ error: "建立訂單失敗", details: error.message });
+    console.error("建立訂單錯誤:", error);
+    res.status(500).json({ status: 'error', message: error.message });
   }
 }
