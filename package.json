@@ -84,6 +84,7 @@
     "next-view-transitions": "^0.3.4",
     "node": "^21.6.1",
     "node-fetch": "^2.6.13",
+    "nodemailer": "^7.0.11",
     "npm": "^10.8.1",
     "prop-types": "^15.8.1",
     "react": "18.2.0",

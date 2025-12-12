@@ -1,33 +1,30 @@
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 import crypto from "crypto";
 
-// 1. 初始化 WooCommerce
+// 初始化 WooCommerce
 const api = new WooCommerceRestApi({
-  url: process.env.WC_SITE_URL, // 確保這也是對的，或這裡也可以先寫死
+  url: process.env.WC_SITE_URL || process.env.NEXT_PUBLIC_WORDPRESS_URL, // 增加容錯
   consumerKey: process.env.WC_CONSUMER_KEY,
   consumerSecret: process.env.WC_CONSUMER_SECRET,
   version: "wc/v3",
 });
 
-// 2. 藍新加密輔助函式 (AES-256-CBC)
+// 加密函式
 function encryptNewebPay(data) {
   const key = process.env.NEWEBPAY_HASH_KEY;
   const iv = process.env.NEWEBPAY_HASH_IV;
-  
   const params = new URLSearchParams(data).toString();
-
   const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
   let encrypted = cipher.update(params, "utf8", "hex");
   encrypted += cipher.final("hex");
   return encrypted;
 }
 
-// 3. 藍新 SHA256 壓碼輔助函式
+// 壓碼函式
 function hashNewebPay(aesString) {
   const key = process.env.NEWEBPAY_HASH_KEY;
   const iv = process.env.NEWEBPAY_HASH_IV;
   const raw = `HashKey=${key}&${aesString}&HashIV=${iv}`;
-  
   return crypto.createHash("sha256").update(raw).digest("hex").toUpperCase();
 }
 
@@ -37,15 +34,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { cartItems, customer } = req.body;
-
-    // --- A. 準備 WooCommerce 訂單資料 ---
-    if (!cartItems || cartItems.length === 0) {
-        throw new Error("購物車是空的");
+    console.log("🚀 [DEBUG] 開始建立訂單...");
+    
+    // 1. 檢查環境變數是否讀取成功 (除錯 500 錯誤用)
+    if (!process.env.WC_CONSUMER_KEY || !process.env.NEWEBPAY_MERCHANT_ID) {
+      console.error("❌ [ERROR] 環境變數缺失！請檢查 .env.local");
+      throw new Error("伺服器配置錯誤：環境變數遺失");
     }
 
+    const { cartItems, customer } = req.body;
+
+    // 2. 建立 WooCommerce 訂單
     const lineItems = cartItems.map((item) => ({
-      product_id: item.id, 
+      product_id: item.id,
       quantity: item.quantity,
     }));
 
@@ -59,24 +60,22 @@ export default async function handler(req, res) {
         phone: customer.phone,
         address_1: customer.address,
         city: customer.city,
-        state: customer.city, 
+        state: customer.city,
         country: "TW",
       },
       line_items: lineItems,
     };
 
-    // --- B. 在 WooCommerce 建立訂單 ---
     const { data: wcOrder } = await api.post("orders", orderData);
-    
-    const orderId = wcOrder.id;
-    const totalAmount = wcOrder.total; 
+    console.log(`✅ [DEBUG] WC 訂單建立成功 ID: ${wcOrder.id}`);
 
-    // --- C. 準備藍新金流參數 ---
+    // 3. 準備藍新參數
     const timestamp = Math.floor(Date.now() / 1000);
-    const merchantOrderNo = `${orderId}_${timestamp}`; 
-
-    // 🔥 DEBUG LOG: 確認訂單產生
-    console.log(`[DEBUG] 訂單建立成功 ID: ${orderId}, 金額: ${totalAmount}`);
+    const merchantOrderNo = `${wcOrder.id}_${timestamp}`;
+    
+    // ⚡️ 關鍵修正：判斷網址是否為 localhost
+    const currentSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const isLocalhost = currentSiteUrl.includes("localhost");
 
     const tradeInfo = {
       MerchantID: process.env.NEWEBPAY_MERCHANT_ID,
@@ -84,42 +83,47 @@ export default async function handler(req, res) {
       TimeStamp: timestamp,
       Version: process.env.NEWEBPAY_VERSION,
       MerchantOrderNo: merchantOrderNo,
-      Amt: Math.floor(totalAmount), 
-      ItemDesc: "CIEMAN 精品包訂單", 
+      Amt: Math.floor(wcOrder.total),
+      ItemDesc: "CIEMAN 精品訂單",
       Email: customer.email,
       LoginType: 0,
       
-      // 👇👇👇 這裡直接寫死 (Hardcode) 你的正式網址，確保萬無一失
-      ReturnURL: "https://www.cieman.tw/api/payment-return",
+      // ReturnURL: 支付完成跳轉 (localhost 可以用)
+      ReturnURL: `${currentSiteUrl}/api/payment-return`,
       
-      ClientBackURL: "https://www.cieman.tw/checkout/failed", 
-      NotifyURL: "https://www.cieman.tw/api/payment-notify", 
+      // ClientBackURL: 失敗返回 (localhost 可以用)
+      ClientBackURL: `${currentSiteUrl}/checkout/failed`,
     };
 
-    // 🔥 DEBUG LOG: 在加密前，把送給藍新的網址印出來看！
-    console.log("==========================================");
-    console.log("[DEBUG] 送給藍新的 ReturnURL:", tradeInfo.ReturnURL);
-    console.log("==========================================");
+    // ⚡️ 只有在「非」localhost 時，才加入 NotifyURL
+    // 這樣你在本機測試就不會報 Port 3000 錯誤了
+    if (!isLocalhost) {
+      tradeInfo.NotifyURL = `${currentSiteUrl}/api/payment-notify`;
+      console.log("ℹ️ [DEBUG] 正式環境：已加入 NotifyURL");
+    } else {
+      console.log("⚠️ [DEBUG] 本地環境：已自動移除 NotifyURL 以避免錯誤");
+    }
 
-    // --- D. 加密資料 ---
+    // 4. 加密
     const aesString = encryptNewebPay(tradeInfo);
     const shaString = hashNewebPay(aesString);
 
-    // --- E. 回傳給前端 ---
+    // 5. 回傳 (強制指定正式環境網址 core)
     res.status(200).json({
       status: "success",
-      orderId: orderId,
+      orderId: wcOrder.id,
       paymentData: {
         MerchantID: process.env.NEWEBPAY_MERCHANT_ID,
         TradeInfo: aesString,
         TradeSha: shaString,
         Version: process.env.NEWEBPAY_VERSION,
-        Url: process.env.NEWEBPAY_URL
+        // 強制使用正式環境網址，避免跑到 ccore
+        Url: "https://core.newebpay.com/MPG/mpg_gateway" 
       }
     });
 
   } catch (error) {
-    console.error("[ERROR] 建立訂單失敗:", error.response ? error.response.data : error.message);
+    console.error("❌ [ERROR] 處理失敗:", error);
     res.status(500).json({ error: "建立訂單失敗", details: error.message });
   }
 }

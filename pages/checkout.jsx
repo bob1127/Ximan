@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useCart } from "../components/context/CartContext";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation"; // 這裡其實用不到 router，因為是用 form submit 跳轉
 
 export default function CheckoutPage() {
-  const { cartItems, clearCart } = useCart();
-  const router = useRouter();
+  const { cartItems } = useCart();
   const [loading, setLoading] = useState(false);
 
   // 用戶填寫的表單資料
@@ -16,11 +15,14 @@ export default function CheckoutPage() {
     phone: "",
     city: "台北市",
     address: "",
+    postalCode: "", // 新增郵遞區號
   });
 
   // 計算總金額
   const subtotal = cartItems.reduce((acc, item) => {
-    const priceNum = parseInt(item.price.replace(/[^\d]/g, ""), 10) || 0;
+    // 確保價格轉為數字 (移除逗號或非數字字元)
+    const priceStr = String(item.price || "0");
+    const priceNum = parseInt(priceStr.replace(/[^\d]/g, ""), 10) || 0;
     return acc + priceNum * item.quantity;
   }, 0);
 
@@ -32,6 +34,18 @@ export default function CheckoutPage() {
   // 提交訂單並跳轉支付
   const handleCheckout = async (e) => {
     e.preventDefault();
+
+    // 基本驗證
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.address
+    ) {
+      alert("請填寫所有必填欄位");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -41,17 +55,17 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cartItems,
-          customer: formData,
+          customer: formData, // 這裡會包含 name, email, phone, city, address, postalCode
         }),
       });
 
       const data = await res.json();
 
       if (data.status === "success") {
-        // 2. 建立一個隱藏的 form 來提交給藍新 (這是官方建議做法)
+        // 2. 建立一個隱藏的 form 來提交給藍新 (官方建議做法)
         const form = document.createElement("form");
         form.method = "post";
-        form.action = data.paymentData.Url; // 藍新金流網址
+        form.action = data.paymentData.Url; // 藍新金流網址 (Core/MPG)
 
         // 加入所有必要參數
         const fields = {
@@ -72,11 +86,12 @@ export default function CheckoutPage() {
         document.body.appendChild(form);
         form.submit(); // 自動送出表單，瀏覽器會跳轉到藍新頁面
       } else {
-        alert("建立訂單失敗：" + JSON.stringify(data));
+        console.error("訂單建立失敗:", data);
+        alert("建立訂單失敗：" + (data.details || JSON.stringify(data)));
         setLoading(false);
       }
     } catch (error) {
-      console.error(error);
+      console.error("系統錯誤:", error);
       alert("發生錯誤，請稍後再試");
       setLoading(false);
     }
@@ -110,6 +125,7 @@ export default function CheckoutPage() {
                 name="email"
                 required
                 placeholder="Email"
+                value={formData.email}
                 onChange={handleChange}
                 className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none transition-colors"
               />
@@ -124,6 +140,7 @@ export default function CheckoutPage() {
                 name="name"
                 required
                 placeholder="收件人姓名"
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none"
               />
@@ -132,32 +149,55 @@ export default function CheckoutPage() {
                 name="phone"
                 required
                 placeholder="手機號碼"
+                value={formData.phone}
                 onChange={handleChange}
                 className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none"
               />
             </div>
+
             <div className="grid grid-cols-3 gap-4">
-              <select
-                name="city"
-                onChange={handleChange}
-                className="col-span-1 w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none bg-white"
-              >
-                <option value="台北市">台北市</option>
-                <option value="台中市">台中市</option>
-                <option value="高雄市">高雄市</option>
-                {/* 可自行補完縣市 */}
-              </select>
+              <div className="col-span-1">
+                <select
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none bg-white h-full"
+                >
+                  <option value="台北市">台北市</option>
+                  <option value="新北市">新北市</option>
+                  <option value="桃園市">桃園市</option>
+                  <option value="台中市">台中市</option>
+                  <option value="台南市">台南市</option>
+                  <option value="高雄市">高雄市</option>
+                  {/* 可自行補完其他縣市 */}
+                </select>
+              </div>
+              <div className="col-span-2">
+                <input
+                  type="text"
+                  name="address"
+                  required
+                  placeholder="詳細地址 (區/路/街/號/樓)"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none"
+                />
+              </div>
+            </div>
+
+            {/* 新增郵遞區號欄位 */}
+            <div>
               <input
                 type="text"
-                name="address"
-                required
-                placeholder="詳細地址 (區/路/街/號/樓)"
+                name="postalCode"
+                placeholder="郵遞區號 (Postal Code)"
+                value={formData.postalCode}
                 onChange={handleChange}
-                className="col-span-2 w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none"
+                className="w-full border border-gray-300 p-3 rounded-none focus:border-black outline-none"
               />
             </div>
 
-            {/* 付款按鈕 (在手機版顯示在下方，桌面版可以隱藏或顯示) */}
+            {/* 付款按鈕 */}
             <button
               type="submit"
               disabled={loading}
@@ -179,13 +219,12 @@ export default function CheckoutPage() {
               {cartItems.map((item) => (
                 <div key={item.id} className="flex gap-4 items-start">
                   <div className="relative w-16 h-20 bg-white flex-shrink-0 border border-gray-100">
-                    {/* 顯示數量標記 */}
                     <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full z-10">
                       {item.quantity}
                     </span>
                     <Image
                       src={item.images ? item.images[0] : item.image || ""}
-                      alt={item.title}
+                      alt={item.title || "Product"}
                       fill
                       className="object-cover"
                     />

@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
+// 嘗試從 Context 引入 updateQuantity，如果沒有也沒關係，下方有用 addToCart 做 fallback
 import { useCart } from "../components/context/CartContext";
 import { Trash2, Plus, Minus } from "lucide-react";
 
 export default function CartPage() {
-  const { cartItems, removeFromCart, addToCart } = useCart();
+  // 解構 updateQuantity (如果 Context 有提供的話)
+  const { cartItems, removeFromCart, addToCart, updateQuantity } = useCart();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -16,19 +17,26 @@ export default function CartPage() {
 
   // 計算小計
   const subtotal = cartItems.reduce((acc, item) => {
-    const priceNum = parseInt(item.price.replace(/[^\d]/g, ""), 10) || 0;
+    const priceStr = String(item.price || "0");
+    const priceNum = parseInt(priceStr.replace(/[^\d]/g, ""), 10) || 0;
     return acc + priceNum * item.quantity;
   }, 0);
 
-  // 處理數量變更
+  // 處理數量變更 (修復 TODO)
   const handleQuantity = (item, type) => {
     if (type === "plus") {
       addToCart(item, 1);
     } else {
       if (item.quantity > 1) {
-        // TODO: Call updateQuantity(item.id, item.quantity - 1)
-        console.log("尚未實作減少數量邏輯，請於 Context 新增 updateQuantity");
+        // 如果 Context 有提供 updateQuantity 就用它
+        if (typeof updateQuantity === "function") {
+          updateQuantity(item.id, item.quantity - 1);
+        } else {
+          // Fallback: 如果 addToCart 支援負數 (常見做法)
+          addToCart(item, -1);
+        }
       } else {
+        // 數量為 1 時再按減少，則移除商品
         removeFromCart(item.id);
       }
     }
@@ -43,7 +51,7 @@ export default function CartPage() {
           {/* Header */}
           <div className="flex justify-between items-end mb-10 md:mb-16">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
-              購物車1
+              購物車
             </h1>
             <Link
               href="/category"
@@ -77,8 +85,9 @@ export default function CartPage() {
               {/* Items List */}
               <div className="flex flex-col">
                 {cartItems.map((item) => {
+                  const priceStr = String(item.price || "0");
                   const unitPrice =
-                    parseInt(item.price.replace(/[^\d]/g, ""), 10) || 0;
+                    parseInt(priceStr.replace(/[^\d]/g, ""), 10) || 0;
                   const itemTotal = unitPrice * item.quantity;
 
                   return (
@@ -96,7 +105,7 @@ export default function CartPage() {
                             src={
                               item.images ? item.images[0] : item.image || ""
                             }
-                            alt={item.title}
+                            alt={item.title || "Product"}
                             fill
                             className="object-cover hover:scale-105 transition-transform duration-500"
                           />
@@ -118,7 +127,10 @@ export default function CartPage() {
                           {/* Mobile Layout: Qty & Remove */}
                           <div className="mt-4 md:hidden flex items-center justify-between w-full max-w-[200px]">
                             <div className="flex items-center border border-gray-300 h-8 w-24">
-                              <button className="w-8 flex items-center justify-center hover:bg-gray-100 disabled:opacity-30">
+                              <button
+                                onClick={() => handleQuantity(item, "minus")}
+                                className="w-8 flex items-center justify-center hover:bg-gray-100 disabled:opacity-30"
+                              >
                                 <Minus size={14} />
                               </button>
                               <span className="flex-1 text-center text-xs font-bold">
@@ -144,7 +156,10 @@ export default function CartPage() {
                       {/* Quantity (Desktop) */}
                       <div className="hidden md:flex col-span-3 justify-center">
                         <div className="flex items-center border border-gray-300 h-10 w-32">
-                          <button className="w-10 flex items-center justify-center text-gray-600 hover:text-black transition-colors">
+                          <button
+                            onClick={() => handleQuantity(item, "minus")}
+                            className="w-10 flex items-center justify-center text-gray-600 hover:text-black transition-colors"
+                          >
                             <Minus size={16} />
                           </button>
                           <span className="flex-1 text-center text-sm font-bold">
