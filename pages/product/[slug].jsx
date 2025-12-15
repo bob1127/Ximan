@@ -7,31 +7,13 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import https from "https"; // 用於後端抓取資料
 
+// --- Swiper 相關引入 ---
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
+import "swiper/css"; // 基本樣式
+
 // 假設您的 CartContext 路徑如下，請依實際情況調整
 import { useCart } from "@/components/context/CartContext";
-
-// --- 靜態推薦商品 (因為目前 API 只抓單一商品，推薦區暫時維持靜態或由您另外寫邏輯) ---
-const RECOMMEND_ITEMS = [
-  {
-    id: 101,
-    title: "OKA SURFER PARKA (KHAKI)",
-    brand: "Laid.B",
-    price: "¥42,900",
-    tag: "NEW",
-    tagColor: "black",
-    image: "/images/placeholder.jpg", // 暫用預設圖，避免報錯
-  },
-  {
-    id: 102,
-    title: "LIFESAVING VEST (BLUE)",
-    brand: "Laid.B",
-    price: "¥18,810",
-    originalPrice: "¥62,700",
-    tag: "SALE",
-    tagColor: "red",
-    image: "/images/placeholder.jpg",
-  },
-];
 
 // --- ✅ 成功加入購物車的 Toast 組件 ---
 const SuccessToast = ({ show }) => (
@@ -66,18 +48,8 @@ const SuccessToast = ({ show }) => (
   </AnimatePresence>
 );
 
-// --- 輔助顯示資訊列 ---
-const InfoRow = ({ label, value }) => (
-  <div className="flex justify-between items-start">
-    <span className="font-bold text-gray-900 w-[40%] uppercase tracking-tight">
-      {label}
-    </span>
-    <span className="w-[60%] text-gray-600 leading-snug">{value || "N/A"}</span>
-  </div>
-);
-
 // --- 🔥 主頁面組件 ---
-export default function ProductDetail({ product }) {
+export default function ProductDetail({ product, relatedProducts }) {
   const router = useRouter();
 
   // 狀態管理
@@ -90,7 +62,6 @@ export default function ProductDetail({ product }) {
   const [mounted, setMounted] = useState(false);
 
   // 購物車 Hook
-  // 如果您的專案暫時沒有 CartContext，請把下面這行註解掉，並修改 handleBuy
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -105,7 +76,7 @@ export default function ProductDetail({ product }) {
     };
   }, [isPolicyModalOpen]);
 
-  // 如果是用 fallback: true，這裡要處理 loading
+  // Loading
   if (router.isFallback) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -123,14 +94,9 @@ export default function ProductDetail({ product }) {
   };
 
   const handleBuy = () => {
-    // 呼叫 Context 的加入購物車功能
     if (addToCart) {
       addToCart(product, quantity);
-    } else {
-      console.log("Add to cart:", product, quantity);
     }
-
-    // 顯示成功 Toast
     setShowToast(true);
     setTimeout(() => setShowToast(false), 2500);
   };
@@ -259,11 +225,11 @@ export default function ProductDetail({ product }) {
                 </div>
 
                 <div className="mb-6">
+                  {/* 側邊欄：完整說明 (description) */}
                   <div
                     className={`text-[13px] text-gray-600 leading-relaxed overflow-hidden transition-all duration-500 ease-in-out ${
                       isDescExpanded ? "max-h-[800px]" : "max-h-[60px]"
                     }`}
-                    // 🔥 使用 dangerouslySetInnerHTML 來正確顯示 WooCommerce 的 HTML 描述
                     dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                   <button
@@ -290,12 +256,13 @@ export default function ProductDetail({ product }) {
                   </button>
                 </div>
 
+                {/* 商品狀況區塊 (ACF) */}
                 <div className="border-t border-gray-200 py-4">
                   <button
                     onClick={() => setIsSpecsOpen(!isSpecsOpen)}
                     className="flex justify-between items-center w-full text-sm font-bold uppercase tracking-widest mb-4 hover:text-[#ef4628]"
                   >
-                    Details & Specs
+                    商品狀況
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -322,47 +289,34 @@ export default function ProductDetail({ product }) {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="bg-[#f9f9f9] p-5 space-y-3 text-[13px] border border-gray-100 mb-2">
-                          <InfoRow label="Brand" value={product.brand} />
-                          <InfoRow
-                            label="Accessory"
-                            value={product.specs.accessories}
+                        <div className="bg-[#f9f9f9] p-5 border border-gray-100 mb-2">
+                          <div
+                            className="
+                              text-[13px] text-gray-600 leading-relaxed mb-4 
+                              [&>p]:mb-2              
+                              [&>ul]:list-disc [&>ul]:pl-5             
+                              [&>ol]:list-decimal [&>ol]:pl-5             
+                              [&>strong]:text-black [&>strong]:font-bold    
+                              [&>h4]:text-sm [&>h4]:font-bold [&>h4]:mt-2
+                            "
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                product.specs.conditionText ||
+                                "<p>暫無商品狀況描述，請聯繫客服詢問。</p>",
+                            }}
                           />
-                          <InfoRow label="Size" value={product.specs.size} />
-                          <InfoRow
-                            label="Year/Stamp"
-                            value={product.specs.year_stamp}
-                          />
-                          <InfoRow
-                            label="Material"
-                            value={product.specs.material}
-                          />
-                          <InfoRow
-                            label="Hardware"
-                            value={product.specs.hardware}
-                          />
-                          <InfoRow
-                            label="Condition"
-                            value={product.specs.defects}
-                          />
-
                           <div className="pt-2 mt-2 border-t border-gray-200">
-                            <div className="flex justify-between items-start">
-                              <span className="font-bold text-gray-900 w-[40%]">
-                                In-Store
-                              </span>
-                              <span
-                                className={`w-[60%] font-medium ${
-                                  product.specs.inStoreView
-                                    ? "text-[#06c755]"
-                                    : "text-gray-400"
-                                }`}
-                              >
-                                {product.specs.inStoreView
-                                  ? "● 可預約現場鑑賞"
-                                  : "○ 僅限線上諮詢"}
-                              </span>
-                            </div>
+                            <span
+                              className={`block font-medium text-sm ${
+                                product.specs.inStoreView
+                                  ? "text-[#06c755]"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {product.specs.inStoreView
+                                ? "● 可預約現場鑑賞"
+                                : "○ 僅限線上諮詢"}
+                            </span>
                           </div>
                         </div>
                       </motion.div>
@@ -396,7 +350,7 @@ export default function ProductDetail({ product }) {
           </div>
         </div>
 
-        {/* ========== Tabs 產品內文切換區塊 ========== */}
+        {/* ========== Tabs 產品內文切換區塊 (保持不變) ========== */}
         <section className="max-w-[1000px] mx-auto px-6 mb-24 border-t border-gray-200 pt-16">
           <div className="flex justify-center border-b border-gray-200 mb-10">
             <button
@@ -431,7 +385,6 @@ export default function ProductDetail({ product }) {
             {activeTab === "details" && (
               <div className="animate-fadeIn">
                 <div className="w-full h-[300px] bg-gray-100 mb-8 flex items-center justify-center overflow-hidden relative">
-                  {/* Banner 圖，使用第一張產品圖 */}
                   {product.images && product.images[0] && (
                     <Image
                       src={product.images[0]}
@@ -449,10 +402,10 @@ export default function ProductDetail({ product }) {
                   <h3 className="text-xl font-bold mb-4 uppercase tracking-wide">
                     關於 {product.title}
                   </h3>
-                  {/* 使用 dangerouslySetInnerHTML 渲染 HTML 描述 */}
+                  {/* 下方 Tab：簡短說明 (intro) */}
                   <div
                     className="text-gray-600 leading-relaxed mb-6 text-sm"
-                    dangerouslySetInnerHTML={{ __html: product.description }}
+                    dangerouslySetInnerHTML={{ __html: product.intro }}
                   />
 
                   <div className="grid grid-cols-2 gap-4 mt-8">
@@ -513,56 +466,97 @@ export default function ProductDetail({ product }) {
           </div>
         </section>
 
-        {/* ========== Recommend Items (暫時靜態) ========== */}
+        {/* ========== 🔥🔥🔥 Recommend Items (改為 Swiper 自動輪播) 🔥🔥🔥 ========== */}
         <section className="others-products max-w-[1440px] mx-auto px-6 md:px-10 border-t border-gray-200 pt-16">
           <h2 className="text-2xl md:text-[28px] font-normal uppercase tracking-wide mb-10">
             Recommend Items
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10">
-            {RECOMMEND_ITEMS.map((item) => (
-              <div key={item.id} className="group cursor-pointer">
-                <div className="relative w-full aspect-[4/5] bg-[#f4f4f4] mb-4 overflow-hidden">
-                  {/* 這裡之後也可以改成動態 Link */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        item.tagColor === "red" ? "bg-[#ef4628]" : "bg-black"
-                      }`}
-                    ></span>
-                    <span className="text-[10px] font-bold tracking-widest uppercase text-gray-800">
-                      {item.tag}
-                    </span>
-                  </div>
-                  <div
-                    className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
-                    style={{ backgroundImage: `url('${item.image}')` }}
-                  ></div>
-                </div>
-                <div>
-                  <h3 className="text-[13px] font-bold uppercase leading-snug mb-1 group-hover:underline decoration-1 underline-offset-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-[10px] text-gray-500 underline decoration-gray-300 underline-offset-2 mb-2">
-                    {item.brand}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-[13px] font-medium ${
-                        item.tag === "SALE" ? "text-[#ef4628]" : "text-black"
-                      }`}
-                    >
-                      {item.price}
-                    </span>
-                    {item.originalPrice && (
-                      <span className="text-[11px] text-gray-400 line-through">
-                        {item.originalPrice}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+
+          {/* 如果沒有相關商品，顯示提示或空 */}
+          {relatedProducts && relatedProducts.length > 0 ? (
+            <Swiper
+              modules={[Autoplay]}
+              spaceBetween={16} // 對應原本的 gap-x-4
+              slidesPerView={2} // 手機版顯示 2 個
+              loop={true} // 無限循環
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              breakpoints={{
+                768: {
+                  slidesPerView: 4, // 電腦版顯示 4 個
+                },
+              }}
+              className="w-full"
+            >
+              {relatedProducts.map((item) => (
+                <SwiperSlide key={item.id}>
+                  {/* 使用 Next/Link 包覆整個 Card 讓它可點擊跳轉 (可選) */}
+                  <Link
+                    href={`/product/${item.slug}`}
+                    className="block group cursor-pointer"
+                  >
+                    <div className="relative w-full aspect-[4/5] bg-[#f4f4f4] mb-4 overflow-hidden">
+                      {/* Tag */}
+                      <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            item.tagColor === "red"
+                              ? "bg-[#ef4628]"
+                              : "bg-black"
+                          }`}
+                        ></span>
+                        <span className="text-[10px] font-bold tracking-widest uppercase text-gray-800">
+                          {item.tag}
+                        </span>
+                      </div>
+
+                      {/* Image (Background style) */}
+                      {item.image ? (
+                        <div
+                          className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
+                          style={{ backgroundImage: `url('${item.image}')` }}
+                        ></div>
+                      ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-xs">
+                          No Image
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div>
+                      <h3 className="text-[13px] font-bold uppercase leading-snug mb-1 group-hover:underline decoration-1 underline-offset-2 truncate">
+                        {item.title}
+                      </h3>
+                      <p className="text-[10px] text-gray-500 underline decoration-gray-300 underline-offset-2 mb-2">
+                        {item.brand}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[13px] font-medium ${
+                            item.tag === "SALE"
+                              ? "text-[#ef4628]"
+                              : "text-black"
+                          }`}
+                        >
+                          {item.price}
+                        </span>
+                        {item.originalPrice && (
+                          <span className="text-[11px] text-gray-400 line-through">
+                            {item.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="text-gray-400 text-sm">暫無推薦商品</div>
+          )}
         </section>
 
         {/* ========== Policy Modal ========== */}
@@ -656,29 +650,58 @@ export async function getStaticProps({ params }) {
   const CS = process.env.WC_CONSUMER_SECRET;
   const slug = params.slug;
 
+  const agent = new https.Agent({ rejectUnauthorized: false });
+
   try {
-    const agent = new https.Agent({ rejectUnauthorized: false });
+    // 1. 抓取主要商品
     const apiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&slug=${encodeURIComponent(
       slug
     )}`;
-
     const res = await fetch(apiUrl, {
       agent,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      },
+      headers: { "User-Agent": "Mozilla/5.0..." },
     });
 
     if (!res.ok) throw new Error("Fetch failed");
     const products = await res.json();
-
     if (products.length === 0) return { notFound: true };
 
     const p = products[0];
 
-    // 🔥 資料轉換：將 WooCommerce 資料對應到設計稿的 "specs" 結構
-    // 輔助函式：從 attributes 陣列中找特定名稱的值
+    // 2. 🔥🔥 新增：抓取相關商品 (排除當前商品，抓最新 8 筆) 🔥🔥
+    const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&exclude=${p.id}&per_page=8`;
+    const relatedRes = await fetch(relatedApiUrl, {
+      agent,
+      headers: { "User-Agent": "Mozilla/5.0..." },
+    });
+    const relatedData = await relatedRes.json();
+
+    // 格式化相關商品數據
+    const formattedRelated = relatedData.map((item) => {
+      // 抓品牌
+      const brandAttr = item.attributes.find(
+        (a) => a.name.toLowerCase() === "brand"
+      );
+      const brandName = brandAttr ? brandAttr.options[0] : "Ciéman Select";
+
+      return {
+        id: item.id,
+        slug: item.slug, // 用於連結跳轉
+        title: item.name.toUpperCase(),
+        brand: brandName,
+        price: `NT$ ${parseInt(item.price || 0).toLocaleString()}`,
+        originalPrice:
+          item.regular_price && item.sale_price
+            ? `NT$ ${parseInt(item.regular_price).toLocaleString()}`
+            : null,
+        image: item.images.length > 0 ? item.images[0].src : null,
+        // 標籤邏輯：有特價就顯示 SALE(紅)，否則 NEW(黑)
+        tag: item.on_sale ? "SALE" : "NEW",
+        tagColor: item.on_sale ? "red" : "black",
+      };
+    });
+
+    // 格式化主要商品 (維持原本邏輯)
     const getAttr = (name) => {
       const attr = p.attributes.find(
         (a) => a.name.toLowerCase() === name.toLowerCase()
@@ -686,33 +709,33 @@ export async function getStaticProps({ params }) {
       return attr ? attr.options[0] : null;
     };
 
+    const conditionText = p.product_condition || "";
+
     const formattedProduct = {
       id: p.id,
       title: p.name.toUpperCase(),
       price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
       brand: getAttr("Brand") || "Ciéman Select",
-      description: p.description || p.short_description || "",
+      description: p.description || "",
+      intro: p.short_description || "", // 下方 Tab 用的簡短說明
       shortDesc: (p.short_description || "")
         .replace(/<[^>]+>/g, "")
-        .slice(0, 150), // 用於 SEO
+        .slice(0, 150),
       images: p.images.length > 0 ? p.images.map((img) => img.src) : [],
 
-      // 對應您的設計 specs
       specs: {
-        rank: getAttr("Rank") || "Rank S", // 請在 WC 後台建立屬性 "Rank"
-        accessories: getAttr("Accessory") || "全配", // 請在 WC 後台建立屬性 "Accessory"
-        size: getAttr("Size") || "N/A",
-        year_stamp: getAttr("Year") || "N/A",
+        rank: getAttr("Rank") || "Rank S",
+        conditionText: conditionText,
         material: getAttr("Material") || "N/A",
         hardware: getAttr("Hardware") || "N/A",
-        defects: getAttr("Condition") || "無明顯瑕疵",
-        inStoreView: p.stock_status === "instock", // 有庫存就顯示可預約
+        inStoreView: p.stock_status === "instock",
       },
     };
 
     return {
       props: {
         product: formattedProduct,
+        relatedProducts: formattedRelated, // 🔥 傳入推薦商品
       },
       revalidate: 10,
     };

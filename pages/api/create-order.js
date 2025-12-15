@@ -1,14 +1,5 @@
-// pages/api/create-order.js
 import crypto from 'crypto';
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
-
-// 初始化 Woo API
-const api = new WooCommerceRestApi({
-  url: process.env.WOO_URL,
-  consumerKey: process.env.WOO_CK,
-  consumerSecret: process.env.WOO_CS,
-  version: "wc/v3"
-});
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -18,57 +9,41 @@ export default async function handler(req, res) {
   try {
     const { cartItems, customer } = req.body;
 
-    // ==========================================
-    // 1. 先在 WooCommerce 建立訂單
-    // ==========================================
-    
-    // 整理購物車格式給 Woo
-    const line_items = cartItems.map(item => ({
-      product_id: item.id, // 確保前端有傳 product_id
-      quantity: item.quantity
-    }));
+    // ... (WooCommerce 初始化與建立訂單部分省略，假設這裡都沒問題) ...
+    // 為了除錯方便，我們假設 Woo 訂單建立成功，直接進入綠界部分
+    // ⚠️ 正式上線前請把 Woo 的邏輯加回來，這裡專注測綠界
 
-    const orderData = {
-      payment_method: "ecpay",
-      payment_method_title: "綠界科技 ECPay",
-      set_paid: false, // 先設為未付款
-      billing: {
-        first_name: customer?.name || "Guest",
-        email: customer?.email || "guest@example.com",
-        phone: customer?.phone || "",
-        // ...其他地址欄位
-      },
-      line_items: line_items,
-    };
+    // 模擬一個訂單 ID 與金額 (方便你直接測試)
+    // 等綠界通了，再把下面這兩行換回真實的 wooOrder 資料
+    const orderId = "TEST_" + Date.now(); 
+    const totalAmount = 100; 
 
-    // 呼叫 Woo API 建立訂單
-    const wooResponse = await api.post("orders", orderData);
-    
-    if (wooResponse.status !== 201) {
-      throw new Error("無法在 WooCommerce 建立訂單");
+    // ==========================================
+    // 🔥 除錯重點區：印出環境變數
+    // ==========================================
+    console.log("========= 綠界參數檢查開始 =========");
+    console.log("1. 讀取到的 MerchantID:", process.env.ECPAY_MERCHANT_ID);
+    console.log("2. 讀取到的 HashKey:", process.env.ECPAY_HASH_KEY ? "已讀取 (隱藏內容)" : "❌ 未讀取 (undefined)");
+    console.log("3. 讀取到的 HashIV:", process.env.ECPAY_HASH_IV ? "已讀取 (隱藏內容)" : "❌ 未讀取 (undefined)");
+
+    if (!process.env.ECPAY_MERCHANT_ID || !process.env.ECPAY_HASH_KEY || !process.env.ECPAY_HASH_IV) {
+        throw new Error("環境變數讀取失敗！請確認 .env.local 檔案位置與內容");
     }
 
-    const wooOrder = wooResponse.data;
-    const orderId = wooOrder.id; // 拿到真正的訂單編號 (例如: 1502)
-    const totalAmount = parseInt(wooOrder.total); // 拿到真正的總金額
+    const ECPAY_MERCHANT_ID = process.env.ECPAY_MERCHANT_ID;
+    const ECPAY_HASH_KEY = process.env.ECPAY_HASH_KEY;
+    const ECPAY_HASH_IV = process.env.ECPAY_HASH_IV;
+    const ECPAY_BASE_URL = process.env.ECPAY_BASE_URL || "https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5";
+    
+    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"; 
 
-    // ==========================================
-    // 2. 準備綠界參數 (使用 Woo 的訂單編號)
-    // ==========================================
+    const MerchantTradeNo = `Woo_${Date.now().toString().slice(-10)}`; // 縮短一點避免太長
     
-    // 注意：MerchantTradeNo 必須唯一。
-    // 為了避免重複 (例如同一張單重複結帳)，通常會加上時間戳記或後綴
-    // 例如: "Woo_1502_170238123"
-    const MerchantTradeNo = `Woo_${orderId}_${Date.now().toString().slice(-6)}`;
-    
-    // 處理時間格式
     const date = new Date();
     const pad = (n) => (n < 10 ? '0' + n : n);
     const MerchantTradeDate = `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
 
-    // 從環境變數讀取綠界設定
-    const { ECPAY_MERCHANT_ID, ECPAY_HASH_KEY, ECPAY_HASH_IV, ECPAY_BASE_URL } = process.env;
-
+    // 準備參數
     const params = {
       MerchantID: ECPAY_MERCHANT_ID,
       MerchantTradeNo: MerchantTradeNo,
@@ -76,16 +51,18 @@ export default async function handler(req, res) {
       PaymentType: 'aio',
       TotalAmount: totalAmount,
       TradeDesc: 'CIEMAN Store Order',
-      ItemName: `Order #${orderId}`, // 簡單顯示訂單號碼即可，避免特殊字元過長
-      ReturnURL: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payment-return`, // 背景通知網址
-      ClientBackURL: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success`, // 前端成功頁面
-      ChoosePayment: 'Credit', // 正式環境視需求改為 'ALL'
+      ItemName: `Order Test`, 
+      ReturnURL: `${SITE_URL}/api/payment-return`, 
+      ClientBackURL: `${SITE_URL}/checkout/success`, 
+      // 🔥 嘗試修改：如果 ALL 失敗，強制改成 Credit 試試看
+      ChoosePayment: 'ALL', 
       EncryptType: 1,
-      CustomField1: orderId.toString(), // ★重要：把 Woo 訂單 ID 藏在這裡，方便 ReturnURL 抓回來更新狀態
     };
 
+    console.log("4. 準備傳送的參數 (尚未加密):", params);
+
     // ==========================================
-    // 3. 計算 CheckMacValue
+    // 計算 CheckMacValue
     // ==========================================
     const keys = Object.keys(params).filter(k => k !== 'CheckMacValue').sort((a, b) => {
         return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -96,6 +73,8 @@ export default async function handler(req, res) {
       rawString += `&${key}=${params[key]}`;
     });
     rawString += `&HashIV=${ECPAY_HASH_IV}`;
+
+    console.log("5. 排序後的原始字串 (檢查有無奇怪符號):", rawString);
 
     let encodedString = encodeURIComponent(rawString).toLowerCase();
     encodedString = encodedString
@@ -110,10 +89,8 @@ export default async function handler(req, res) {
 
     params.CheckMacValue = crypto.createHash('sha256').update(encodedString).digest('hex').toUpperCase();
 
-    // ==========================================
-    // 4. 回傳
-    // ==========================================
-    console.log(`Woo 訂單 #${orderId} 建立成功，準備前往綠界`);
+    console.log("6. 最終產生的 CheckMacValue:", params.CheckMacValue);
+    console.log("========= 檢查結束 =========");
 
     res.status(200).json({
       status: 'success',
@@ -122,7 +99,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error("建立訂單錯誤:", error);
+    console.error("❌ 發生錯誤:", error.message);
     res.status(500).json({ status: 'error', message: error.message });
   }
 }
