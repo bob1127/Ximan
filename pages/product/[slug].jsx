@@ -88,6 +88,48 @@ export default function ProductDetail({ product, relatedProducts }) {
   // 防止沒有資料時報錯
   if (!product) return null;
 
+  // --- 🌟 SEO & Structured Data (JSON-LD) 設定 ---
+
+  // 1. 設定網站網域 (請在 .env.local 設定 NEXT_PUBLIC_SITE_URL=https://您的網域.com)
+  // 如果還沒設定，這裡先做一個 fallback，但強烈建議設定環境變數
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cieman.com";
+  const currentUrl = `${siteUrl}/product/${product.slug}`;
+  const mainImage = product.images[0] || `${siteUrl}/images/placeholder.jpg`;
+
+  // 2. 準備 JSON-LD 結構化資料 (給 Google 看的)
+  // 我們需要把 "NT$ 18,800" 轉回純數字 18800
+  const cleanPrice = product.price ? product.price.replace(/[^0-9]/g, "") : "0";
+
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.title,
+    image: product.images,
+    description: product.shortDesc,
+    sku: product.id,
+    brand: {
+      "@type": "Brand",
+      name: product.brand,
+    },
+    offers: {
+      "@type": "Offer",
+      url: currentUrl,
+      priceCurrency: "TWD",
+      price: cleanPrice,
+      priceValidUntil: "2025-12-31", // 建議動態設定，這裡先寫死一個未來日期
+      itemCondition: "https://schema.org/UsedCondition", // 二手商品設為 Used，全新設為 NewCondition
+      availability: product.specs.inStoreView
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: {
+        "@type": "Organization",
+        name: "CIÉMAN",
+      },
+    },
+  };
+
+  // --- 事件處理 ---
+
   const handleQtyChange = (type) => {
     if (type === "minus" && quantity > 1) setQuantity(quantity - 1);
     if (type === "plus") setQuantity(quantity + 1);
@@ -104,8 +146,36 @@ export default function ProductDetail({ product, relatedProducts }) {
   return (
     <>
       <Head>
-        <title>{product.title} | CIÉMAN</title>
+        <title>{`${product.title} | CIÉMAN`}</title>
         <meta name="description" content={product.shortDesc} />
+        <link rel="canonical" href={currentUrl} />
+
+        {/* --- Open Graph (Facebook, LINE, Discord 分享預覽) --- */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={`${product.title} | CIÉMAN`} />
+        <meta property="og:description" content={product.shortDesc} />
+        <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content="CIÉMAN" />
+        <meta property="og:price:amount" content={cleanPrice} />
+        <meta property="og:price:currency" content="TWD" />
+
+        {/* 關鍵：圖片必須是絕對路徑 (http開頭) 才能在分享時顯示 */}
+        <meta property="og:image" content={mainImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={product.title} />
+
+        {/* --- Twitter Card (Twitter/X 分享預覽) --- */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={product.title} />
+        <meta name="twitter:description" content={product.shortDesc} />
+        <meta name="twitter:image" content={mainImage} />
+
+        {/* --- 注入 JSON-LD 結構化資料 --- */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </Head>
 
       {/* ✅ 顯示 Toast */}
@@ -350,7 +420,7 @@ export default function ProductDetail({ product, relatedProducts }) {
           </div>
         </div>
 
-        {/* ========== Tabs 產品內文切換區塊 (保持不變) ========== */}
+        {/* ========== Tabs 產品內文切換區塊 ========== */}
         <section className="max-w-[1000px] mx-auto px-6 mb-24 border-t border-gray-200 pt-16">
           <div className="flex justify-center border-b border-gray-200 mb-10">
             <button
@@ -466,39 +536,36 @@ export default function ProductDetail({ product, relatedProducts }) {
           </div>
         </section>
 
-        {/* ========== 🔥🔥🔥 Recommend Items (改為 Swiper 自動輪播) 🔥🔥🔥 ========== */}
+        {/* ========== Recommend Items (Swiper) ========== */}
         <section className="others-products max-w-[1440px] mx-auto px-6 md:px-10 border-t border-gray-200 pt-16">
           <h2 className="text-2xl md:text-[28px] font-normal uppercase tracking-wide mb-10">
             Recommend Items
           </h2>
 
-          {/* 如果沒有相關商品，顯示提示或空 */}
           {relatedProducts && relatedProducts.length > 0 ? (
             <Swiper
               modules={[Autoplay]}
-              spaceBetween={16} // 對應原本的 gap-x-4
-              slidesPerView={2} // 手機版顯示 2 個
-              loop={true} // 無限循環
+              spaceBetween={16}
+              slidesPerView={2}
+              loop={true}
               autoplay={{
                 delay: 3000,
                 disableOnInteraction: false,
               }}
               breakpoints={{
                 768: {
-                  slidesPerView: 4, // 電腦版顯示 4 個
+                  slidesPerView: 4,
                 },
               }}
               className="w-full"
             >
               {relatedProducts.map((item) => (
                 <SwiperSlide key={item.id}>
-                  {/* 使用 Next/Link 包覆整個 Card 讓它可點擊跳轉 (可選) */}
                   <Link
                     href={`/product/${item.slug}`}
                     className="block group cursor-pointer"
                   >
                     <div className="relative w-full aspect-[4/5] bg-[#f4f4f4] mb-4 overflow-hidden">
-                      {/* Tag */}
                       <div className="absolute top-3 left-3 flex items-center gap-2 z-10">
                         <span
                           className={`w-2 h-2 rounded-full ${
@@ -511,8 +578,6 @@ export default function ProductDetail({ product, relatedProducts }) {
                           {item.tag}
                         </span>
                       </div>
-
-                      {/* Image (Background style) */}
                       {item.image ? (
                         <div
                           className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
@@ -524,8 +589,6 @@ export default function ProductDetail({ product, relatedProducts }) {
                         </div>
                       )}
                     </div>
-
-                    {/* Info */}
                     <div>
                       <h3 className="text-[13px] font-bold uppercase leading-snug mb-1 group-hover:underline decoration-1 underline-offset-2 truncate">
                         {item.title}
@@ -636,7 +699,7 @@ export default function ProductDetail({ product, relatedProducts }) {
   );
 }
 
-// --- 🔥 後端邏輯：SSG + ISR ---
+// --- 🔥 後端邏輯：getStaticPaths ---
 export async function getStaticPaths() {
   return {
     paths: [],
@@ -644,6 +707,7 @@ export async function getStaticPaths() {
   };
 }
 
+// --- 🔥 後端邏輯：getStaticProps ---
 export async function getStaticProps({ params }) {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
@@ -668,7 +732,7 @@ export async function getStaticProps({ params }) {
 
     const p = products[0];
 
-    // 2. 🔥🔥 新增：抓取相關商品 (排除當前商品，抓最新 8 筆) 🔥🔥
+    // 2. 抓取相關商品
     const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&exclude=${p.id}&per_page=8`;
     const relatedRes = await fetch(relatedApiUrl, {
       agent,
@@ -676,9 +740,7 @@ export async function getStaticProps({ params }) {
     });
     const relatedData = await relatedRes.json();
 
-    // 格式化相關商品數據
     const formattedRelated = relatedData.map((item) => {
-      // 抓品牌
       const brandAttr = item.attributes.find(
         (a) => a.name.toLowerCase() === "brand"
       );
@@ -686,7 +748,7 @@ export async function getStaticProps({ params }) {
 
       return {
         id: item.id,
-        slug: item.slug, // 用於連結跳轉
+        slug: item.slug,
         title: item.name.toUpperCase(),
         brand: brandName,
         price: `NT$ ${parseInt(item.price || 0).toLocaleString()}`,
@@ -695,13 +757,11 @@ export async function getStaticProps({ params }) {
             ? `NT$ ${parseInt(item.regular_price).toLocaleString()}`
             : null,
         image: item.images.length > 0 ? item.images[0].src : null,
-        // 標籤邏輯：有特價就顯示 SALE(紅)，否則 NEW(黑)
         tag: item.on_sale ? "SALE" : "NEW",
         tagColor: item.on_sale ? "red" : "black",
       };
     });
 
-    // 格式化主要商品 (維持原本邏輯)
     const getAttr = (name) => {
       const attr = p.attributes.find(
         (a) => a.name.toLowerCase() === name.toLowerCase()
@@ -713,11 +773,12 @@ export async function getStaticProps({ params }) {
 
     const formattedProduct = {
       id: p.id,
+      slug: p.slug, // 🔥 重要：傳遞 slug 給 SEO 用
       title: p.name.toUpperCase(),
       price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
       brand: getAttr("Brand") || "Ciéman Select",
       description: p.description || "",
-      intro: p.short_description || "", // 下方 Tab 用的簡短說明
+      intro: p.short_description || "",
       shortDesc: (p.short_description || "")
         .replace(/<[^>]+>/g, "")
         .slice(0, 150),
@@ -735,7 +796,7 @@ export async function getStaticProps({ params }) {
     return {
       props: {
         product: formattedProduct,
-        relatedProducts: formattedRelated, // 🔥 傳入推薦商品
+        relatedProducts: formattedRelated,
       },
       revalidate: 10,
     };
