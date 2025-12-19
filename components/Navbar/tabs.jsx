@@ -6,14 +6,14 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ShoppingBag } from "lucide-react"; // 移除了 Heart
+import { Menu, X, User, ShoppingBag, Search } from "lucide-react"; // 新增 Search icon
 
 export const SlideTabsExample = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState("none");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // 新增：滾動狀態
+  // 滾動狀態 (僅用於邊框陰影顯示，不再用於縮放 Logo)
   const [isScrolled, setIsScrolled] = useState(false);
 
   const { totalQty, setIsCartOpen } = useCart();
@@ -24,10 +24,10 @@ export const SlideTabsExample = () => {
   const userMenuRef = useRef(null);
   const navRef = useRef(null);
 
-  // 1. 監聽滾動事件
+  // 監聽滾動事件 (保留陰影效果邏輯)
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 10) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -57,6 +57,7 @@ export const SlideTabsExample = () => {
     return () => document.removeEventListener("mouseover", handleMouseLeave);
   }, []);
 
+  // Fetch User Info
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -73,6 +74,7 @@ export const SlideTabsExample = () => {
       .catch((err) => console.error("無法取得使用者資訊", err));
   }, [setUserInfo]);
 
+  // Fetch Categories
   useEffect(() => {
     async function fetchData() {
       try {
@@ -92,43 +94,17 @@ export const SlideTabsExample = () => {
   }, []);
 
   const navLinks = [
-    {
-      key: "categories",
-      labelTop: "產品類別",
-      labelBottom: "CATEGORIES",
-      href: "/category",
-    },
-    {
-      key: "brand",
-      labelTop: "品牌館",
-      labelBottom: "BRAND",
-      href: "/category",
-    },
-    { key: "news", labelTop: "最新消息", labelBottom: "NEWS", href: "#" },
-    {
-      key: "SERVICE",
-      labelTop: "服務流程",
-      labelBottom: "SERVICE",
-      href: "/service",
-    },
-    // LOGO 會插入在這裡 (Service 之後)
-    { key: "NOTE", labelTop: "購物須知", labelBottom: "NOTE", href: "/note" },
-    {
-      key: "CONTACT",
-      labelTop: "聯繫喜曼",
-      labelBottom: "CONTACT",
-      href: "/contact",
-    },
-    {
-      key: "ABOUT",
-      labelTop: "公司介紹",
-      labelBottom: "ABOUT",
-      href: "/about",
-    },
+    { key: "categories", label: "產品類別", href: "/category" },
+    { key: "brand", label: "品牌館", href: "/category" },
+    { key: "news", label: "最新消息", href: "#" },
+    { key: "SERVICE", label: "服務流程", href: "/service" },
+    { key: "NOTE", label: "購物須知", href: "/note" },
+    { key: "CONTACT", label: "聯繫喜曼", href: "/contact" },
+    { key: "ABOUT", label: "公司介紹", href: "/about" },
   ];
 
   const megaVariants = {
-    hidden: { opacity: 0, y: -20 },
+    hidden: { opacity: 0, y: -10 },
     visible: {
       opacity: 1,
       y: 0,
@@ -136,7 +112,7 @@ export const SlideTabsExample = () => {
     },
     exit: {
       opacity: 0,
-      y: -20,
+      y: -10,
       transition: { duration: 0.2, ease: "easeIn" },
     },
   };
@@ -147,24 +123,9 @@ export const SlideTabsExample = () => {
     exit: { opacity: 0, transition: { duration: 0.2 } },
   };
 
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: 10, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.2, ease: "easeOut" },
-    },
-    exit: {
-      opacity: 0,
-      y: 10,
-      scale: 0.95,
-      transition: { duration: 0.15, ease: "easeIn" },
-    },
-  };
-
   return (
-    <div ref={navRef} className="relative">
+    <div ref={navRef} className="relative font-sans text-gray-800">
+      {/* Mobile Menu Backdrop */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -182,10 +143,12 @@ export const SlideTabsExample = () => {
         )}
       </AnimatePresence>
 
+      {/* Desktop Mega Menu Backdrop */}
       <AnimatePresence>
         {openMega !== "none" && (
           <motion.div
-            className="fixed inset-0 top-[80px] z-[940] bg-black/20 backdrop-blur-sm hidden md:block"
+            // Mega menu top position adjusted for taller header
+            className="fixed inset-0 top-[140px] z-[940] bg-black/20 backdrop-blur-sm hidden md:block"
             variants={backdropVariants}
             initial="hidden"
             animate="visible"
@@ -195,17 +158,20 @@ export const SlideTabsExample = () => {
         )}
       </AnimatePresence>
 
+      {/* Main Header Container */}
       <div
-        className={`fixed top-0 left-0 w-full z-[1000] bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-500 bg-white`}
+        className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#fcf8f3] ${
+          isScrolled ? "shadow-sm" : ""
+        }`}
       >
-        {/* Navbar Container */}
-        <div
-          className={`relative flex justify-between items-center px-5 md:px-[50px] max-w-[1920px] mx-auto transition-all duration-500 ${
-            isScrolled ? "md:h-[70px] py-2" : "md:h-[100px] py-4 md:py-0"
-          }`}
-        >
-          {/* 1. Left Area: Mobile Menu Only (Desktop keeps empty space for balance) */}
-          <div className="flex items-center w-[140px] flex-shrink-0">
+        {/* =========================================================
+            ROW 1: Tools (Search) | Logo | Tools (Account/Cart) 
+            (Desktop Visible, Mobile Adjusted)
+           ========================================================= */}
+        <div className="relative flex justify-between items-center px-4 md:px-10 py-4 max-w-[1920px] mx-auto">
+          {/* Left: Mobile Hamburger / Desktop Search */}
+          <div className="flex items-center w-[200px] flex-shrink-0">
+            {/* Mobile Menu Button */}
             <button
               className="md:hidden text-black p-1 -ml-1 mr-2"
               onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -217,106 +183,52 @@ export const SlideTabsExample = () => {
               )}
             </button>
 
-            {/* 移除原本這裡的 Desktop Logo，改到中間 */}
+            {/* Desktop Search (仿圖樣式) */}
+            <div className="hidden md:flex items-center group cursor-pointer">
+              <Search size={20} strokeWidth={1.5} className="text-gray-800" />
+              <div className="ml-3 relative py-1 border-b border-gray-800 w-[120px] lg:w-[180px]">
+                <span className="text-sm font-bold text-gray-600">搜尋</span>
+              </div>
+            </div>
           </div>
 
-          {/* 2. Center: Desktop Nav (Split with Logo) */}
-          <div className="hidden md:flex flex-1 justify-center items-center h-full gap-1 lg:gap-4">
-            {navLinks.map((link) => {
-              const isMega = link.key === "categories" || link.key === "brand";
-
-              return (
-                <React.Fragment key={link.key}>
-                  {/* Normal Link Item */}
-                  <div
-                    className="relative h-full flex items-center"
-                    onMouseEnter={() => {
-                      if (link.key === "categories") setOpenMega("categories");
-                      if (link.key === "brand") setOpenMega("brand");
-                    }}
-                  >
-                    <Link
-                      href={link.href}
-                      className="group relative h-10 rounded-full bg-transparent px-3 lg:px-4 text-neutral-950 flex items-center justify-center"
-                    >
-                      <span className="relative inline-grid grid-cols-1 overflow-hidden leading-[2.5rem] text-[13px] font-bold text-center whitespace-nowrap">
-                        <div className="col-start-1 row-start-1 transition duration-500 group-hover:-translate-y-full group-hover:skew-y-12 tracking-widest text-gray-400">
-                          {link.labelBottom}
-                        </div>
-                        <div className="col-start-1 row-start-1 translate-y-full group-hover:translate-y-0 group-hover:skew-y-0 transition duration-500 text-black tracking-widest">
-                          {link.labelTop}
-                        </div>
-                      </span>
-                    </Link>
-                  </div>
-
-                  {/* 🌟 插入中間 Logo 邏輯 (在 SERVICE 之後) 🌟 */}
-                  {link.key === "SERVICE" && (
-                    <div className="px-6 py-4 flex items-center justify-center">
-                      <div className="px-4 flex items-center justify-center">
-                        <Link href="/">
-                          <motion.div
-                            layout
-                            // 修改 2: 初始寬度減半 (140 -> 80)
-                            initial={{ width: 80 }}
-                            animate={{
-                              // 修改 3: 滾動時與正常時的寬度都減半 (100 -> 60, 140 -> 80)
-                              width: isScrolled ? 60 : 80,
-                              opacity: 1,
-                            }}
-                            transition={{
-                              duration: 0.5,
-                              type: "spring",
-                              stiffness: 100,
-                            }}
-                            className="relative h-auto flex items-center justify-center"
-                          >
-                            <Image
-                              src="/images/logo/喜曼＿Logo＿給檔＿黑-02(1).png"
-                              alt="CIEMAN"
-                              // 修改 4: 圖片原始定義尺寸也減半，保持良好習慣 (160/60 -> 80/30)
-                              width={80}
-                              height={30}
-                              priority
-                              className="w-full h-auto"
-                            />
-                          </motion.div>
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
-              );
-            })}
+          {/* Center: Logo (Fixed Size, No scroll animation) */}
+          <div className="flex-1 flex justify-center items-center">
+            <Link href="/" className="relative block w-[65px] md:w-[80px]">
+              {/* 圖片移除 width animation，改用標準 RWD 設定 */}
+              <Image
+                src="/images/logo/喜曼＿Logo＿給檔＿黑-02(1).png"
+                alt="CIEMAN"
+                width={160}
+                height={60}
+                priority
+                className="w-full h-auto object-contain"
+              />
+            </Link>
           </div>
 
-          {/* Mobile Logo (Center Absolute) - 手機版維持不變 */}
-          <Link
-            href="/"
-            className="md:hidden absolute left-1/2 -translate-x-1/2 text-2xl font-bold tracking-widest text-black uppercase"
-          >
-            CIÉMAN
-          </Link>
-
-          {/* 3. Right: Icons (Removed Heart) */}
-          <div className="flex items-center justify-end w-[140px] flex-shrink-0 gap-3 md:gap-5">
-            {/* 這裡移除了 Heart Link */}
-
-            <div className="relative" ref={userMenuRef}>
+          {/* Right: Account & Cart (with Labels) */}
+          <div className="flex items-center justify-end w-[200px] flex-shrink-0 gap-6">
+            {/* User Account */}
+            <div className="relative hidden md:block" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="text-black hover:text-gray-600 transition-colors flex items-center pt-1"
+                className="text-gray-800 hover:opacity-70 transition-opacity flex items-center gap-2"
               >
-                <User size={24} strokeWidth={1.5} />
+                <User size={22} strokeWidth={1.5} />
+                <span className="text-xs font-bold tracking-wide">
+                  會員帳戶
+                </span>
               </button>
 
+              {/* User Dropdown */}
               <AnimatePresence>
                 {isUserMenuOpen && (
                   <motion.div
-                    variants={dropdownVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
                     className="absolute right-0 top-full mt-4 w-48 bg-white border border-gray-100 shadow-xl rounded-md overflow-hidden z-[1100]"
                   >
                     <div className="py-2">
@@ -330,15 +242,13 @@ export const SlideTabsExample = () => {
                           </div>
                           <Link
                             href="/member/profile"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             會員資料
                           </Link>
                           <Link
                             href="/member/orders"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             訂單查詢
                           </Link>
@@ -347,7 +257,7 @@ export const SlideTabsExample = () => {
                               logout();
                               setIsUserMenuOpen(false);
                             }}
-                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100"
+                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
                           >
                             登出
                           </button>
@@ -356,15 +266,13 @@ export const SlideTabsExample = () => {
                         <>
                           <Link
                             href="/login"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             會員登入
                           </Link>
                           <Link
                             href="/register"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors"
-                            onClick={() => setIsUserMenuOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
                           >
                             註冊帳號
                           </Link>
@@ -376,21 +284,57 @@ export const SlideTabsExample = () => {
               </AnimatePresence>
             </div>
 
+            {/* Cart */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="text-black hover:text-gray-600 transition-colors relative flex items-center pt-1"
+              className="text-gray-800 hover:opacity-70 transition-opacity relative flex items-center gap-2"
             >
-              <ShoppingBag size={24} strokeWidth={1.5} />
-              {totalQty > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#ef4628] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full animate-bounce">
-                  {totalQty}
-                </span>
-              )}
+              <div className="relative">
+                <ShoppingBag size={22} strokeWidth={1.5} />
+                {totalQty > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#ef4628] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                    {totalQty}
+                  </span>
+                )}
+              </div>
+              <span className="text-xs font-bold tracking-wide hidden md:block">
+                購物車
+              </span>
             </button>
           </div>
         </div>
 
-        {/* Mega Menu Dropdown */}
+        {/* =========================================================
+            ROW 2: Navigation Links (Desktop Only)
+           ========================================================= */}
+        <div className="hidden md:flex justify-center pb-4 pt-1">
+          <div className="flex gap-8 lg:gap-12">
+            {navLinks.map((link) => (
+              <div
+                key={link.key}
+                className="relative"
+                onMouseEnter={() => {
+                  if (link.key === "categories") setOpenMega("categories");
+                  else if (link.key === "brand") setOpenMega("brand");
+                  else setOpenMega("none");
+                }}
+              >
+                <Link
+                  href={link.href}
+                  className="text-[13px] font-bold tracking-[0.1em] text-gray-800 hover:text-gray-500 transition-colors uppercase py-2"
+                >
+                  {link.label}
+                </Link>
+                {/* Active/Hover Indicator Line (Optional style) */}
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-800 scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* =========================================================
+            Mega Menu Dropdown (Position adjusted for 2-row header)
+           ========================================================= */}
         <AnimatePresence>
           {openMega !== "none" && (
             <motion.div
@@ -399,21 +343,25 @@ export const SlideTabsExample = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="fixed left-0 right-0 top-[80px] z-[950] bg-white shadow-xl border-t border-gray-100 hidden md:block"
+              // Adjusted top position to sit below the 2nd row
+              className="absolute left-0 right-0 top-full z-[950] bg-[#fcf8f3] border-t border-gray-200 shadow-xl hidden md:block"
               onMouseEnter={() => setOpenMega(openMega)}
+              onMouseLeave={() => setOpenMega("none")}
             >
-              {/* Mega Menu 內容維持不變 */}
               <div className="max-w-[1440px] mx-auto px-8 py-12">
-                <div className="mb-8 flex items-baseline justify-between border-b border-gray-100 pb-4">
-                  <div className="text-sm tracking-[0.2em] text-gray-400 font-bold">
-                    {openMega === "categories" ? "CATEGORIES" : "BRAND"}
+                {/* Header of Mega Menu */}
+                <div className="mb-8 flex items-baseline justify-between border-b border-gray-200 pb-4">
+                  <div className="text-sm tracking-[0.2em] text-gray-500 font-bold uppercase">
+                    {openMega === "categories" ? "Categories" : "Brand"}
                   </div>
                   <div className="text-xs text-gray-400">
                     {openMega === "categories" ? "產品類別" : "品牌館"}
                   </div>
                 </div>
 
+                {/* Content Logic (Same as before) */}
                 {openMega === "brand" ? (
+                  // ... (Brand logic kept exactly the same) ...
                   (() => {
                     const featuredBrandsData = [
                       { name: "Hermès", href: "/category/Hermes" },
@@ -421,7 +369,6 @@ export const SlideTabsExample = () => {
                       { name: "Louis Vuitton", href: "/category/LouisVuitton" },
                       { name: "Dior", href: "/category/Dior" },
                     ];
-
                     const featuredBrands = brandChildren
                       .filter((cat) =>
                         featuredBrandsData.some((f) =>
@@ -434,7 +381,6 @@ export const SlideTabsExample = () => {
                         );
                         return { ...cat, customHref: linkData?.href };
                       });
-
                     const otherBrands = brandChildren.filter(
                       (cat) =>
                         !featuredBrandsData.some((f) =>
@@ -451,7 +397,7 @@ export const SlideTabsExample = () => {
                       >
                         {cat.image && cat.image.src && (
                           <div
-                            className={`overflow-hidden rounded-full relative aspect-square bg-gray-50 mb-2 border border-gray-100 group-hover/item:border-black transition-colors ${
+                            className={`overflow-hidden rounded-full relative aspect-square bg-white mb-2 border border-gray-100 group-hover/item:border-gray-400 transition-colors ${
                               isFeatured ? "w-full" : ""
                             }`}
                           >
@@ -482,7 +428,7 @@ export const SlideTabsExample = () => {
                         )}
                         {featuredBrands.length > 0 &&
                           otherBrands.length > 0 && (
-                            <div className="w-full h-[1px] bg-gray-100" />
+                            <div className="w-full h-[1px] bg-gray-200" />
                           )}
                         <div className="grid grid-cols-6 gap-8">
                           {otherBrands.map((cat) => renderItem(cat, false))}
@@ -491,6 +437,7 @@ export const SlideTabsExample = () => {
                     );
                   })()
                 ) : (
+                  // Category Logic
                   <div className="grid grid-cols-6 gap-8">
                     {categoriesChildren.map((cat) => (
                       <Link
@@ -500,7 +447,7 @@ export const SlideTabsExample = () => {
                         onClick={() => setOpenMega("none")}
                       >
                         {cat.image && cat.image.src && (
-                          <div className="overflow-hidden rounded-full relative aspect-square bg-gray-50 mb-2 border border-gray-100 group-hover/item:border-black transition-colors">
+                          <div className="overflow-hidden rounded-full relative aspect-square bg-white mb-2 border border-gray-100 group-hover/item:border-gray-400 transition-colors">
                             <Image
                               src={cat.image.src}
                               alt={cat.name}
@@ -522,35 +469,51 @@ export const SlideTabsExample = () => {
         </AnimatePresence>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (Sidebar) */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2, ease: "circOut" }}
-            className="md:hidden fixed top-[60px] left-0 right-0 z-[950] bg-[#fdfdfd] text-[#1b1b1b] shadow-2xl overflow-hidden max-h-[calc(100vh-60px)] flex flex-col border-t border-gray-100"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden fixed top-[60px] left-0 right-0 bottom-0 z-[950] bg-[#fcf8f3] text-gray-900 shadow-2xl overflow-y-auto"
           >
-            <div className="overflow-y-auto p-6 pb-20">
+            {/* Mobile Menu Content ... (Adjusted slightly for styling consistency) */}
+            <div className="p-6 pb-20">
+              <div className="mb-6 pb-6 border-b border-gray-200">
+                <div className="flex items-center gap-3 text-gray-600 mb-4">
+                  <Search size={20} />
+                  <span className="text-sm">搜尋</span>
+                </div>
+              </div>
               <div className="flex flex-col gap-6">
                 {navLinks.map((link) => (
-                  <div key={link.key}>
-                    <Link
-                      href={link.href}
-                      className="flex items-baseline justify-between group"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <div className="text-lg font-bold text-[#1b1b1b] uppercase tracking-wide">
-                        {link.labelTop}
-                      </div>
-                      <div className="text-[10px] text-gray-400 font-medium tracking-widest">
-                        {link.labelBottom}
-                      </div>
-                    </Link>
-                    {/* ... Mobile Submenu logic remains same ... */}
-                  </div>
+                  <Link
+                    key={link.key}
+                    href={link.href}
+                    className="flex items-baseline justify-between group py-2 border-b border-gray-100"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <div className="text-lg font-bold uppercase tracking-wide">
+                      {link.label}
+                    </div>
+                  </Link>
                 ))}
+
+                {/* Mobile User Links */}
+                <div className="mt-4 pt-6 border-t border-gray-300">
+                  <Link
+                    href={userInfo ? "/member/profile" : "/login"}
+                    className="flex items-center gap-3 py-3"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User size={20} />
+                    <span className="text-sm font-bold">
+                      {userInfo ? "會員中心" : "登入 / 註冊"}
+                    </span>
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>
