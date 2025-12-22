@@ -58,7 +58,7 @@ export default function Footer() {
               <p>台中市北區中清路一段 428 號</p>
               <p>No. 428, Sec. 1, Zhongqing Rd.,</p>
               <p>North Dist., Taichung City, Taiwan</p>
-              <p className="mt-4">TAX ID: 12345678</p>
+              <p className="mt-4">統編：00065870</p>
               <p>Email: hello.cieman@gmail.com</p>
             </div>
           </div>
