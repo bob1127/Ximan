@@ -1,105 +1,144 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 import WooCommerceRestApi from "@woocommerce/woocommerce-rest-api";
 
+// AES-256-CBC 加密（PayUni TradeInfo）
+function encryptPayUni(raw, key, iv) {
+  const keyBuf = Buffer.from(key, "utf8");
+  const ivBuf = Buffer.from(iv, "utf8");
+
+  // AES-256-CBC: key 32 bytes, iv 16 bytes
+  if (keyBuf.length !== 32 || ivBuf.length !== 16) {
+    throw new Error(
+      `PAYUNI_HASH_KEY / PAYUNI_HASH_IV 長度錯誤：key=${keyBuf.length}, iv=${ivBuf.length}`
+    );
+  }
+
+  const cipher = crypto.createCipheriv("aes-256-cbc", keyBuf, ivBuf);
+  cipher.setAutoPadding(true);
+
+  let encrypted = cipher.update(raw, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
+}
+
+function sha256Upper(str) {
+  return crypto.createHash("sha256").update(str).digest("hex").toUpperCase();
+}
+
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ status: "error", message: "Method not allowed" });
   }
 
   try {
     const { cartItems, customer } = req.body;
 
-    // ... (WooCommerce 初始化與建立訂單部分省略，假設這裡都沒問題) ...
-    // 為了除錯方便，我們假設 Woo 訂單建立成功，直接進入綠界部分
-    // ⚠️ 正式上線前請把 Woo 的邏輯加回來，這裡專注測綠界
+    // ====== 讀取環境變數 ======
+    const WC_SITE_URL = process.env.WC_SITE_URL;
+    const WC_CONSUMER_KEY = process.env.WC_CONSUMER_KEY;
+    const WC_CONSUMER_SECRET = process.env.WC_CONSUMER_SECRET;
 
-    // 模擬一個訂單 ID 與金額 (方便你直接測試)
-    // 等綠界通了，再把下面這兩行換回真實的 wooOrder 資料
-    const orderId = "TEST_" + Date.now(); 
-    const totalAmount = 100; 
+    const MerID = process.env.PAYUNI_MERCHANT_ID;
+    const HashKey = process.env.PAYUNI_HASH_KEY;
+    const HashIV = process.env.PAYUNI_HASH_IV;
 
-    // ==========================================
-    // 🔥 除錯重點區：印出環境變數
-    // ==========================================
-    console.log("========= 綠界參數檢查開始 =========");
-    console.log("1. 讀取到的 MerchantID:", process.env.ECPAY_MERCHANT_ID);
-    console.log("2. 讀取到的 HashKey:", process.env.ECPAY_HASH_KEY ? "已讀取 (隱藏內容)" : "❌ 未讀取 (undefined)");
-    console.log("3. 讀取到的 HashIV:", process.env.ECPAY_HASH_IV ? "已讀取 (隱藏內容)" : "❌ 未讀取 (undefined)");
+    // 建議 PAYUNI_BASE_URL 放 https://api.payuni.com.tw/api/upp （不要含 /payment）
+    const PAYUNI_BASE_URL = process.env.PAYUNI_BASE_URL;
 
-    if (!process.env.ECPAY_MERCHANT_ID || !process.env.ECPAY_HASH_KEY || !process.env.ECPAY_HASH_IV) {
-        throw new Error("環境變數讀取失敗！請確認 .env.local 檔案位置與內容");
+    // 你的站台公開網址（Vercel/正式域名；本機請用 ngrok/tunnel）
+    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
+
+    if (!WC_SITE_URL || !WC_CONSUMER_KEY || !WC_CONSUMER_SECRET) {
+      throw new Error("WooCommerce 環境變數缺失（WC_SITE_URL / WC_CONSUMER_KEY / WC_CONSUMER_SECRET）");
+    }
+    if (!MerID || !HashKey || !HashIV || !PAYUNI_BASE_URL || !SITE_URL) {
+      throw new Error("PayUni/站台 環境變數缺失（MerID/HashKey/HashIV/PAYUNI_BASE_URL/NEXT_PUBLIC_SITE_URL）");
     }
 
-    const ECPAY_MERCHANT_ID = process.env.ECPAY_MERCHANT_ID;
-    const ECPAY_HASH_KEY = process.env.ECPAY_HASH_KEY;
-    const ECPAY_HASH_IV = process.env.ECPAY_HASH_IV;
-    const ECPAY_BASE_URL = process.env.ECPAY_BASE_URL || "https://payment.ecpay.com.tw/Cashier/AioCheckOut/V5";
-    
-    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"; 
+    // ====== 1) 建立 WooCommerce 訂單 ======
+    const api = new WooCommerceRestApi({
+      url: WC_SITE_URL,
+      consumerKey: WC_CONSUMER_KEY,
+      consumerSecret: WC_CONSUMER_SECRET,
+      version: "wc/v3",
+    });
 
-    const MerchantTradeNo = `Woo_${Date.now().toString().slice(-10)}`; // 縮短一點避免太長
-    
-    const date = new Date();
-    const pad = (n) => (n < 10 ? '0' + n : n);
-    const MerchantTradeDate = `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    const wooResponse = await api.post("orders", {
+      payment_method: "payuni",
+      payment_method_title: "PayUni 統一支付",
+      billing: {
+        first_name: customer?.name || "",
+        email: customer?.email || "",
+        phone: customer?.phone || "",
+        address_1: customer?.address || "",
+        city: customer?.city || "",
+        postcode: customer?.postalCode || "",
+      },
+      line_items: (cartItems || []).map((item) => ({
+        product_id: item.id,
+        quantity: item.quantity,
+      })),
+    });
 
-    // 準備參數
-    const params = {
-      MerchantID: ECPAY_MERCHANT_ID,
-      MerchantTradeNo: MerchantTradeNo,
-      MerchantTradeDate: MerchantTradeDate,
-      PaymentType: 'aio',
-      TotalAmount: totalAmount,
-      TradeDesc: 'CIEMAN Store Order',
-      ItemName: `Order Test`, 
-      ReturnURL: `${SITE_URL}/api/payment-return`, 
-      ClientBackURL: `${SITE_URL}/checkout/success`, 
-      // 🔥 嘗試修改：如果 ALL 失敗，強制改成 Credit 試試看
-      ChoosePayment: 'ALL', 
-      EncryptType: 1,
+    const wooOrder = wooResponse.data;
+    const orderNo = String(wooOrder.id);
+
+    // Woo total 可能是字串，用 Number 轉
+    const amt = Math.round(Number(wooOrder.total || 0));
+    if (!amt || amt <= 0) {
+      throw new Error(`訂單金額不正確：wooOrder.total=${wooOrder.total}`);
+    }
+
+    // ====== 2) PayUni 參數 ======
+    const tradeParams = {
+      Amt: amt,
+      BackURL: `${SITE_URL}/checkout/success`,
+      ItemName: `Order${orderNo}`,
+      MerID: MerID,
+      MerOrderNo: orderNo,
+      NotifyURL: `${SITE_URL}/api/payment-notify`, // 背景通知
+      ReturnURL: `${SITE_URL}/api/payment-return`, // 同步/回傳
+      Timestamp: Math.floor(Date.now() / 1000),
+      UsrMail: customer.email,
     };
 
-    console.log("4. 準備傳送的參數 (尚未加密):", params);
+    // A-Z 排序 + encode
+    const rawString = Object.keys(tradeParams)
+      .sort()
+      .map((k) => `${k}=${encodeURIComponent(tradeParams[k])}`)
+      .join("&");
 
-    // ==========================================
-    // 計算 CheckMacValue
-    // ==========================================
-    const keys = Object.keys(params).filter(k => k !== 'CheckMacValue').sort((a, b) => {
-        return a.toLowerCase().localeCompare(b.toLowerCase());
+    // ====== 3) 產生 TradeInfo / TradeSha ======
+    const TradeInfo = encryptPayUni(rawString, HashKey, HashIV);
+
+    // 常見正確驗章格式（帶欄位名）
+    const shaStr = `HashKey=${HashKey}&TradeInfo=${TradeInfo}&HashIV=${HashIV}`;
+    const TradeSha = sha256Upper(shaStr);
+
+    // 付款網址（一定要 /payment）
+    const paymentUrl = `${PAYUNI_BASE_URL.replace(/\/$/, "")}/payment`;
+
+    console.log("=== PayUni Create Order Debug ===");
+    console.log("paymentUrl:", paymentUrl);
+    console.log("rawString:", rawString);
+    console.log("TradeSha:", TradeSha);
+
+    // ====== 4) 回傳給前端 ======
+    return res.status(200).json({
+      status: "success",
+      paymentUrl,
+      MerID,
+      TradeInfo,
+      TradeSha,
+      Version: "1.0",
+      orderId: wooOrder.id,
+      amount: amt,
     });
-    
-    let rawString = `HashKey=${ECPAY_HASH_KEY}`;
-    keys.forEach(key => {
-      rawString += `&${key}=${params[key]}`;
-    });
-    rawString += `&HashIV=${ECPAY_HASH_IV}`;
-
-    console.log("5. 排序後的原始字串 (檢查有無奇怪符號):", rawString);
-
-    let encodedString = encodeURIComponent(rawString).toLowerCase();
-    encodedString = encodedString
-      .replace(/%2d/g, '-')
-      .replace(/%5f/g, '_')
-      .replace(/%2e/g, '.')
-      .replace(/%21/g, '!')
-      .replace(/%2a/g, '*')
-      .replace(/%28/g, '(')
-      .replace(/%29/g, ')')
-      .replace(/%20/g, '+');
-
-    params.CheckMacValue = crypto.createHash('sha256').update(encodedString).digest('hex').toUpperCase();
-
-    console.log("6. 最終產生的 CheckMacValue:", params.CheckMacValue);
-    console.log("========= 檢查結束 =========");
-
-    res.status(200).json({
-      status: 'success',
-      paymentUrl: ECPAY_BASE_URL,
-      paymentParams: params
-    });
-
   } catch (error) {
-    console.error("❌ 發生錯誤:", error.message);
-    res.status(500).json({ status: 'error', message: error.message });
+    console.error("❌ PayUni Error:", error);
+    return res.status(500).json({
+      status: "error",
+      message: error?.message || "Server error",
+    });
   }
 }
