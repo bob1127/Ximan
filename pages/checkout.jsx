@@ -1,3 +1,4 @@
+// pages/checkout.js
 "use client";
 import React, { useState } from "react";
 import { useCart } from "../components/context/CartContext";
@@ -21,9 +22,8 @@ export default function CheckoutPage() {
     return acc + priceNum * item.quantity;
   }, 0);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleCheckout = async (e) => {
     e.preventDefault();
@@ -49,10 +49,7 @@ export default function CheckoutPage() {
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cartItems: cleanCartItems,
-          customer: formData,
-        }),
+        body: JSON.stringify({ cartItems: cleanCartItems, customer: formData }),
       });
 
       const data = await res.json();
@@ -63,24 +60,41 @@ export default function CheckoutPage() {
         return;
       }
 
-      // ✅ 建立 PayUni 表單並自動提交
+      // ✅（除錯）確認後端回來的欄位
+      // console.log("PayUni payload:", data);
+
+      // ✅ 建立 PayUni 表單並自動提交（新版：EncryptInfo / HashInfo）
       const form = document.createElement("form");
       form.method = "POST";
-      form.action = data.paymentUrl; // ✅ https://api.payuni.com.tw/api/upp/payment
-
-      // ✅ PayUni 必要欄位：MerID / TradeInfo / TradeSha / Version
+      form.action = data.paymentUrl; // ✅ https://api.payuni.com.tw/api/upp
       const fields = {
         MerID: data.MerID,
-        TradeInfo: data.TradeInfo,
-        TradeSha: data.TradeSha,
+        EncryptInfo: data.EncryptInfo,
+        HashInfo: data.HashInfo,
         Version: data.Version || "1.0",
       };
+
+      // ✅ 最基本的防呆：缺欄位就直接提示，不要送出去才看到紫色錯誤頁
+      const missing = Object.entries(fields)
+        .filter(([_, v]) => !v)
+        .map(([k]) => k);
+
+      if (missing.length > 0) {
+        console.error("PayUni missing fields:", missing, fields);
+        alert(
+          "PayUni 缺少欄位：" +
+            missing.join(", ") +
+            "（請檢查 /api/create-order 回傳）"
+        );
+        setLoading(false);
+        return;
+      }
 
       Object.entries(fields).forEach(([key, value]) => {
         const input = document.createElement("input");
         input.type = "hidden";
         input.name = key;
-        input.value = value;
+        input.value = String(value);
         form.appendChild(input);
       });
 
@@ -93,9 +107,8 @@ export default function CheckoutPage() {
     }
   };
 
-  if (cartItems.length === 0) {
+  if (cartItems.length === 0)
     return <div className="p-20 text-center">購物車是空的</div>;
-  }
 
   return (
     <div className="min-h-screen bg-white text-[#1A1A1A] pt-24 pb-20">
@@ -145,6 +158,7 @@ export default function CheckoutPage() {
                 className="border border-gray-300 p-3 outline-none"
               />
             </div>
+
             <div className="grid grid-cols-3 gap-4">
               <select
                 name="city"
@@ -157,6 +171,7 @@ export default function CheckoutPage() {
                 <option value="台中市">台中市</option>
                 <option value="高雄市">高雄市</option>
               </select>
+
               <input
                 type="text"
                 name="address"
@@ -167,6 +182,7 @@ export default function CheckoutPage() {
                 className="col-span-2 border border-gray-300 p-3 outline-none"
               />
             </div>
+
             <input
               type="text"
               name="postalCode"
