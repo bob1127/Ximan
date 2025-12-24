@@ -78,6 +78,12 @@ export default async function handler(req, res) {
         city: customer?.city || "",
         postcode: customer?.postalCode || "",
       },
+      shipping: {
+        first_name: customer?.name || "",
+        address_1: customer?.address || "",
+        city: customer?.city || "",
+        postcode: customer?.postalCode || "",
+      },
       line_items: (cartItems || []).map((item) => ({
         product_id: item.id, // ⚠️ 請確保這是 Woo 的 product_id
         quantity: item.quantity,
@@ -102,8 +108,9 @@ export default async function handler(req, res) {
       ProdDesc: `Order${orderNo}`,
       UsrMail: customer?.email || "",
       ReturnURL: `${SITE_URL}/api/payuni/return`,
-      NotifyURL: `${SITE_URL}/api/payuni/notify`, // ✅ 打開 Notify（付款成功會打回來）
-      BackURL: `${SITE_URL}/order-lookup`, // ✅ 可選：付款完成回到哪（你可改成成功頁）
+      NotifyURL: `${SITE_URL}/api/payuni/notify`,
+      BackURL: `${SITE_URL}/order-lookup`,
+      PaymentType: "CREDIT,ATM,CVS", // ✅ 顯示信用卡/ATM/超商（依你後台開通）
     };
 
     const plaintext = querystring.stringify(payload);
@@ -116,8 +123,17 @@ export default async function handler(req, res) {
 
     console.log("=== PayUni UPP Debug ===");
     console.log("orderNo:", orderNo, "amt:", amt);
+    console.log("PaymentType:", payload.PaymentType);
     console.log("NotifyURL:", payload.NotifyURL);
     console.log("ReturnURL:", payload.ReturnURL);
+
+    // ===== 4) ✅ 下單成功信（待付款）=====
+    // 用你自己的 send-order-email API（會防重複 & 寫 meta）
+    fetch(`${SITE_URL}/api/send-order-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: wooOrder.id, type: "ORDER_CREATED" }),
+    }).catch((e) => console.error("send ORDER_CREATED email failed:", e));
 
     return res.status(200).json({
       status: "success",

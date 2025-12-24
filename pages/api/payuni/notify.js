@@ -25,24 +25,22 @@ function sha256PayUni(encryptStr, keyRaw, ivBuf) {
   return hash.digest("hex").toUpperCase();
 }
 
-// 判斷付款成功（PayUni 欄位名稱可能依你申請的版本不同，這裡做「多條件容錯」）
+// 判斷付款成功（容錯）
 function isPaidSuccess(obj) {
   const v = (x) => String(x ?? "").toUpperCase();
 
-  // 常見可能欄位（不保證全都有）
   const rtnCode = v(obj.RtnCode || obj.Rtncode || obj.ReturnCode || obj.Status);
   const tradeStatus = v(obj.TradeStatus || obj.TradeStatusCode || obj.PayStatus);
 
-  // 常見成功值：'1' / 'SUCCESS' / 'OK'
   if (rtnCode === "1" || rtnCode === "SUCCESS" || rtnCode === "OK") return true;
   if (tradeStatus === "1" || tradeStatus === "SUCCESS" || tradeStatus === "OK")
     return true;
 
+  // 有些會回傳 TradeAmt/PayTime 等，但不回成功碼，這裡不做推測，避免誤判
   return false;
 }
 
 export default async function handler(req, res) {
-  // PayUni 多半用 POST 通知
   if (req.method !== "POST") {
     return res.status(405).send("Method Not Allowed");
   }
@@ -51,13 +49,14 @@ export default async function handler(req, res) {
     const MerID = process.env.PAYUNI_MERCHANT_ID;
     const HashKeyRaw = process.env.PAYUNI_HASH_KEY;
     const HashIVRaw = process.env.PAYUNI_HASH_IV;
+    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
     const WC_SITE_URL = process.env.WC_SITE_URL;
     const WC_CONSUMER_KEY = process.env.WC_CONSUMER_KEY;
     const WC_CONSUMER_SECRET = process.env.WC_CONSUMER_SECRET;
 
-    if (!MerID || !HashKeyRaw || !HashIVRaw) {
-      throw new Error("PayUni env missing");
+    if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL) {
+      throw new Error("PayUni env missing (MerID/HashKey/HashIV/SITE_URL)");
     }
     if (!WC_SITE_URL || !WC_CONSUMER_KEY || !WC_CONSUMER_SECRET) {
       throw new Error("Woo env missing");
@@ -66,7 +65,6 @@ export default async function handler(req, res) {
     const keyBuf = Buffer.from(HashKeyRaw, "utf8");
     const ivBuf = Buffer.from(HashIVRaw, "utf8");
 
-    // PayUni 通常會送：EncryptInfo / HashInfo / MerID / Version...
     const body = req.body || {};
     const recvMerID = body.MerID || body.MerId || body.merid;
     const EncryptInfo = body.EncryptInfo || body.encryptInfo || body.Encryptinfo;
@@ -97,7 +95,7 @@ export default async function handler(req, res) {
     console.log("plaintext:", plaintext);
     console.log("parsed:", data);
 
-    // 3) 取訂單號（你 create-order 用 MerTradeNo = wooOrder.id）
+    // 3) 取訂單號
     const orderNo =
       data.MerTradeNo || data.mertradeno || data.MerTradeNO || data.OrderNo;
     if (!orderNo) {
@@ -107,7 +105,7 @@ export default async function handler(req, res) {
     // 4) 判斷付款成功
     const paid = isPaidSuccess(data);
 
-    // 5) 更新 Woo 訂單狀態
+    // 5) Woo API
     const api = new WooCommerceRestApi({
       url: WC_SITE_URL,
       consumerKey: WC_CONSUMER_KEY,
@@ -115,32 +113,59 @@ export default async function handler(req, res) {
       version: "wc/v3",
     });
 
+    // 6) 先抓訂單，做「防重複處理」
+    const orderRes = await api.get(`orders/${encodeURIComponent(String(orderNo))}`);
+    const order = orderRes.data;
+    const meta = Array.isArray(order.meta_data) ? order.meta_data : [];
+    const getMeta = (k) => meta.find((m) => m?.key === k)?.value;
+    const paidMarked = String(getMeta("_payuni_paid") || "0") === "1";
+    const emailSent = String(getMeta("_email_payment_success_sent") || "0") === "1";
+
+    // 交易序號（若 PayUni 有回傳）
+    const transactionId =
+      data.TradeNo || data.TradeNO || data.TransactionId || data.PayNo || "";
+
     if (paid) {
-      // 交易序號（若 PayUni 有回傳）
-      const transactionId =
-        data.TradeNo || data.TradeNO || data.TransactionId || data.PayNo || "";
+      // ✅ 如果已經處理過 paid，直接回 OK（避免重複改狀態）
+      if (!paidMarked) {
+        await api.put(`orders/${encodeURIComponent(String(orderNo))}`, {
+          status: "processing",
+          set_paid: true,
+          transaction_id: transactionId ? String(transactionId) : undefined,
+          meta_data: [
+            { key: "_payuni_paid", value: "1" },
+            { key: "_payuni_notify_time", value: String(Date.now()) },
+            ...(transactionId ? [{ key: "_payuni_trade_no", value: String(transactionId) }] : []),
+          ],
+        });
+        console.log(`✅ Woo order #${orderNo} updated to processing`);
+      } else {
+        console.log(`ℹ️ Woo order #${orderNo} already marked paid, skip status update`);
+      }
 
-      await api.put(`orders/${encodeURIComponent(String(orderNo))}`, {
-        status: "processing", // ✅ 你要的「處理中」
-        set_paid: true,
-        transaction_id: transactionId ? String(transactionId) : undefined,
-        meta_data: [
-          { key: "_payuni_paid", value: "1" },
-          { key: "_payuni_notify_time", value: String(Date.now()) },
-        ],
-      });
+      // ✅ 付款成功信（防重複）
+      if (!emailSent) {
+        fetch(`${SITE_URL}/api/send-order-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: orderNo,
+            type: "PAYMENT_SUCCESS",
+            transactionId: transactionId ? String(transactionId) : undefined,
+          }),
+        }).catch((e) => console.error("send PAYMENT_SUCCESS email failed:", e));
+      } else {
+        console.log(`ℹ️ payment success email already sent for order #${orderNo}`);
+      }
 
-      console.log(`✅ Woo order #${orderNo} updated to processing`);
-      // PayUni 通常只要 200/OK
       return res.status(200).send("OK");
     } else {
-      // 未成功可選擇標 failed/on-hold（看你需求）
       console.log(`⚠️ PayUni notify not paid, order #${orderNo} keep pending`);
       return res.status(200).send("OK");
     }
   } catch (err) {
     console.error("❌ payuni notify error:", err);
-    // PayUni 通常還是會重試，所以回 500 讓它重送（或你也可回 200 但會吞錯）
+    // 讓 PayUni 重送以便修復（或你也可回 200 吞錯）
     return res.status(500).send("Server Error");
   }
 }
