@@ -4,6 +4,8 @@ import { ReactLenis } from "@studio-freight/react-lenis";
 import Slider from "../components/HeroSlider/page";
 import { motion } from "framer-motion"; // 引入動畫庫 (若未安裝請 npm install framer-motion)
 import Image from "next/image";
+import Link from "next/link";
+import ParallaxImage from "../components/ParallaxImage";
 // --- 子元件：文字區塊動畫設定 ---
 const FadeInSection = ({ children, delay = 0, className = "" }) => (
   <motion.div
@@ -54,7 +56,7 @@ export default function About() {
         <Slider slides={sliderData} />
 
         {/* --- 2. 關於我們 內容區塊 --- */}
-        <main className="relative z-10 bg-white">
+        <main className="relative z-10 bg-[#1A1A1A]">
           {/* Section A: 品牌故事 (極簡留白風格) */}
           <section className="px-6 py-20 md:py-32 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
@@ -87,32 +89,32 @@ export default function About() {
               {/* 右側：文字內容 (增加行距與呼吸感) */}
               <div className="lg:col-span-7 flex flex-col gap-10 lg:pt-20 text-gray-600 font-light leading-loose text-justify">
                 <FadeInSection delay={0.2}>
-                  <p className="text-xl text-gray-900 font-medium mb-4">
+                  <p className="text-xl text-[#F6F1EB] font-medium mb-4">
                     CIÉMAN 喜曼精品成立於台中。
                   </p>
-                  <p className="mb-4">
+                  <p className="mb-4 text-[#F6F1EB]">
                     我們打造一樓至二樓的精品展示空間，以柔和的光線、乾淨俐落的動線與高質感材質堆疊，
                     希望每位踏進店裡的貴賓，都能在喧囂的城市中，找到一處安靜品味生活的角落。
                   </p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.3}>
-                  <p>
+                  <p className="text-[#F6F1EB]">
                     我們專注於{" "}
-                    <span className="text-black font-medium border-b border-gray-300 pb-0.5">
+                    <span className="text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5">
                       Hermès、Chanel、Dior、Louis Vuitton
                     </span>{" "}
                     等頂級品牌。
                   </p>
-                  <p className="mt-4">
+                  <p className="mt-4 text-[#F6F1EB]">
                     從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。
                     每一處細節的堅持，都是為了讓這份美好能夠延續。
                   </p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.4}>
-                  <blockquote className="relative border-l-2 border-black pl-8 py-2 my-6 italic text-gray-500 text-lg">
-                    <span className="absolute -top-4 left-4 text-4xl text-gray-200 font-serif">
+                  <blockquote className="relative border-l-2 border-[#F6F1EB] pl-8 py-2 my-6 italic text-[#F6F1EB] text-lg">
+                    <span className="absolute -top-4 left-4 text-4xl text-[#F6F1EB] font-serif">
                       “
                     </span>
                     在 CIÉMAN，我們相信精品不僅是商品，
@@ -120,7 +122,36 @@ export default function About() {
                     更是一種風格、一種質感、一種態度的延伸。
                   </blockquote>
                 </FadeInSection>
+                <Link
+                  href="/contact"
+                  className="
+    group relative inline-flex items-center justify-center
+    h-14  w-[14rem]  border-white border-1  [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    text-sm tracking-widest
+  "
+                >
+                  {/* 外框 */}
+                  <span
+                    className="
+      absolute inset-0 border border-[#f6f1eb]
+      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    "
+                  />
 
+                  {/* 內底 */}
+                  <span
+                    className="
+      relative z-10 w-full h-full
+      inline-flex items-center justify-center
+      bg-[#f6f1eb] text-[#1a1a1a]
+      transition-colors duration-300
+      group-hover:bg-[#1a1a1a] group-hover:text-[#f6f1eb]
+      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    "
+                  >
+                    CONTACT
+                  </span>
+                </Link>
                 {/* 額外增加一段裝飾或結尾，平衡左右長度 (可選) */}
                 <FadeInSection delay={0.5}>
                   <div className="h-[1px] w-20 bg-gray-200 mt-8 mb-4"></div>
@@ -131,9 +162,172 @@ export default function About() {
               </div>
             </div>
           </section>
+          <div className="w-full  h-screen relative">
+            <div className="txt absolute w-[400px] z-50 left-[13%] top-1/2 -translate-y-1/2">
+              <img
+                src="/images/about/logo_wh.svg"
+                alt=""
+                className="w-[500px]"
+              />
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
+              <ParallaxImage src="/images/index/DSCF7419.JPG" alt="" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+            {/* LEFT */}
+            <div className="relative w-full min-h-[70vh] lg:h-screen">
+              {/* TEXT */}
+              <div className="relative lg:sticky z-50 pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[200px]">
+                <p className="text-white mt-5 text-right w- lg:w-1/2 text-[14px] leading-relaxed">
+                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                  Magnam veniam obcaecati veritatis assumenda, et tempora
+                  pariatur? Ullam accusamus maxime officia recusandae,
+                  exercitationem sed? Minus hic culpa repudiandae suscipit?
+                  Vitae, soluta.
+                </p>
+              </div>
+
+              {/* IMAGE */}
+              <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
+                <ParallaxImage src="/images/index/DSCF7440.JPG" alt="" />
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="relative w-full min-h-[70vh] lg:h-screen">
+              {/* TEXT */}
+              <div className="relative lg:sticky z-50 pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[250px]">
+                <div className="mt-5 text-right w-2/3 lg:w-1/2">
+                  <h3 className="text-white text-[32px] lg:text-[42px]">
+                    FEATURE
+                  </h3>
+                  <h3 className="text-white text-[20px] lg:text-[28px]">
+                    舒適的空間環境
+                  </h3>
+                  <p className="text-white text-[14px] leading-relaxed mt-2">
+                    打造值得信賴、具品味的精品交換中心，
+                    成為連結精品收藏、品味生活與長期價值的橋樑。
+                  </p>
+                </div>
+              </div>
+
+              {/* IMAGE */}
+              <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
+                <ParallaxImage src="/images/index/DSCF7416.JPG" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 mt-12 lg:mt-20 gap-10 lg:gap-0">
+            {/* Left: Images */}
+            <div className="space-y-10">
+              {/* Hero image */}
+              <div className="relative w-full overflow-hidden rounded-2xl">
+                {/* 高度自適應：手機較矮、桌機更高 */}
+                <div className="relative h-[60vh] min-h-[420px] lg:h-screen">
+                  <div className="absolute inset-0 flex justify-center">
+                    <div className="w-[94%] h-full overflow-hidden will-change-transform">
+                      <ParallaxImage src="/images/index/DSCF7003.jpg" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Two smaller images */}
+              <div className="space-y-10">
+                <div className="relative w-full">
+                  <div className="relative h-[420px] sm:h-[480px] lg:h-[520px]">
+                    <div className="absolute inset-0 flex justify-end sm:pr-6 pr-4">
+                      <div className="w-[94%] max-w-[420px] max-h-[420px] overflow-hidden will-change-transform">
+                        <ParallaxImage
+                          src="/images/index/DSCF7160.webp"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative w-full">
+                  <div className="relative h-[420px] sm:h-[480px] lg:h-[520px]">
+                    <div className="absolute inset-0 flex justify-center">
+                      <div className="w-[94%] max-w-[420px] max-h-[420px] overflow-hidden will-change-transform">
+                        <ParallaxImage
+                          src="/images/index/DSCF6017.jpg"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Text */}
+            <div className="relative">
+              <div
+                className="
+        flex flex-col  justify-end
+        px-4 sm:px-6  lg:pl-10 lg:pr-8
+        lg:sticky lg:top-[200px]
+        h-auto lg:h-[300px]
+      "
+              >
+                <h2 className="text-[28px] sm:text-[36px] lg:text-[42px] font-light text-[#F6F1EB] leading-snug">
+                  成為連結精品收藏、
+                  <br className="hidden sm:block" />
+                  品味生活與長期價值的橋樑。
+                </h2>
+
+                <p
+                  className="
+          text-[#F6F1EB]   font-light leading-loose tracking-wider
+          text-[14px] sm:text-[16px]
+          mt-4 sm:mt-5
+          w-full max-w-prose
+        "
+                >
+                  我們專注於 Hermès、Chanel、Dior、Louis Vuitton 等頂級品牌。
+                  從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。
+                  每一處細節的堅持，都是為了讓這份美好能夠延續。
+                </p>
+                <Link
+                  href="/category"
+                  className="
+    group relative inline-flex   items-center justify-center
+    h-14  w-[14rem]  border-white border-1  [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    text-sm tracking-widest
+  "
+                >
+                  {/* 外框 */}
+                  <span
+                    className=" 
+      absolute inset-0 border border-[#f6f1eb]
+      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    "
+                  />
+
+                  {/* 內底 */}
+                  <span
+                    className="
+      relative z-10 w-full h-full
+      inline-flex items-center justify-center
+      bg-[#f6f1eb] text-[#1a1a1a]
+      transition-colors duration-300
+      group-hover:bg-[#1a1a1a] group-hover:text-[#f6f1eb]
+      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
+    "
+                  >
+                    MORE
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
 
           {/* Section B: 願景 Vision (黑底沈浸式) */}
-          <section className="bg-[#111] text-white py-32  bg-[url('/images/index/DSCF7086.webp')] bg-cover bg-no-repeat bg-center px-6">
+          {/* <section className="bg-[#111] text-white py-32  bg-[url('/images/index/DSCF7086.webp')] bg-cover bg-no-repeat bg-center px-6">
             <div className="max-w-4xl mx-auto text-center py-20">
               <FadeInSection>
                 <span className="text-gold-500 text-xs tracking-[0.3em] uppercase opacity-60 block mb-6">
@@ -149,7 +343,7 @@ export default function About() {
                 <div className="w-16 h-[1px] bg-white/20 mx-auto"></div>
               </FadeInSection>
             </div>
-          </section>
+          </section> */}
 
           {/* Section C: 服務精神 & 三大保證 (雜誌風格排版) */}
           <section className="px-6 py-24 max-w-7xl mx-auto">
@@ -255,21 +449,6 @@ export default function About() {
                 </FadeInSection>
               </div>
             </div>
-          </section>
-
-          {/* 底部 CTA */}
-          <section className="py-20 text-center bg-gray-50">
-            <FadeInSection>
-              <p className="text-gray-500 mb-6 font-serif italic">
-                Discover your next collection.
-              </p>
-              <a
-                href="/contact"
-                className="inline-block bg-black text-white px-8 py-3 text-sm tracking-widest hover:bg-gray-800 transition-colors uppercase"
-              >
-                Contact Us
-              </a>
-            </FadeInSection>
           </section>
         </main>
       </div>
