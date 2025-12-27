@@ -4,7 +4,18 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../../components/context/UserContext";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, ShoppingBag, LogOut, MapPin, Mail, Phone } from "lucide-react";
+import {
+  User,
+  ShoppingBag,
+  LogOut,
+  MapPin,
+  Mail,
+  Phone,
+  CreditCard,
+  Truck,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 
 export default function MemberProfile() {
   const { userInfo, logout, loading } = useUser();
@@ -12,6 +23,7 @@ export default function MemberProfile() {
   const [activeTab, setActiveTab] = useState("profile"); // 'profile' | 'orders'
   const [orders, setOrders] = useState([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [expandedOrders, setExpandedOrders] = useState({}); // { [orderId]: boolean }
 
   // 1. 檢查登入狀態
   useEffect(() => {
@@ -22,19 +34,17 @@ export default function MemberProfile() {
 
   // 2. 抓取訂單資料
   useEffect(() => {
-    // 🔍 Debug: 檢查有沒有 email
     console.log("準備抓取訂單，目前 UserInfo:", userInfo);
 
     if (userInfo?.email && activeTab === "orders") {
       setIsLoadingOrders(true);
 
-      // 🔍 Debug: 印出 API 請求網址
       console.log(`Fetching: /api/member/orders?email=${userInfo.email}`);
 
       fetch(`/api/member/orders?email=${userInfo.email}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("API 回傳資料:", data); // 🔍 Debug: 看看回傳了什麼
+          console.log("API 回傳資料:", data);
           setOrders(Array.isArray(data) ? data : []);
           setIsLoadingOrders(false);
         })
@@ -45,7 +55,14 @@ export default function MemberProfile() {
     }
   }, [userInfo, activeTab]);
 
-  if (loading || !userInfo) return null; // 或顯示 Loading Spinner
+  const toggleExpanded = (orderId) => {
+    setExpandedOrders((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
+
+  if (loading || !userInfo) return null;
 
   return (
     <>
@@ -107,47 +124,165 @@ export default function MemberProfile() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <h2 className="text-xl font-bold uppercase tracking-widest mb-6 pb-2 border-b border-gray-200">
-                      Profile Details
-                    </h2>
+                    <div className="flex items-end justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
+                      <div>
+                        <h2 className="text-xl font-bold uppercase tracking-widest">
+                          Profile Details
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          管理您的會員資料與預設運送資訊
+                        </p>
+                      </div>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="bg-[#f9f9f9] p-8 rounded-sm">
-                        <div className="flex items-center gap-3 mb-6">
-                          <div className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center text-lg font-bold">
-                            {userInfo.name.charAt(0).toUpperCase()}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      {/* 左：帳號概覽 */}
+                      <section className="lg:col-span-1 border border-gray-200 bg-white rounded-sm">
+                        <div className="p-6 border-b border-gray-100">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center text-lg font-bold">
+                              {userInfo?.name?.charAt(0)?.toUpperCase() || "U"}
+                            </div>
+                            <div>
+                              <p className="text-xs text-gray-400 uppercase tracking-wider">
+                                Account
+                              </p>
+                              <p className="text-base font-bold leading-tight">
+                                {userInfo?.name || userInfo?.username || "會員"}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                @{userInfo?.username || "—"}
+                              </p>
+                            </div>
                           </div>
+                        </div>
+
+                        <div className="p-6 space-y-4">
+                          <InfoRow
+                            icon={<Mail size={16} />}
+                            label="Email"
+                            value={userInfo?.email || "—"}
+                          />
+                          <InfoRow
+                            icon={<Phone size={16} />}
+                            label="Phone"
+                            value={
+                              userInfo?.phone || userInfo?.billing?.phone || "—"
+                            }
+                          />
+                          <InfoRow
+                            icon={<User size={16} />}
+                            label="Member Level"
+                            value={userInfo?.roleLabel || "一般會員"}
+                          />
+
+                          <div className="pt-4 border-t border-gray-100">
+                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">
+                              Quick Notes
+                            </p>
+                            <ul className="text-sm text-gray-600 space-y-2">
+                              <li className="flex items-center justify-between">
+                                <span className="text-gray-500">會員狀態</span>
+                                <span className="font-semibold">正常</span>
+                              </li>
+                              <li className="flex items-center justify-between">
+                                <span className="text-gray-500">通知</span>
+                                <span className="font-semibold">Email</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </section>
+
+                      {/* 右：預設運送地址 */}
+                      <section className="lg:col-span-2 border border-gray-200 bg-white rounded-sm">
+                        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                           <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wider">
-                              Account
+                              Default Shipping Address
                             </p>
-                            <p className="text-sm font-bold">
-                              {userInfo.username}
-                            </p>
+                            <h3 className="text-lg font-bold tracking-wide mt-1">
+                              預設運送地址
+                            </h3>
+                          </div>
+                          <div className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                            {hasShippingAddress(userInfo) ? "SET" : "NOT SET"}
                           </div>
                         </div>
 
-                        <div className="space-y-4">
-                          <div className="flex items-center gap-3 text-sm text-gray-600">
-                            <Mail size={16} />
-                            <span>{userInfo.email}</span>
-                          </div>
-                          {/* 這裡未來可以串接更詳細的 user meta */}
-                          <div className="flex items-center gap-3 text-sm text-gray-600">
-                            <User size={16} />
-                            <span>會員級別：一般會員</span>
-                          </div>
-                        </div>
-                      </div>
+                        <div className="p-6">
+                          {hasShippingAddress(userInfo) ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div className="space-y-3">
+                                <AddressRow
+                                  label="收件人"
+                                  value={
+                                    userInfo?.shipping?.name ||
+                                    userInfo?.name ||
+                                    "—"
+                                  }
+                                />
+                                <AddressRow
+                                  label="電話"
+                                  value={
+                                    userInfo?.shipping?.phone ||
+                                    userInfo?.billing?.phone ||
+                                    userInfo?.phone ||
+                                    "—"
+                                  }
+                                />
+                                <AddressRow
+                                  label="Email"
+                                  value={userInfo?.email || "—"}
+                                />
+                              </div>
 
-                      {/* 預留給地址資訊 (未來可從 WC 抓 billing address) */}
-                      <div className="border border-dashed border-gray-300 p-8 rounded-sm flex flex-col items-center justify-center text-center text-gray-400">
-                        <MapPin size={32} className="mb-2 opacity-50" />
-                        <p className="text-sm">尚未設定預設運送地址</p>
-                        <button className="mt-4 text-xs text-black font-bold underline underline-offset-4 hover:text-[#ef4628]">
-                          編輯地址 (Coming Soon)
-                        </button>
-                      </div>
+                              <div className="space-y-3">
+                                <AddressRow
+                                  label="縣市 / 區域"
+                                  value={
+                                    [
+                                      userInfo?.shipping?.state,
+                                      userInfo?.shipping?.city,
+                                    ]
+                                      .filter(Boolean)
+                                      .join(" ") || "—"
+                                  }
+                                />
+                                <AddressRow
+                                  label="地址"
+                                  value={
+                                    [
+                                      userInfo?.shipping?.address_1,
+                                      userInfo?.shipping?.address_2,
+                                    ]
+                                      .filter(Boolean)
+                                      .join(" ") || "—"
+                                  }
+                                />
+                                <AddressRow
+                                  label="郵遞區號"
+                                  value={userInfo?.shipping?.postcode || "—"}
+                                />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex items-start gap-4 bg-gray-50 border border-dashed border-gray-200 p-6 rounded-sm">
+                              <div className="mt-1 text-gray-400">
+                                <MapPin size={28} />
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-bold text-gray-800">
+                                  尚未設定預設運送地址
+                                </p>
+                                <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                                  建議您在下次結帳時填寫完整收件資訊，我們會在您同意後自動保存為預設地址，方便之後快速結帳。
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </section>
                     </div>
                   </motion.div>
                 )}
@@ -161,9 +296,19 @@ export default function MemberProfile() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <h2 className="text-xl font-bold uppercase tracking-widest mb-6 pb-2 border-b border-gray-200">
-                      Order History
-                    </h2>
+                    <div className="flex items-end justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
+                      <div>
+                        <h2 className="text-xl font-bold uppercase tracking-widest">
+                          Order History
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">
+                          檢視您的訂單狀態、付款與配送資訊
+                        </p>
+                      </div>
+                      <div className="text-xs text-gray-400 uppercase tracking-wider">
+                        {orders?.length ? `Total ${orders.length}` : ""}
+                      </div>
+                    </div>
 
                     {isLoadingOrders ? (
                       <div className="flex justify-center py-20 text-gray-400 text-sm">
@@ -184,69 +329,358 @@ export default function MemberProfile() {
                       </div>
                     ) : (
                       <div className="space-y-4">
-                        {orders.map((order) => (
-                          <div
-                            key={order.id}
-                            className="border border-gray-200 p-6 rounded-sm hover:border-black transition-colors bg-white"
-                          >
-                            <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
-                              <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-                                  Order ID
-                                </p>
-                                <p className="font-bold text-lg">#{order.id}</p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-                                  Date
-                                </p>
-                                <p className="text-sm font-medium">
-                                  {new Date(
-                                    order.date_created
-                                  ).toLocaleDateString()}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-                                  Status
-                                </p>
-                                <StatusBadge status={order.status} />
-                              </div>
-                              <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
-                                  Total
-                                </p>
-                                <p className="text-sm font-bold">
-                                  NT$ {parseInt(order.total).toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
+                        {orders.map((order) => {
+                          const expanded = Boolean(expandedOrders[order.id]);
+                          const createdDate = order?.date_created
+                            ? new Date(order.date_created)
+                            : null;
 
-                            {/* 訂單內容簡覽 (只顯示前兩樣) */}
-                            <div className="border-t border-gray-100 pt-4 mt-4">
-                              {order.line_items.slice(0, 2).map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="flex justify-between text-sm py-1"
-                                >
-                                  <span className="text-gray-600">
-                                    {item.name}{" "}
-                                    <span className="text-xs text-gray-400">
-                                      x{item.quantity}
-                                    </span>
-                                  </span>
-                                  <span>NT$ {item.subtotal}</span>
+                          const shippingName =
+                            order?.shipping?.first_name ||
+                            order?.shipping?.last_name
+                              ? `${order?.shipping?.first_name || ""} ${
+                                  order?.shipping?.last_name || ""
+                                }`.trim()
+                              : order?.billing?.first_name ||
+                                order?.billing?.last_name
+                              ? `${order?.billing?.first_name || ""} ${
+                                  order?.billing?.last_name || ""
+                                }`.trim()
+                              : "—";
+
+                          const shippingPhone =
+                            order?.shipping?.phone ||
+                            order?.billing?.phone ||
+                            "—";
+
+                          const shippingAddress = formatWCAddress(
+                            order?.shipping,
+                            order?.billing
+                          );
+
+                          return (
+                            <div
+                              key={order.id}
+                              className="border border-gray-200 rounded-sm bg-white hover:border-black transition-colors overflow-hidden"
+                            >
+                              {/* Header */}
+                              <div className="p-6">
+                                <div className="flex flex-col gap-4">
+                                  <div className="flex flex-wrap items-start justify-between gap-4">
+                                    <div>
+                                      <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                                        Order
+                                      </p>
+                                      <div className="flex items-center gap-3">
+                                        <p className="font-bold text-xl">
+                                          #{order.id}
+                                        </p>
+                                        <StatusBadge status={order.status} />
+                                      </div>
+                                      <p className="text-sm text-gray-500 mt-1">
+                                        {createdDate
+                                          ? createdDate.toLocaleString()
+                                          : "—"}
+                                      </p>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-6">
+                                      <div className="min-w-[160px]">
+                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                                          Total
+                                        </p>
+                                        <p className="text-base font-bold">
+                                          NT$ {formatMoney(order.total)}
+                                        </p>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                          {order.currency || "TWD"}
+                                        </p>
+                                      </div>
+
+                                      <div className="min-w-[180px]">
+                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                                          Payment
+                                        </p>
+                                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                                          <CreditCard
+                                            size={16}
+                                            className="text-gray-400"
+                                          />
+                                          <span className="font-semibold">
+                                            {order.payment_method_title || "—"}
+                                          </span>
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                          {order.transaction_id
+                                            ? `交易號：${order.transaction_id}`
+                                            : ""}
+                                        </p>
+                                      </div>
+
+                                      <div className="min-w-[200px]">
+                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">
+                                          Shipping
+                                        </p>
+                                        <div className="flex items-center gap-2 text-sm text-gray-700">
+                                          <Truck
+                                            size={16}
+                                            className="text-gray-400"
+                                          />
+                                          <span className="font-semibold">
+                                            {order.shipping_lines?.[0]
+                                              ?.method_title || "—"}
+                                          </span>
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                          {order.shipping_total
+                                            ? `運費：NT$ ${formatMoney(
+                                                order.shipping_total
+                                              )}`
+                                            : ""}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Recipient summary */}
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 border border-gray-100 rounded-sm p-4">
+                                    <MiniInfo
+                                      label="收件人"
+                                      value={shippingName}
+                                    />
+                                    <MiniInfo
+                                      label="電話"
+                                      value={shippingPhone}
+                                    />
+                                    <MiniInfo
+                                      label="地址"
+                                      value={shippingAddress || "—"}
+                                    />
+                                  </div>
+
+                                  {/* Expand button */}
+                                  <div className="flex justify-end">
+                                    <button
+                                      onClick={() => toggleExpanded(order.id)}
+                                      className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-black px-4 py-2 hover:bg-black hover:text-white transition-colors"
+                                    >
+                                      {expanded ? "收合明細" : "查看明細"}
+                                      {expanded ? (
+                                        <ChevronUp size={16} />
+                                      ) : (
+                                        <ChevronDown size={16} />
+                                      )}
+                                    </button>
+                                  </div>
                                 </div>
-                              ))}
-                              {order.line_items.length > 2 && (
-                                <p className="text-xs text-gray-400 mt-2">
-                                  ... 以及其他 {order.line_items.length - 2}{" "}
-                                  項商品
-                                </p>
-                              )}
+                              </div>
+
+                              {/* Details */}
+                              <AnimatePresence initial={false}>
+                                {expanded && (
+                                  <motion.div
+                                    key={`detail-${order.id}`}
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.25 }}
+                                    className="border-t border-gray-200"
+                                  >
+                                    <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                      {/* Items */}
+                                      <div className="lg:col-span-2">
+                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">
+                                          Items
+                                        </p>
+
+                                        <div className="space-y-3">
+                                          {(order.line_items || []).map(
+                                            (item) => {
+                                              const img =
+                                                item?.image?.src ||
+                                                item?.images?.[0]?.src ||
+                                                item?.featured_image ||
+                                                null;
+
+                                              const itemTotal =
+                                                item?.total &&
+                                                item?.total !== "0"
+                                                  ? item.total
+                                                  : item?.subtotal;
+
+                                              return (
+                                                <div
+                                                  key={item.id}
+                                                  className="flex items-start gap-4 border border-gray-100 rounded-sm p-4"
+                                                >
+                                                  <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-sm overflow-hidden flex items-center justify-center">
+                                                    {img ? (
+                                                      // eslint-disable-next-line @next/next/no-img-element
+                                                      <img
+                                                        src={img}
+                                                        alt={item.name}
+                                                        className="w-full h-full object-cover"
+                                                      />
+                                                    ) : (
+                                                      <ShoppingBag
+                                                        size={20}
+                                                        className="text-gray-400"
+                                                      />
+                                                    )}
+                                                  </div>
+
+                                                  <div className="flex-1 min-w-0">
+                                                    <p className="font-semibold text-sm text-gray-900 truncate">
+                                                      {item.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                      數量：x{item.quantity}
+                                                    </p>
+                                                    {!!item?.meta_data
+                                                      ?.length && (
+                                                      <div className="mt-2 space-y-1">
+                                                        {item.meta_data
+                                                          .slice(0, 2)
+                                                          .map((m) => (
+                                                            <p
+                                                              key={
+                                                                m.id || m.key
+                                                              }
+                                                              className="text-xs text-gray-400"
+                                                            >
+                                                              {m.display_key ||
+                                                                m.key}
+                                                              ：{" "}
+                                                              {String(
+                                                                m.display_value ??
+                                                                  m.value
+                                                              )}
+                                                            </p>
+                                                          ))}
+                                                        {item.meta_data.length >
+                                                          2 && (
+                                                          <p className="text-xs text-gray-400">
+                                                            ...更多規格
+                                                          </p>
+                                                        )}
+                                                      </div>
+                                                    )}
+                                                  </div>
+
+                                                  <div className="text-right">
+                                                    <p className="text-xs text-gray-400 uppercase tracking-wider">
+                                                      Subtotal
+                                                    </p>
+                                                    <p className="text-sm font-bold">
+                                                      NT${" "}
+                                                      {formatMoney(itemTotal)}
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              );
+                                            }
+                                          )}
+                                        </div>
+                                      </div>
+
+                                      {/* Summary */}
+                                      <div className="lg:col-span-1">
+                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">
+                                          Summary
+                                        </p>
+
+                                        <div className="border border-gray-200 rounded-sm p-4 space-y-3">
+                                          <SummaryRow
+                                            label="小計"
+                                            value={`NT$ ${formatMoney(
+                                              order.total -
+                                                (Number(order.shipping_total) ||
+                                                  0) +
+                                                (Number(order.discount_total) ||
+                                                  0)
+                                            )}`}
+                                            muted
+                                          />
+                                          <SummaryRow
+                                            label="折扣"
+                                            value={
+                                              Number(order.discount_total) > 0
+                                                ? `- NT$ ${formatMoney(
+                                                    order.discount_total
+                                                  )}`
+                                                : "—"
+                                            }
+                                            muted
+                                          />
+                                          <SummaryRow
+                                            label="運費"
+                                            value={
+                                              Number(order.shipping_total) > 0
+                                                ? `NT$ ${formatMoney(
+                                                    order.shipping_total
+                                                  )}`
+                                                : "—"
+                                            }
+                                            muted
+                                          />
+                                          <SummaryRow
+                                            label="稅金"
+                                            value={
+                                              Number(order.total_tax) > 0
+                                                ? `NT$ ${formatMoney(
+                                                    order.total_tax
+                                                  )}`
+                                                : "—"
+                                            }
+                                            muted
+                                          />
+                                          <div className="pt-3 border-t border-gray-200">
+                                            <SummaryRow
+                                              label="總計"
+                                              value={`NT$ ${formatMoney(
+                                                order.total
+                                              )}`}
+                                              strong
+                                            />
+                                          </div>
+                                        </div>
+
+                                        {/* Notes / meta */}
+                                        {(order.customer_note ||
+                                          order.meta_data?.length) && (
+                                          <div className="mt-4 border border-gray-200 rounded-sm p-4">
+                                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">
+                                              Notes
+                                            </p>
+                                            {order.customer_note && (
+                                              <p className="text-sm text-gray-700 leading-relaxed">
+                                                {order.customer_note}
+                                              </p>
+                                            )}
+                                            {!!order.meta_data?.length && (
+                                              <div className="mt-3 space-y-1">
+                                                {order.meta_data
+                                                  .slice(0, 3)
+                                                  .map((m) => (
+                                                    <p
+                                                      key={m.id || m.key}
+                                                      className="text-xs text-gray-500"
+                                                    >
+                                                      {m.key}：{String(m.value)}
+                                                    </p>
+                                                  ))}
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     )}
                   </motion.div>
@@ -259,6 +693,103 @@ export default function MemberProfile() {
     </>
   );
 }
+
+/* =========================
+   UI Helpers
+========================= */
+
+const InfoRow = ({ icon, label, value }) => {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="mt-[2px] text-gray-400">{icon}</div>
+      <div className="flex-1">
+        <p className="text-xs text-gray-400 uppercase tracking-wider">
+          {label}
+        </p>
+        <p className="text-sm font-semibold text-gray-800 break-words">
+          {value}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const AddressRow = ({ label, value }) => {
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <p className="text-xs text-gray-400 uppercase tracking-wider whitespace-nowrap">
+        {label}
+      </p>
+      <p className="text-sm font-semibold text-gray-800 text-right break-words">
+        {value}
+      </p>
+    </div>
+  );
+};
+
+const MiniInfo = ({ label, value }) => {
+  return (
+    <div className="min-w-0">
+      <p className="text-[11px] text-gray-400 uppercase tracking-wider">
+        {label}
+      </p>
+      <p className="text-sm font-semibold text-gray-800 break-words mt-1">
+        {value}
+      </p>
+    </div>
+  );
+};
+
+const SummaryRow = ({ label, value, strong = false, muted = false }) => {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className={`text-sm ${muted ? "text-gray-500" : "text-gray-700"}`}>
+        {label}
+      </span>
+      <span
+        className={`text-sm ${
+          strong ? "font-bold text-gray-900" : "font-semibold text-gray-800"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+};
+
+/* =========================
+   Data Helpers
+========================= */
+
+const hasShippingAddress = (userInfo) => {
+  const s = userInfo?.shipping;
+  if (!s) return false;
+  return Boolean(s.address_1 || s.city || s.state || s.postcode);
+};
+
+const formatMoney = (v) => {
+  const n = Number(v);
+  if (Number.isNaN(n)) return "0";
+  return Math.round(n).toLocaleString();
+};
+
+const formatWCAddress = (shipping, billing) => {
+  const s = shipping || {};
+  const b = billing || {};
+
+  const addr1 = s.address_1 || b.address_1;
+  const addr2 = s.address_2 || b.address_2;
+  const city = s.city || b.city;
+  const state = s.state || b.state;
+  const postcode = s.postcode || b.postcode;
+
+  const parts = [postcode, state, city, addr1, addr2].filter(Boolean);
+  return parts.join(" ");
+};
+
+/* =========================
+   Status Badge
+========================= */
 
 // 狀態標籤組件
 const StatusBadge = ({ status }) => {
@@ -278,6 +809,7 @@ const StatusBadge = ({ status }) => {
     cancelled: "已取消",
     refunded: "已退款",
     failed: "失敗",
+    "on-hold": "保留中",
   };
 
   const currentStyle = styles[status] || "bg-gray-100 text-gray-800";

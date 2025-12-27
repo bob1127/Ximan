@@ -11,7 +11,6 @@ export default function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ 門市資訊
   const [cvsStore, setCvsStore] = useState({
     storeId: "",
     storeName: "",
@@ -26,11 +25,9 @@ export default function CheckoutPage() {
     city: "台北市",
     address: "",
     postalCode: "",
-    // ✅ 新增：配送方式
     shippingMethod: "HOME", // HOME | CVS_711
   });
 
-  // ===== subtotal =====
   const subtotal = useMemo(() => {
     return cartItems.reduce((acc, item) => {
       const priceNum =
@@ -39,10 +36,17 @@ export default function CheckoutPage() {
     }, 0);
   }, [cartItems]);
 
+  const shippingFee = useMemo(() => {
+    if (formData.shippingMethod === "HOME") return 80;
+    if (formData.shippingMethod === "CVS_711") return 80;
+    return 0;
+  }, [formData.shippingMethod]);
+
+  const total = useMemo(() => subtotal + shippingFee, [subtotal, shippingFee]);
+
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // ✅ 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -59,20 +63,15 @@ export default function CheckoutPage() {
 
     if (next.storeId && next.storeName) {
       setCvsStore(next);
-      // ✅ 也存 localStorage，避免重整就消失
       try {
         localStorage.setItem("PAYUNI_CVS_STORE", JSON.stringify(next));
       } catch {}
 
-      // ✅ 選完門市後自動切到 CVS_711
       setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
-
-      // ✅ 清乾淨 URL query（避免重整又重跑）
       router.replace("/checkout", undefined, { shallow: true });
     }
   }, [router.isReady, router.query, router]);
 
-  // ✅ 初始化：從 localStorage 還原門市
   useEffect(() => {
     try {
       const raw = localStorage.getItem("PAYUNI_CVS_STORE");
@@ -82,10 +81,7 @@ export default function CheckoutPage() {
     } catch {}
   }, []);
 
-  // ✅ 開啟 7-11 門市地圖（前景）
   const openCvsMap = () => {
-    // 直接跳到你新增的 map API，它會回 HTML form auto submit
-    // 可加 query: goodsType=1&lgsType=C2C&shipType=1&mapType=1
     window.location.href =
       "/api/payuni/cvs/map?goodsType=1&lgsType=C2C&shipType=1&mapType=1";
   };
@@ -100,19 +96,16 @@ export default function CheckoutPage() {
   const handleCheckout = async (e) => {
     e.preventDefault();
 
-    // ✅ 基本必填
     if (!formData.name || !formData.email || !formData.phone) {
       alert("請填寫所有必填欄位");
       return;
     }
 
-    // ✅ HOME 才需要地址
     if (formData.shippingMethod === "HOME" && !formData.address) {
       alert("宅配請填寫詳細地址");
       return;
     }
 
-    // ✅ CVS 必須選門市
     if (formData.shippingMethod === "CVS_711") {
       if (!cvsStore.storeId || !cvsStore.storeName) {
         alert("請先選擇 7-11 門市");
@@ -127,7 +120,6 @@ export default function CheckoutPage() {
       price: parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0,
     }));
 
-    // ✅ 把門市資料一起送去 create-order
     const customerPayload = {
       ...formData,
       cvs: formData.shippingMethod === "CVS_711" ? cvsStore : null,
@@ -151,24 +143,24 @@ export default function CheckoutPage() {
         return;
       }
 
-      // ✅ 建立 PayUni 表單並自動提交
       const form = document.createElement("form");
       form.method = "POST";
       form.action = data.paymentUrl;
 
-      const fields = {
-        MerID: data.MerID,
-        EncryptInfo: data.EncryptInfo,
-        HashInfo: data.HashInfo,
-        Version: data.Version || "1.0",
-      };
+      // ✅ 同時兼容兩種命名
+      const MerID = data.MerID || data.MerchantID;
+      const EncryptInfo = data.EncryptInfo || data.TradeInfo;
+      const HashInfo = data.HashInfo || data.TradeSha;
+      const Version = data.Version || "1.0";
+
+      const fields = { MerID, EncryptInfo, HashInfo, Version };
 
       const missing = Object.entries(fields)
         .filter(([_, v]) => !v)
         .map(([k]) => k);
 
       if (missing.length > 0) {
-        console.error("PayUni missing fields:", missing, fields);
+        console.error("PayUni missing fields:", missing, fields, data);
         alert("PayUni 缺少欄位：" + missing.join(", "));
         setLoading(false);
         return;
@@ -220,7 +212,6 @@ export default function CheckoutPage() {
               className="w-full border border-gray-300 p-3 outline-none focus:border-black"
             />
 
-            {/* ✅ 配送方式 */}
             <h2 className="text-lg font-bold uppercase tracking-widest mt-8">
               Shipping Method
             </h2>
@@ -234,7 +225,7 @@ export default function CheckoutPage() {
                   checked={formData.shippingMethod === "HOME"}
                   onChange={handleChange}
                 />
-                <span>宅配（填地址）</span>
+                <span>宅配（運費 NT$80）</span>
               </label>
 
               <label className="flex items-center gap-2">
@@ -245,11 +236,10 @@ export default function CheckoutPage() {
                   checked={formData.shippingMethod === "CVS_711"}
                   onChange={handleChange}
                 />
-                <span>7-11 店到店（選門市）</span>
+                <span>7-11 店到店（運費 NT$80）</span>
               </label>
             </div>
 
-            {/* ✅ 7-11 門市選擇區塊 */}
             {formData.shippingMethod === "CVS_711" && (
               <div className="border border-gray-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
@@ -400,10 +390,20 @@ export default function CheckoutPage() {
                 <span>Subtotal</span>
                 <span>NT$ {subtotal.toLocaleString()}</span>
               </div>
+
+              <div className="flex justify-between text-gray-600 text-sm">
+                <span>Shipping</span>
+                <span>NT$ {shippingFee.toLocaleString()}</span>
+              </div>
+
               <div className="flex justify-between text-xl font-bold border-t border-gray-200 pt-4">
                 <span>Total</span>
-                <span>NT$ {subtotal.toLocaleString()}</span>
+                <span>NT$ {total.toLocaleString()}</span>
               </div>
+
+              <p className="text-xs text-gray-400 mt-2">
+                * 最終金額以建立 Woo 訂單後的計算結果為準
+              </p>
             </div>
           </div>
         </div>

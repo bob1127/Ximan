@@ -44,14 +44,14 @@ export default function CheckoutSuccess() {
               href="/"
               className="block w-full py-4 border border-black bg-black text-white text-sm tracking-widest hover:bg-gray-800 transition-colors duration-300"
             >
-              RETURN TO HOME
+              回首頁
             </Link>
 
             <Link
-              href="/account"
+              href="/member/profile"
               className="block w-full py-4 border border-gray-200 text-gray-600 text-sm tracking-widest hover:border-black hover:text-black transition-colors duration-300"
             >
-              VIEW MY ORDERS
+              查看訂單
             </Link>
           </div>
         </div>
