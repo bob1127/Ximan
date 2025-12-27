@@ -1,9 +1,12 @@
 // pages/checkout.js
 "use client";
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useCart } from "../components/context/CartContext";
 import Image from "next/image";
 import { useRouter } from "next/router";
+
+const STORAGE_KEY = "PAYUNI_CVS_STORE";
 
 export default function CheckoutPage() {
   const { cartItems } = useCart();
@@ -26,7 +29,6 @@ export default function CheckoutPage() {
     city: "台北市",
     address: "",
     postalCode: "",
-    // ✅ 新增：配送方式
     shippingMethod: "HOME", // HOME | CVS_711
   });
 
@@ -40,52 +42,69 @@ export default function CheckoutPage() {
   }, [cartItems]);
 
   const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  // ✅ 初始化：從 localStorage 還原門市 + 若有門市就預設切到 CVS_711
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+
+      const parsed = JSON.parse(raw);
+      if (parsed?.storeId && parsed?.storeName) {
+        setCvsStore({
+          storeId: String(parsed.storeId || ""),
+          storeName: String(parsed.storeName || ""),
+          address: String(parsed.address || ""),
+          insularArea: String(parsed.insularArea || ""),
+        });
+
+        // ✅ 這行是你缺的：重整/回跳後不要回到 HOME
+        setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // ✅ 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
   useEffect(() => {
     if (!router.isReady) return;
 
-    const { cvs, storeId, storeName, address, insularArea } =
-      router.query || {};
-    if (String(cvs) !== "1") return;
+    const q = router.query || {};
+    const cvs = String(q.cvs || "");
+    if (cvs !== "1") return;
 
     const next = {
-      storeId: String(storeId || ""),
-      storeName: String(storeName || ""),
-      address: String(address || ""),
-      insularArea: String(insularArea || ""),
+      storeId: String(q.storeId || ""),
+      storeName: String(q.storeName || ""),
+      address: String(q.address || ""),
+      insularArea: String(q.insularArea || ""),
     };
 
+    // ✅ 只有真的有回到門市資料才處理（避免空值把原本門市覆蓋掉）
     if (next.storeId && next.storeName) {
       setCvsStore(next);
-      // ✅ 也存 localStorage，避免重整就消失
+
       try {
-        localStorage.setItem("PAYUNI_CVS_STORE", JSON.stringify(next));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       } catch {}
 
-      // ✅ 選完門市後自動切到 CVS_711
+      // ✅ 選完門市後固定切到 CVS_711
       setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
 
-      // ✅ 清乾淨 URL query（避免重整又重跑）
+      // ✅ 清掉 query（避免重整又重跑，或一直帶著 cvs=1）
+      router.replace("/checkout", undefined, { shallow: true });
+    } else {
+      // 若回來是空值，不要覆蓋現有門市；但仍把 query 清掉避免卡住
       router.replace("/checkout", undefined, { shallow: true });
     }
-  }, [router.isReady, router.query, router]);
-
-  // ✅ 初始化：從 localStorage 還原門市
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("PAYUNI_CVS_STORE");
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed?.storeId && parsed?.storeName) setCvsStore(parsed);
-    } catch {}
-  }, []);
+  }, [router.isReady, router.query]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ✅ 開啟 7-11 門市地圖（前景）
   const openCvsMap = () => {
-    // 直接跳到你新增的 map API，它會回 HTML form auto submit
-    // 可加 query: goodsType=1&lgsType=C2C&shipType=1&mapType=1
     window.location.href =
       "/api/payuni/cvs/map?goodsType=1&lgsType=C2C&shipType=1&mapType=1";
   };
@@ -93,8 +112,12 @@ export default function CheckoutPage() {
   const clearCvsStore = () => {
     setCvsStore({ storeId: "", storeName: "", address: "", insularArea: "" });
     try {
-      localStorage.removeItem("PAYUNI_CVS_STORE");
+      localStorage.removeItem(STORAGE_KEY);
     } catch {}
+
+    // ✅ 清掉門市後，留在你當前選項不強迫切 HOME
+    // 如果你想清掉後直接回 HOME，把下面取消註解：
+    // setFormData((prev) => ({ ...prev, shippingMethod: "HOME" }));
   };
 
   const handleCheckout = async (e) => {
