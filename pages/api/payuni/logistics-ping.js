@@ -47,17 +47,20 @@ export default async function handler(req, res) {
     const keyBuf = Buffer.from(HashKeyRaw, "utf8");
     const ivBuf = Buffer.from(HashIVRaw, "utf8");
 
-    const payload = {
-      MerID,
-      Version: "1.1",
-      Timestamp: Math.floor(Date.now() / 1000),
-      MerKeyNo: "1",
-      GoodsType: 1,
-      LgsType: "C2C",
-      ShipType: 1,
-      MapType: 1,
-      MapReturnURL: `${SITE_URL}/api/payuni/map-return-test`,
-    };
+// payload 裡加上 Tag: 2
+const payload = {
+  MerID,
+  Version: "1.1",
+  Timestamp: Math.floor(Date.now() / 1000),
+  MerKeyNo: "1",
+  GoodsType: 1,
+  LgsType: "C2C",
+  ShipType: 1,
+  MapType: 1,
+  Tag: 2, // ✅ 必填
+  MapReturnURL: `${SITE_URL}/api/payuni/map-return-test`,
+  MobileTag: "N",
+};
 
     const plaintext = querystring.stringify(payload);
     const EncryptInfo = encryptPayUniGCM(plaintext, keyBuf, ivBuf);
