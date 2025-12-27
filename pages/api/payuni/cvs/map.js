@@ -13,7 +13,7 @@ function encryptPayUniGCM(plaintext, keyBuf, ivBuf) {
 function sha256PayUni(encryptStr, keyRaw, ivBuf) {
   return crypto
     .createHash("sha256")
-    .update(`${keyRaw}${encryptStr}${ivBuf.toString()}`)
+    .update(`${keyRaw}${encryptStr}${ivBuf.toString("utf8")}`)
     .digest("hex")
     .toUpperCase();
 }
@@ -26,30 +26,27 @@ export default async function handler(req, res) {
   const HashIVRaw = process.env.PAYUNI_HASH_IV;
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
-  // ✅ 門市地圖 URL（照你的文件 #/7/103）
-  const SHIP_MAP_URL =
-    process.env.PAYUNI_SHIP_MAP_URL ||
-    "https://sandbox-api.payuni.com.tw/api/logistics/ship_map";
+  // ✅ 統一只用這個 env，不要 fallback sandbox
+  const SHIP_MAP_URL = process.env.PAYUNI_SHIP_MAP_URL;
 
-  if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL) {
-    return res.status(500).send("PayUni env missing");
+  if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL || !SHIP_MAP_URL) {
+    return res
+      .status(500)
+      .send(
+        "PayUni env missing: PAYUNI_MERCHANT_ID/PAYUNI_HASH_KEY/PAYUNI_HASH_IV/NEXT_PUBLIC_SITE_URL/PAYUNI_SHIP_MAP_URL"
+      );
   }
 
+  // ⚠️ 先維持 utf8（若 key/iv 是 hex，再改成 Buffer.from(x,'hex')）
   const keyBuf = Buffer.from(HashKeyRaw, "utf8");
   const ivBuf = Buffer.from(HashIVRaw, "utf8");
 
-  // 你可以從 query 決定常溫/冷凍、B2C/C2C… 先給預設常溫+7-11
-  const goodsType = Number(req.query.goodsType || 1); // 1常溫 2冷凍
-  const lgsType = String(req.query.lgsType || "C2C"); // C2C 店到店
-  const shipType = Number(req.query.shipType || 1);   // 1=7-ELEVEN
-  const mapType = Number(req.query.mapType || 1);     // 1=僅限本島 2=本島+離島
-
-  // MerKeyNo：文件說「自訂編號」，你可用時間戳
+  const goodsType = Number(req.query.goodsType || 1);
+  const lgsType = String(req.query.lgsType || "C2C");
+  const shipType = Number(req.query.shipType || 1);
+  const mapType = Number(req.query.mapType || 1);
   const merKeyNo = String(req.query.merKeyNo || `MAP_${Date.now()}`);
 
-  // MapReturnURL：PayUni 選完門市回來打這支（POST）
-  // 我這裡把 returnUrl 做成你的 /api/payuni/cvs/return
-  // 並把 merKeyNo 帶回去，方便你前端識別是哪次選門市
   const mapReturnURL = `${SITE_URL}/api/payuni/cvs/return?merKeyNo=${encodeURIComponent(
     merKeyNo
   )}`;
@@ -62,14 +59,13 @@ export default async function handler(req, res) {
     LgsType: lgsType,
     ShipType: shipType,
     MapType: mapType,
-    MapReturnURL: mapReturnURL, // C：可選，但你要接回門市一定要填
+    MapReturnURL: mapReturnURL,
   };
 
   const plaintext = querystring.stringify(encryptPayload);
   const EncryptInfo = encryptPayUniGCM(plaintext, keyBuf, ivBuf);
   const HashInfo = sha256PayUni(EncryptInfo, HashKeyRaw, ivBuf);
 
-  // PayUni 是 Form Post：回 HTML 自動送出
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   return res.send(`
 <!doctype html>

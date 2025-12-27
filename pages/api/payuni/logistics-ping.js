@@ -13,9 +13,13 @@ function encryptPayUniGCM(plaintext, keyBuf, ivBuf) {
 function sha256PayUni(encryptStr, keyRaw, ivBuf) {
   return crypto
     .createHash("sha256")
-    .update(`${keyRaw}${encryptStr}${ivBuf.toString()}`)
+    .update(`${keyRaw}${encryptStr}${ivBuf.toString("utf8")}`)
     .digest("hex")
     .toUpperCase();
+}
+
+function safePreview(str, n = 800) {
+  return String(str || "").replace(/\s+/g, " ").slice(0, n);
 }
 
 export default async function handler(req, res) {
@@ -23,35 +27,35 @@ export default async function handler(req, res) {
     const MerID = process.env.PAYUNI_MERCHANT_ID;
     const HashKeyRaw = process.env.PAYUNI_HASH_KEY;
     const HashIVRaw = process.env.PAYUNI_HASH_IV;
+    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
-    const SHIP_MAP_URL =
-      process.env.PAYUNI_LOGISTICS_SHIP_MAP_URL ||
-      "https://sandbox-api.payuni.com.tw/api/logistics/ship_map";
+    // ✅ 統一只用這個 env
+  const SHIP_MAP_URL =
+  process.env.PAYUNI_SHIP_MAP_URL ||
+  "https://sandbox-api.payuni.com.tw/api/logistics/ship_map";
 
-    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL; // 先用 ngrok https
 
-    if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL) {
+    if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL || !SHIP_MAP_URL) {
       return res.status(400).json({
         ok: false,
         message:
-          "Missing env: PAYUNI_MERCHANT_ID/PAYUNI_HASH_KEY/PAYUNI_HASH_IV/NEXT_PUBLIC_SITE_URL",
+          "Missing env: PAYUNI_MERCHANT_ID / PAYUNI_HASH_KEY / PAYUNI_HASH_IV / NEXT_PUBLIC_SITE_URL / PAYUNI_SHIP_MAP_URL",
       });
     }
 
+    // ⚠️ 先維持 utf8（如果你確認 key/iv 是 hex，再改成 Buffer.from(x,'hex')）
     const keyBuf = Buffer.from(HashKeyRaw, "utf8");
     const ivBuf = Buffer.from(HashIVRaw, "utf8");
 
-    // 用最基本必填組一包（依文件：MerID, Timestamp, MerKeyNo, GoodsType, LgsType, ShipType, MapType, MapReturnURL...）
-    // 這裡先用最常見的：7-11 / 常溫 / C2C / 本島
     const payload = {
       MerID,
       Version: "1.1",
       Timestamp: Math.floor(Date.now() / 1000),
-      MerKeyNo: "1",        // 你後台若有指定可改；先用 1
-      GoodsType: 1,         // 1=常溫
-      LgsType: "C2C",       // 店到店
-      ShipType: 1,          // 1=7-ELEVEN
-      MapType: 1,           // 1=僅限本島
+      MerKeyNo: "1",
+      GoodsType: 1,
+      LgsType: "C2C",
+      ShipType: 1,
+      MapType: 1,
       MapReturnURL: `${SITE_URL}/api/payuni/map-return-test`,
     };
 
@@ -59,7 +63,6 @@ export default async function handler(req, res) {
     const EncryptInfo = encryptPayUniGCM(plaintext, keyBuf, ivBuf);
     const HashInfo = sha256PayUni(EncryptInfo, HashKeyRaw, ivBuf);
 
-    // ship_map 是 Form Post（不是 JSON）
     const form = new URLSearchParams();
     form.append("MerID", MerID);
     form.append("Version", "1.1");
@@ -73,14 +76,12 @@ export default async function handler(req, res) {
     });
 
     const text = await r.text();
-
-    // ship_map 正常情況會回一個 HTML（地圖頁），錯誤也可能是 HTML
     return res.status(200).json({
-      ok: true,
+      ok: r.ok,
       shipMapUrl: SHIP_MAP_URL,
       status: r.status,
       contentType: r.headers.get("content-type"),
-      preview: text.slice(0, 500),
+      preview: safePreview(text),
     });
   } catch (e) {
     return res.status(500).json({ ok: false, message: e?.message || "error" });
