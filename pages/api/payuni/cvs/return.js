@@ -4,7 +4,7 @@ import querystring from "querystring";
 
 export const config = {
   api: {
-    bodyParser: false, // ✅ 我們自己解析，避免拿到空 body
+    bodyParser: false, // ✅ 讓我們自己讀 raw body（避免 next 解析失敗）
   },
 };
 
@@ -22,95 +22,68 @@ function decryptPayUniGCM(encryptHex, keyBuf, ivBuf) {
 }
 
 function sha256PayUni(encryptStr, keyRaw, ivBuf) {
-  // ✅ 用 utf8，避免 Buffer.toString() 亂出
   return crypto
     .createHash("sha256")
-    .update(`${keyRaw}${encryptStr}${ivBuf.toString("utf8")}`)
+    .update(`${keyRaw}${encryptStr}${ivBuf.toString()}`)
     .digest("hex")
     .toUpperCase();
 }
 
-function readRawBody(req) {
-  return new Promise((resolve, reject) => {
-    let data = "";
-    req.on("data", (chunk) => (data += chunk));
-    req.on("end", () => resolve(data));
-    req.on("error", reject);
-  });
-}
-
-function pick(obj, keys) {
-  for (const k of keys) {
-    if (obj && obj[k] != null && obj[k] !== "") return obj[k];
-  }
-  return "";
+// ✅ 讀 raw body
+async function readRawBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  return Buffer.concat(chunks).toString("utf8");
 }
 
 export default async function handler(req, res) {
-  // PayUni 回傳通常是 POST
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
-
-  const SITE_URL =
-    (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/+$/, "") ||
-    "http://localhost:3000";
 
   try {
     const MerID = process.env.PAYUNI_MERCHANT_ID;
     const HashKeyRaw = process.env.PAYUNI_HASH_KEY;
     const HashIVRaw = process.env.PAYUNI_HASH_IV;
+    const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
 
-    if (!MerID || !HashKeyRaw || !HashIVRaw) {
+    if (!MerID || !HashKeyRaw || !HashIVRaw || !SITE_URL) {
       throw new Error("PayUni env missing");
     }
 
-    // ⚠️ 先維持 utf8；若你確認 key/iv 是 hex，再改成 Buffer.from(x,'hex')
     const keyBuf = Buffer.from(HashKeyRaw, "utf8");
     const ivBuf = Buffer.from(HashIVRaw, "utf8");
 
-    // ✅ 解析 raw body（form 或 json）
+    // ✅ 讀 PayUni POST 回來的 form body
     const raw = await readRawBody(req);
-    const contentType = String(req.headers["content-type"] || "");
+    const form = Object.fromEntries(new URLSearchParams(raw));
 
-    let body = {};
-    if (contentType.includes("application/x-www-form-urlencoded")) {
-      body = Object.fromEntries(new URLSearchParams(raw));
-    } else if (contentType.includes("application/json")) {
-      body = raw ? JSON.parse(raw) : {};
-    } else {
-      // fallback：先嘗試 form
-      body = Object.fromEntries(new URLSearchParams(raw));
-      if (Object.keys(body).length === 0) {
-        try {
-          body = raw ? JSON.parse(raw) : {};
-        } catch {
-          body = {};
-        }
-      }
-    }
+    // ✅ Debug：一定要看到 PayUni 有沒有回 EncryptInfo/HashInfo
+    console.log("✅ PayUni return raw:", raw?.slice(0, 500));
+    console.log("✅ PayUni return parsed keys:", Object.keys(form));
 
-    const recvMerID = pick(body, ["MerID", "MerId", "merid", "merID"]);
-    const EncryptInfo = pick(body, ["EncryptInfo", "encryptInfo", "Encryptinfo"]);
-    const HashInfo = pick(body, ["HashInfo", "hashInfo", "Hashinfo"]);
+    const recvMerID = form.MerID || form.MerId || form.merid;
+    const EncryptInfo = form.EncryptInfo || form.encryptInfo || form.Encryptinfo;
+    const HashInfo = form.HashInfo || form.hashInfo || form.Hashinfo;
 
     if (!EncryptInfo || !HashInfo) {
-      console.log("⚠️ PayUni return missing Encrypt/Hash", {
-        contentType,
-        rawPreview: String(raw || "").slice(0, 500),
-        bodyKeys: Object.keys(body || {}),
+      console.warn("⚠️ PayUni return missing EncryptInfo/HashInfo", {
+        recvMerID,
+        hasEncrypt: !!EncryptInfo,
+        hasHash: !!HashInfo,
       });
       return res.status(400).send("Missing EncryptInfo/HashInfo");
     }
 
     if (recvMerID && String(recvMerID) !== String(MerID)) {
+      console.warn("⚠️ MerID mismatch", { recvMerID, MerID });
       return res.status(400).send("MerID mismatch");
     }
 
     // ✅ 驗 Hash
     const expectedHash = sha256PayUni(EncryptInfo, HashKeyRaw, ivBuf);
     if (String(HashInfo).toUpperCase() !== expectedHash) {
-      console.log("❌ Hash mismatch", {
-        got: String(HashInfo).slice(0, 12) + "...",
-        expected: String(expectedHash).slice(0, 12) + "...",
+      console.warn("⚠️ HashInfo mismatch", {
+        got: String(HashInfo).toUpperCase(),
+        expected: expectedHash,
       });
       return res.status(400).send("HashInfo mismatch");
     }
@@ -119,37 +92,28 @@ export default async function handler(req, res) {
     const plaintext = decryptPayUniGCM(EncryptInfo, keyBuf, ivBuf);
     const data = querystring.parse(plaintext);
 
-    // ✅ MapJson 是 JSON 字串（多數情況）
-    const mapJsonStr = String(pick(data, ["MapJson", "mapJson"]) || "");
+    console.log("✅ PayUni decrypted:", plaintext?.slice(0, 500));
+
+    const mapJsonStr = String(data.MapJson || "");
     let mapJson = null;
     try {
       mapJson = mapJsonStr ? JSON.parse(mapJsonStr) : null;
-    } catch {
+    } catch (e) {
+      console.warn("⚠️ MapJson JSON parse fail:", mapJsonStr?.slice(0, 200));
       mapJson = null;
     }
 
-    // ✅ 兼容多種 key
-    const storeId = String(
-      pick(mapJson, ["StoreID", "StoreId", "storeId", "CVSStoreID", "StoreNo"]) || ""
-    );
-    const storeName = String(
-      pick(mapJson, ["StoreName", "storeName", "CVSStoreName"]) || ""
-    );
-    const address = String(
-      pick(mapJson, ["StoreAddr", "Address", "address", "StoreAddress"]) || ""
-    );
-    const insularArea = String(
-      pick(mapJson, ["InsularArea", "insularArea", "IsOutlying", "Outlying"]) || ""
-    );
+    const storeId = String(mapJson?.StoreID || "");
+    const storeName = String(mapJson?.StoreName || "");
+    const address = String(mapJson?.Address || "");
+    const insularArea = String(mapJson?.InsularArea || "");
+    const merKeyNo = String(data.MerKeyNo || req.query.merKeyNo || "");
 
-    const merKeyNo = String(pick(data, ["MerKeyNo", "merKeyNo"]) || req.query.merKeyNo || "");
-
-    // ✅ 若拿不到門市資料：印出 plaintext/MapJson 片段，讓你對欄位
     if (!storeId) {
-      console.log("⚠️ PayUni return decrypted but no storeId", {
+      console.warn("⚠️ PayUni decrypted but no storeId", {
         merKeyNo,
-        plaintextPreview: String(plaintext).slice(0, 800),
-        mapJsonPreview: String(mapJsonStr).slice(0, 800),
+        mapJson,
+        keys: Object.keys(mapJson || {}),
       });
     }
 
@@ -162,8 +126,7 @@ export default async function handler(req, res) {
       `&address=${encodeURIComponent(address)}` +
       `&insularArea=${encodeURIComponent(insularArea)}`;
 
-    res.writeHead(302, { Location: redirectUrl });
-    res.end();
+    return res.redirect(302, redirectUrl);
   } catch (e) {
     console.error("❌ cvs return error:", e);
     return res.status(500).send("Server Error");
