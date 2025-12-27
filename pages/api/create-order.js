@@ -22,6 +22,11 @@ function sha256PayUni(encryptStr, keyRaw, ivBuf) {
   return hash.digest("hex").toUpperCase();
 }
 
+function pickStr(v) {
+  const s = String(v ?? "").trim();
+  return s.length ? s : "";
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res
@@ -58,6 +63,24 @@ export default async function handler(req, res) {
     const keyBuf = Buffer.from(HashKeyRaw, "utf8"); // AES key 32 bytes
     const ivBuf = Buffer.from(HashIVRaw, "utf8"); // IV 16 bytes
 
+    // ===== 0) 取物流資訊（來自 checkout formData）=====
+    // 這裡約定：customer.shippingMethod = "CVS_711" 或 "HOME"
+    // 並且 customer.cvs = { storeId, storeName, address, insularArea }
+    const shippingMethod = pickStr(customer?.shippingMethod) || "HOME";
+    const cvs = customer?.cvs || {};
+    const cvsStoreId = pickStr(cvs.storeId);
+    const cvsStoreName = pickStr(cvs.storeName);
+    const cvsStoreAddress = pickStr(cvs.address);
+    const cvsInsularArea = pickStr(cvs.insularArea);
+
+    // 如果選了超商但沒有門市資料，就擋下
+    if (shippingMethod === "CVS_711" && (!cvsStoreId || !cvsStoreName)) {
+      return res.status(400).json({
+        status: "error",
+        message: "你選擇了 7-11 店到店，但尚未選擇門市（StoreID/StoreName 缺失）",
+      });
+    }
+
     // ===== 1) 建 Woo 訂單 =====
     const api = new WooCommerceRestApi({
       url: WC_SITE_URL,
@@ -78,9 +101,14 @@ export default async function handler(req, res) {
         city: customer?.city || "",
         postcode: customer?.postalCode || "",
       },
+      // ✅ shipping：若是 CVS，就先把門市地址塞進去（方便後台看）
       shipping: {
         first_name: customer?.name || "",
-        address_1: customer?.address || "",
+        address_1:
+          shippingMethod === "CVS_711"
+            ? `${cvsStoreName}（${cvsStoreId}）`
+            : customer?.address || "",
+        address_2: shippingMethod === "CVS_711" ? cvsStoreAddress : "",
         city: customer?.city || "",
         postcode: customer?.postalCode || "",
       },
@@ -88,6 +116,19 @@ export default async function handler(req, res) {
         product_id: item.id, // ⚠️ 請確保這是 Woo 的 product_id
         quantity: item.quantity,
       })),
+
+      // ✅ 這裡把門市資料存 meta，notify 後續取號才拿得到
+      meta_data: [
+        { key: "_shipping_method", value: shippingMethod },
+        ...(shippingMethod === "CVS_711"
+          ? [
+              { key: "_cvs_store_id", value: cvsStoreId },
+              { key: "_cvs_store_name", value: cvsStoreName },
+              { key: "_cvs_store_address", value: cvsStoreAddress },
+              { key: "_cvs_insular_area", value: cvsInsularArea },
+            ]
+          : []),
+      ],
     });
 
     const wooOrder = wooResponse.data;
@@ -126,9 +167,12 @@ export default async function handler(req, res) {
     console.log("PaymentType:", payload.PaymentType);
     console.log("NotifyURL:", payload.NotifyURL);
     console.log("ReturnURL:", payload.ReturnURL);
+    console.log("shippingMethod:", shippingMethod, {
+      cvsStoreId,
+      cvsStoreName,
+    });
 
     // ===== 4) ✅ 下單成功信（待付款）=====
-    // 用你自己的 send-order-email API（會防重複 & 寫 meta）
     fetch(`${SITE_URL}/api/send-order-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

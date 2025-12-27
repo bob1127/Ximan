@@ -1,12 +1,24 @@
 // pages/checkout.js
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useCart } from "../components/context/CartContext";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function CheckoutPage() {
   const { cartItems } = useCart();
+  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
+
+  // ✅ 門市資訊
+  const [cvsStore, setCvsStore] = useState({
+    storeId: "",
+    storeName: "",
+    address: "",
+    insularArea: "",
+  });
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,28 +26,98 @@ export default function CheckoutPage() {
     city: "台北市",
     address: "",
     postalCode: "",
+    // ✅ 新增：配送方式
+    shippingMethod: "HOME", // HOME | CVS_711
   });
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const priceNum =
-      parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0;
-    return acc + priceNum * item.quantity;
-  }, 0);
+  // ===== subtotal =====
+  const subtotal = useMemo(() => {
+    return cartItems.reduce((acc, item) => {
+      const priceNum =
+        parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0;
+      return acc + priceNum * item.quantity;
+    }, 0);
+  }, [cartItems]);
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // ✅ 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const { cvs, storeId, storeName, address, insularArea } =
+      router.query || {};
+    if (String(cvs) !== "1") return;
+
+    const next = {
+      storeId: String(storeId || ""),
+      storeName: String(storeName || ""),
+      address: String(address || ""),
+      insularArea: String(insularArea || ""),
+    };
+
+    if (next.storeId && next.storeName) {
+      setCvsStore(next);
+      // ✅ 也存 localStorage，避免重整就消失
+      try {
+        localStorage.setItem("PAYUNI_CVS_STORE", JSON.stringify(next));
+      } catch {}
+
+      // ✅ 選完門市後自動切到 CVS_711
+      setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
+
+      // ✅ 清乾淨 URL query（避免重整又重跑）
+      router.replace("/checkout", undefined, { shallow: true });
+    }
+  }, [router.isReady, router.query, router]);
+
+  // ✅ 初始化：從 localStorage 還原門市
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("PAYUNI_CVS_STORE");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.storeId && parsed?.storeName) setCvsStore(parsed);
+    } catch {}
+  }, []);
+
+  // ✅ 開啟 7-11 門市地圖（前景）
+  const openCvsMap = () => {
+    // 直接跳到你新增的 map API，它會回 HTML form auto submit
+    // 可加 query: goodsType=1&lgsType=C2C&shipType=1&mapType=1
+    window.location.href =
+      "/api/payuni/cvs/map?goodsType=1&lgsType=C2C&shipType=1&mapType=1";
+  };
+
+  const clearCvsStore = () => {
+    setCvsStore({ storeId: "", storeName: "", address: "", insularArea: "" });
+    try {
+      localStorage.removeItem("PAYUNI_CVS_STORE");
+    } catch {}
+  };
+
   const handleCheckout = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.phone ||
-      !formData.address
-    ) {
+    // ✅ 基本必填
+    if (!formData.name || !formData.email || !formData.phone) {
       alert("請填寫所有必填欄位");
       return;
+    }
+
+    // ✅ HOME 才需要地址
+    if (formData.shippingMethod === "HOME" && !formData.address) {
+      alert("宅配請填寫詳細地址");
+      return;
+    }
+
+    // ✅ CVS 必須選門市
+    if (formData.shippingMethod === "CVS_711") {
+      if (!cvsStore.storeId || !cvsStore.storeName) {
+        alert("請先選擇 7-11 門市");
+        return;
+      }
     }
 
     setLoading(true);
@@ -45,11 +127,20 @@ export default function CheckoutPage() {
       price: parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0,
     }));
 
+    // ✅ 把門市資料一起送去 create-order
+    const customerPayload = {
+      ...formData,
+      cvs: formData.shippingMethod === "CVS_711" ? cvsStore : null,
+    };
+
     try {
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cartItems: cleanCartItems, customer: formData }),
+        body: JSON.stringify({
+          cartItems: cleanCartItems,
+          customer: customerPayload,
+        }),
       });
 
       const data = await res.json();
@@ -60,13 +151,11 @@ export default function CheckoutPage() {
         return;
       }
 
-      // ✅（除錯）確認後端回來的欄位
-      // console.log("PayUni payload:", data);
-
-      // ✅ 建立 PayUni 表單並自動提交（新版：EncryptInfo / HashInfo）
+      // ✅ 建立 PayUni 表單並自動提交
       const form = document.createElement("form");
       form.method = "POST";
-      form.action = data.paymentUrl; // ✅ https://api.payuni.com.tw/api/upp
+      form.action = data.paymentUrl;
+
       const fields = {
         MerID: data.MerID,
         EncryptInfo: data.EncryptInfo,
@@ -74,18 +163,13 @@ export default function CheckoutPage() {
         Version: data.Version || "1.0",
       };
 
-      // ✅ 最基本的防呆：缺欄位就直接提示，不要送出去才看到紫色錯誤頁
       const missing = Object.entries(fields)
         .filter(([_, v]) => !v)
         .map(([k]) => k);
 
       if (missing.length > 0) {
         console.error("PayUni missing fields:", missing, fields);
-        alert(
-          "PayUni 缺少欄位：" +
-            missing.join(", ") +
-            "（請檢查 /api/create-order 回傳）"
-        );
+        alert("PayUni 缺少欄位：" + missing.join(", "));
         setLoading(false);
         return;
       }
@@ -125,6 +209,7 @@ export default function CheckoutPage() {
             <h2 className="text-lg font-bold uppercase tracking-widest">
               Contact Information
             </h2>
+
             <input
               type="email"
               name="email"
@@ -135,9 +220,82 @@ export default function CheckoutPage() {
               className="w-full border border-gray-300 p-3 outline-none focus:border-black"
             />
 
+            {/* ✅ 配送方式 */}
+            <h2 className="text-lg font-bold uppercase tracking-widest mt-8">
+              Shipping Method
+            </h2>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="shippingMethod"
+                  value="HOME"
+                  checked={formData.shippingMethod === "HOME"}
+                  onChange={handleChange}
+                />
+                <span>宅配（填地址）</span>
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="shippingMethod"
+                  value="CVS_711"
+                  checked={formData.shippingMethod === "CVS_711"}
+                  onChange={handleChange}
+                />
+                <span>7-11 店到店（選門市）</span>
+              </label>
+            </div>
+
+            {/* ✅ 7-11 門市選擇區塊 */}
+            {formData.shippingMethod === "CVS_711" && (
+              <div className="border border-gray-200 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="font-bold">7-11 門市</div>
+                  <button
+                    type="button"
+                    onClick={openCvsMap}
+                    className="px-4 py-2 bg-black text-white text-xs font-bold uppercase tracking-widest hover:bg-[#333]"
+                  >
+                    選擇門市
+                  </button>
+                </div>
+
+                {cvsStore.storeId ? (
+                  <div className="text-sm space-y-1">
+                    <div>
+                      <span className="text-gray-500">門市：</span>
+                      <span className="font-medium">
+                        {cvsStore.storeName}（{cvsStore.storeId}）
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">地址：</span>
+                      <span>{cvsStore.address}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={clearCvsStore}
+                      className="mt-2 text-xs underline text-gray-600 hover:text-black"
+                    >
+                      清除門市
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">
+                    尚未選擇門市，請點「選擇門市」
+                  </div>
+                )}
+              </div>
+            )}
+
             <h2 className="text-lg font-bold uppercase tracking-widest mt-8">
               Shipping Address
             </h2>
+
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
@@ -175,11 +333,15 @@ export default function CheckoutPage() {
               <input
                 type="text"
                 name="address"
-                required
-                placeholder="詳細地址"
+                placeholder={
+                  formData.shippingMethod === "HOME"
+                    ? "詳細地址（宅配必填）"
+                    : "宅配地址（選填）"
+                }
                 value={formData.address}
                 onChange={handleChange}
                 className="col-span-2 border border-gray-300 p-3 outline-none"
+                required={formData.shippingMethod === "HOME"}
               />
             </div>
 

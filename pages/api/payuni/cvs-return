@@ -1,0 +1,60 @@
+// pages/api/payuni/cvs-return.js
+import crypto from "crypto";
+import querystring from "querystring";
+
+function decryptPayUniGCM(encryptHex, keyBuf, ivBuf) {
+  const packed = Buffer.from(String(encryptHex || ""), "hex").toString("utf8");
+  const [cipherB64, tagB64] = packed.split(":::");
+  const decipher = crypto.createDecipheriv("aes-256-gcm", keyBuf, ivBuf);
+  decipher.setAuthTag(Buffer.from(tagB64, "base64"));
+  let plaintext = decipher.update(cipherB64, "base64", "utf8");
+  plaintext += decipher.final("utf8");
+  return plaintext;
+}
+function sha256PayUni(encryptStr, keyRaw, ivBuf) {
+  return crypto.createHash("sha256")
+    .update(`${keyRaw}${encryptStr}${ivBuf.toString()}`)
+    .digest("hex").toUpperCase();
+}
+
+export default async function handler(req, res) {
+  const MerID = process.env.PAYUNI_MERCHANT_ID;
+  const HashKeyRaw = process.env.PAYUNI_HASH_KEY;
+  const HashIVRaw = process.env.PAYUNI_HASH_IV;
+
+  const keyBuf = Buffer.from(HashKeyRaw, "utf8");
+  const ivBuf = Buffer.from(HashIVRaw, "utf8");
+
+  const body = req.method === "POST" ? (req.body || {}) : (req.query || {});
+  const EncryptInfo = body.EncryptInfo;
+  const HashInfo = body.HashInfo;
+
+  const expected = sha256PayUni(EncryptInfo, HashKeyRaw, ivBuf);
+  if (String(HashInfo).toUpperCase() !== expected) {
+    return res.status(400).send("HashInfo mismatch");
+  }
+
+  const plaintext = decryptPayUniGCM(EncryptInfo, keyBuf, ivBuf);
+  const data = querystring.parse(plaintext);
+
+  // TODO: 以下欄位名依 PAYUNi 地圖回傳為準
+  const store = {
+    storeId: data.StoreID || data.store_id || "",
+    storeName: data.StoreName || "",
+    storeAddress: data.StoreAddr || "",
+    raw: data,
+  };
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.status(200).send(`
+<!doctype html><html><body>
+<script>
+  try {
+    localStorage.setItem("payuni_cvs_store", ${JSON.stringify(JSON.stringify(store))});
+    if (window.opener) window.opener.postMessage({ type: "PAYUNI_CVS_SELECTED" }, "*");
+  } catch (e) {}
+  window.close();
+</script>
+門市選擇完成，視窗可關閉
+</body></html>`);
+}

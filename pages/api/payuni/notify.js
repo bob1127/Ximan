@@ -36,8 +36,13 @@ function isPaidSuccess(obj) {
   if (tradeStatus === "1" || tradeStatus === "SUCCESS" || tradeStatus === "OK")
     return true;
 
-  // 有些會回傳 TradeAmt/PayTime 等，但不回成功碼，這裡不做推測，避免誤判
   return false;
+}
+
+// 小工具：讀 meta
+function getMetaValue(metaArr, key) {
+  const m = (Array.isArray(metaArr) ? metaArr : []).find((x) => x?.key === key);
+  return m?.value;
 }
 
 export default async function handler(req, res) {
@@ -114,19 +119,34 @@ export default async function handler(req, res) {
     });
 
     // 6) 先抓訂單，做「防重複處理」
-    const orderRes = await api.get(`orders/${encodeURIComponent(String(orderNo))}`);
+    const orderRes = await api.get(
+      `orders/${encodeURIComponent(String(orderNo))}`
+    );
     const order = orderRes.data;
+
     const meta = Array.isArray(order.meta_data) ? order.meta_data : [];
-    const getMeta = (k) => meta.find((m) => m?.key === k)?.value;
-    const paidMarked = String(getMeta("_payuni_paid") || "0") === "1";
-    const emailSent = String(getMeta("_email_payment_success_sent") || "0") === "1";
+    const paidMarked = String(getMetaValue(meta, "_payuni_paid") || "0") === "1";
+    const emailSent =
+      String(getMetaValue(meta, "_email_payment_success_sent") || "0") === "1";
+
+    // 物流相關 meta（你要在 create-order 時存）
+    const shippingType =
+      String(getMetaValue(meta, "_shipping_type") || "") ||
+      String(getMetaValue(meta, "shipping_type") || "");
+
+    const shipCreated =
+      String(getMetaValue(meta, "_payuni_ship_created") || "0") === "1";
+
+    // 這個是「防同時重複觸發」用（我們會在 notify 先寫入，再去呼叫物流 API）
+    const shipTriggered =
+      String(getMetaValue(meta, "_payuni_ship_triggered") || "0") === "1";
 
     // 交易序號（若 PayUni 有回傳）
     const transactionId =
       data.TradeNo || data.TradeNO || data.TransactionId || data.PayNo || "";
 
     if (paid) {
-      // ✅ 如果已經處理過 paid，直接回 OK（避免重複改狀態）
+      // ✅ 付款成功：更新 Woo 訂單（防重複）
       if (!paidMarked) {
         await api.put(`orders/${encodeURIComponent(String(orderNo))}`, {
           status: "processing",
@@ -135,12 +155,16 @@ export default async function handler(req, res) {
           meta_data: [
             { key: "_payuni_paid", value: "1" },
             { key: "_payuni_notify_time", value: String(Date.now()) },
-            ...(transactionId ? [{ key: "_payuni_trade_no", value: String(transactionId) }] : []),
+            ...(transactionId
+              ? [{ key: "_payuni_trade_no", value: String(transactionId) }]
+              : []),
           ],
         });
         console.log(`✅ Woo order #${orderNo} updated to processing`);
       } else {
-        console.log(`ℹ️ Woo order #${orderNo} already marked paid, skip status update`);
+        console.log(
+          `ℹ️ Woo order #${orderNo} already marked paid, skip status update`
+        );
       }
 
       // ✅ 付款成功信（防重複）
@@ -153,9 +177,47 @@ export default async function handler(req, res) {
             type: "PAYMENT_SUCCESS",
             transactionId: transactionId ? String(transactionId) : undefined,
           }),
-        }).catch((e) => console.error("send PAYMENT_SUCCESS email failed:", e));
+        }).catch((e) =>
+          console.error("send PAYMENT_SUCCESS email failed:", e)
+        );
       } else {
-        console.log(`ℹ️ payment success email already sent for order #${orderNo}`);
+        console.log(
+          `ℹ️ payment success email already sent for order #${orderNo}`
+        );
+      }
+
+      // ✅ ✅ ✅ 付款成功後：若是 7-11 店到店，觸發物流取號（防重複）
+      // 你在前端/建單要設 shippingType = "CVS_711"
+      if (shippingType === "CVS_711") {
+        if (shipCreated) {
+          console.log(`ℹ️ logistics already created for order #${orderNo}`);
+        } else if (shipTriggered) {
+          console.log(`ℹ️ logistics already triggered for order #${orderNo}`);
+        } else {
+          // 先寫入 triggered，避免 PayUni 重送 notify 時同時打多次取號
+          await api.put(`orders/${encodeURIComponent(String(orderNo))}`, {
+            meta_data: [
+              { key: "_payuni_ship_triggered", value: "1" },
+              { key: "_payuni_ship_triggered_time", value: String(Date.now()) },
+            ],
+          });
+
+          // 再呼叫你自己的物流 API（這支 API 內會去打 PayUni /api/logistics/trade）
+          fetch(`${SITE_URL}/api/payuni/logistics/trade`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: orderNo }),
+          })
+            .then(async (r) => {
+              const t = await r.text().catch(() => "");
+              console.log(
+                `✅ logistics/trade triggered for order #${orderNo}, status=${r.status}, body=${t}`
+              );
+            })
+            .catch((e) =>
+              console.error(`❌ logistics/trade trigger failed for #${orderNo}`, e)
+            );
+        }
       }
 
       return res.status(200).send("OK");
@@ -165,7 +227,7 @@ export default async function handler(req, res) {
     }
   } catch (err) {
     console.error("❌ payuni notify error:", err);
-    // 讓 PayUni 重送以便修復（或你也可回 200 吞錯）
+    // 這裡你可選擇回 200 吞掉避免 PayUni 一直重送；但目前你原本是 500
     return res.status(500).send("Server Error");
   }
 }
