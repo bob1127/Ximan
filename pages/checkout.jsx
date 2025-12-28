@@ -5,6 +5,9 @@ import { useCart } from "../components/context/CartContext";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+const LS_FORM_KEY = "CHECKOUT_FORM_DATA_V1";
+const LS_CVS_KEY = "PAYUNI_CVS_STORE";
+
 export default function CheckoutPage() {
   const { cartItems } = useCart();
   const router = useRouter();
@@ -19,6 +22,7 @@ export default function CheckoutPage() {
     insularArea: "",
   });
 
+  // ✅ 表單資料（會存 localStorage）
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,19 +42,75 @@ export default function CheckoutPage() {
     }, 0);
   }, [cartItems]);
 
-  // ✅ 前端顯示用運費（真正金額以後端 create-order 回傳為準）
+  // ✅ 前端顯示用運費（真正金額以後端 create-order 回傳 Woo total 為準）
   const shippingFee = useMemo(() => {
     if (formData.shippingMethod === "HOME") return 80;
-    if (formData.shippingMethod === "CVS_711") return 1; // ✅ 你要先改成 1
+    if (formData.shippingMethod === "CVS_711") return 1; // ✅ 先改成 1
     return 0;
   }, [formData.shippingMethod]);
 
   const total = useMemo(() => subtotal + shippingFee, [subtotal, shippingFee]);
 
   const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  // ✅ 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
+  /**
+   * ✅ (A) 初始化：從 localStorage 還原 formData + cvsStore
+   * - 解決：回來預設變宅配、個人資料被清空
+   */
+  useEffect(() => {
+    // restore formData
+    try {
+      const raw = localStorage.getItem(LS_FORM_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          setFormData((prev) => ({
+            ...prev,
+            ...parsed,
+          }));
+        }
+      }
+    } catch {}
+
+    // restore cvs store
+    try {
+      const raw = localStorage.getItem(LS_CVS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.storeId && parsed?.storeName) {
+          setCvsStore(parsed);
+          // 如果已經有門市，強制把配送方式設成 CVS_711（修正你說的回來變宅配）
+          setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
+        }
+      }
+    } catch {}
+  }, []);
+
+  /**
+   * ✅ (B) 表單任何變動就存 localStorage
+   */
+  useEffect(() => {
+    try {
+      localStorage.setItem(LS_FORM_KEY, JSON.stringify(formData));
+    } catch {}
+  }, [formData]);
+
+  /**
+   * ✅ (C) 門市變動也存 localStorage
+   */
+  useEffect(() => {
+    try {
+      if (cvsStore?.storeId && cvsStore?.storeName) {
+        localStorage.setItem(LS_CVS_KEY, JSON.stringify(cvsStore));
+      }
+    } catch {}
+  }, [cvsStore]);
+
+  /**
+   * ✅ (D) 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
+   * - 回填後：保存門市、切到 CVS_711、並清掉 URL query
+   */
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -58,20 +118,17 @@ export default function CheckoutPage() {
       router.query || {};
     if (String(cvs) !== "1") return;
 
-    const next = {
+    const nextStore = {
       storeId: String(storeId || ""),
       storeName: String(storeName || ""),
       address: String(address || ""),
       insularArea: String(insularArea || ""),
     };
 
-    if (next.storeId && next.storeName) {
-      setCvsStore(next);
-      try {
-        localStorage.setItem("PAYUNI_CVS_STORE", JSON.stringify(next));
-      } catch {}
+    if (nextStore.storeId && nextStore.storeName) {
+      setCvsStore(nextStore);
 
-      // ✅ 選完門市後自動切到 CVS_711
+      // ✅ 回填後立刻切換配送方式，避免 UI 還停在 HOME
       setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
 
       // ✅ 清乾淨 URL query（避免重整又重跑）
@@ -79,18 +136,17 @@ export default function CheckoutPage() {
     }
   }, [router.isReady, router.query, router]);
 
-  // ✅ 初始化：從 localStorage 還原門市
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("PAYUNI_CVS_STORE");
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (parsed?.storeId && parsed?.storeName) setCvsStore(parsed);
-    } catch {}
-  }, []);
-
   // ✅ 開啟 7-11 門市地圖（前景）
   const openCvsMap = () => {
+    // ✅ 你按「選擇門市」前，先把配送方式切成 CVS_711 並存起來
+    // 這樣跳出去再回來，不會變回宅配，也不會清空資料
+    try {
+      const next = { ...formData, shippingMethod: "CVS_711" };
+      localStorage.setItem(LS_FORM_KEY, JSON.stringify(next));
+    } catch {}
+
+    setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
+
     window.location.href =
       "/api/payuni/cvs/map?goodsType=1&lgsType=C2C&shipType=1&mapType=1";
   };
@@ -98,7 +154,7 @@ export default function CheckoutPage() {
   const clearCvsStore = () => {
     setCvsStore({ storeId: "", storeName: "", address: "", insularArea: "" });
     try {
-      localStorage.removeItem("PAYUNI_CVS_STORE");
+      localStorage.removeItem(LS_CVS_KEY);
     } catch {}
   };
 
