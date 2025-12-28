@@ -11,6 +11,7 @@ export default function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
 
+  // ✅ 門市資訊
   const [cvsStore, setCvsStore] = useState({
     storeId: "",
     storeName: "",
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
     shippingMethod: "HOME", // HOME | CVS_711
   });
 
+  // ===== subtotal =====
   const subtotal = useMemo(() => {
     return cartItems.reduce((acc, item) => {
       const priceNum =
@@ -36,9 +38,10 @@ export default function CheckoutPage() {
     }, 0);
   }, [cartItems]);
 
+  // ✅ 前端顯示用運費（真正金額以後端 create-order 回傳為準）
   const shippingFee = useMemo(() => {
     if (formData.shippingMethod === "HOME") return 80;
-    if (formData.shippingMethod === "CVS_711") return 80;
+    if (formData.shippingMethod === "CVS_711") return 1; // ✅ 你要先改成 1
     return 0;
   }, [formData.shippingMethod]);
 
@@ -47,6 +50,7 @@ export default function CheckoutPage() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // ✅ 讀取門市回填（來自 /api/payuni/cvs/return redirect 的 query）
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -67,11 +71,15 @@ export default function CheckoutPage() {
         localStorage.setItem("PAYUNI_CVS_STORE", JSON.stringify(next));
       } catch {}
 
+      // ✅ 選完門市後自動切到 CVS_711
       setFormData((prev) => ({ ...prev, shippingMethod: "CVS_711" }));
+
+      // ✅ 清乾淨 URL query（避免重整又重跑）
       router.replace("/checkout", undefined, { shallow: true });
     }
   }, [router.isReady, router.query, router]);
 
+  // ✅ 初始化：從 localStorage 還原門市
   useEffect(() => {
     try {
       const raw = localStorage.getItem("PAYUNI_CVS_STORE");
@@ -81,6 +89,7 @@ export default function CheckoutPage() {
     } catch {}
   }, []);
 
+  // ✅ 開啟 7-11 門市地圖（前景）
   const openCvsMap = () => {
     window.location.href =
       "/api/payuni/cvs/map?goodsType=1&lgsType=C2C&shipType=1&mapType=1";
@@ -96,16 +105,19 @@ export default function CheckoutPage() {
   const handleCheckout = async (e) => {
     e.preventDefault();
 
+    // ✅ 基本必填
     if (!formData.name || !formData.email || !formData.phone) {
       alert("請填寫所有必填欄位");
       return;
     }
 
+    // ✅ HOME 才需要地址
     if (formData.shippingMethod === "HOME" && !formData.address) {
       alert("宅配請填寫詳細地址");
       return;
     }
 
+    // ✅ CVS 必須選門市
     if (formData.shippingMethod === "CVS_711") {
       if (!cvsStore.storeId || !cvsStore.storeName) {
         alert("請先選擇 7-11 門市");
@@ -120,6 +132,7 @@ export default function CheckoutPage() {
       price: parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0,
     }));
 
+    // ✅ 把門市資料一起送去 create-order
     const customerPayload = {
       ...formData,
       cvs: formData.shippingMethod === "CVS_711" ? cvsStore : null,
@@ -143,6 +156,7 @@ export default function CheckoutPage() {
         return;
       }
 
+      // ✅ 建立 PayUni 表單並自動提交
       const form = document.createElement("form");
       form.method = "POST";
       form.action = data.paymentUrl;
@@ -212,6 +226,7 @@ export default function CheckoutPage() {
               className="w-full border border-gray-300 p-3 outline-none focus:border-black"
             />
 
+            {/* ✅ 配送方式 */}
             <h2 className="text-lg font-bold uppercase tracking-widest mt-8">
               Shipping Method
             </h2>
@@ -236,10 +251,11 @@ export default function CheckoutPage() {
                   checked={formData.shippingMethod === "CVS_711"}
                   onChange={handleChange}
                 />
-                <span>7-11 店到店（運費 NT$80）</span>
+                <span>7-11 店到店（運費 NT$1）</span>
               </label>
             </div>
 
+            {/* ✅ 7-11 門市選擇區塊 */}
             {formData.shippingMethod === "CVS_711" && (
               <div className="border border-gray-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
