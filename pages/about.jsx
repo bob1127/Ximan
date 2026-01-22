@@ -24,25 +24,25 @@ export default function About() {
   const sliderData = [
     {
       id: 1,
-      src: "/images/index/DSCF7041.jpg",
+      src: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_19.jpg",
       name: "PhotoGraphy",
       year: "2023",
     },
     {
       id: 2,
-      src: "/images/index/DSCF7126.jpg",
+      src: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg",
       name: "EtherShift-Demo",
       year: "2021",
     },
     {
       id: 3,
-      src: "/images/index/DSCF5948-2.jpg",
+     src: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_12.jpg",
       name: "EtherShift-Demo",
       year: "2021",
     },
     {
       id: 4,
-      src: "/images/index/DSCF6011.jpg",
+       src: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_16.jpg",
       name: "EtherShift-Demo",
       year: "2021",
     },
@@ -90,25 +90,31 @@ export default function About() {
               <div className="lg:col-span-7 flex flex-col gap-10 lg:pt-20 text-gray-600 font-light leading-loose text-justify">
                 <FadeInSection delay={0.2}>
                   <p className="text-xl text-[#F6F1EB] font-medium mb-4">
-                    CIÉMAN 喜曼精品成立於台中。
+                   KÉSH de¹ 凱仕國際精品
                   </p>
                   <p className="mb-4 text-[#F6F1EB]">
-                    我們打造一樓至二樓的精品展示空間，以柔和的光線、乾淨俐落的動線與高質感材質堆疊，
-                    希望每位踏進店裡的貴賓，都能在喧囂的城市中，找到一處安靜品味生活的角落。
+                  成立於台中市，政府立案營運，
+KÉSH de¹ 凱仕國際精品致力打造值得信賴的國際精品交易平台。
                   </p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.3}>
                   <p className="text-[#F6F1EB]">
-                    我們專注於{" "}
+                  專營 Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine 等國際知名品牌，
+
+
                     <span className="text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5">
-                      Hermès、Chanel、Dior、Louis Vuitton
+                     服務涵蓋全新精品與嚴選二手精品販售、顧客寄賣及指定款式代購服務，
+並提供全球配送服務，讓無論身處何地的貴賓，也能輕鬆擁有。
                     </span>{" "}
                     等頂級品牌。
                   </p>
                   <p className="mt-4 text-[#F6F1EB]">
-                    從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。
-                    每一處細節的堅持，都是為了讓這份美好能夠延續。
+                  KÉSH 團隊具備國際精品鑑定師合格證照，
+所有商品皆由專業鑑定團隊親自把關，
+並搭配先進鑑定設備進行多重交叉驗證，
+每件商品皆附上專屬鑑定證明，提供最高級別的正品保障。
+
                   </p>
                 </FadeInSection>
 
@@ -117,9 +123,11 @@ export default function About() {
                     <span className="absolute -top-4 left-4 text-4xl text-[#F6F1EB] font-serif">
                       “
                     </span>
-                    在 CIÉMAN，我們相信精品不僅是商品，
-                    <br className="hidden md:block" />
-                    更是一種風格、一種質感、一種態度的延伸。
+                 凡於 KÉSH 選購之商品，
+皆享有國際認可單位之正品認證保障，
+讓每一次交易皆安心、透明、值得信賴。
+
+                  
                   </blockquote>
                 </FadeInSection>
                 <Link
@@ -171,50 +179,59 @@ export default function About() {
               />
             </div>
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-              <ParallaxImage src="/images/index/DSCF7419.JPG" alt="" />
+              <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_5.jpg" alt="" />
             </div>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* LEFT */}
             <div className="relative w-full min-h-[70vh] lg:h-screen">
               {/* TEXT */}
+               <div className="absolute bg-black/50 w-full h-full z-20 left-0 top-0">
+                 
+              </div>
               <div className="relative lg:sticky z-50 pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[200px]">
-                <p className="text-white mt-5 text-right w- lg:w-1/2 text-[14px] leading-relaxed">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                  Magnam veniam obcaecati veritatis assumenda, et tempora
-                  pariatur? Ullam accusamus maxime officia recusandae,
-                  exercitationem sed? Minus hic culpa repudiandae suscipit?
-                  Vitae, soluta.
-                </p>
-              </div>
-
-              {/* IMAGE */}
-              <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-                <ParallaxImage src="/images/index/DSCF7440.JPG" alt="" />
-              </div>
-            </div>
-
-            {/* RIGHT */}
-            <div className="relative w-full min-h-[70vh] lg:h-screen">
-              {/* TEXT */}
-              <div className="relative lg:sticky z-50 pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[250px]">
                 <div className="mt-5 text-right w-2/3 lg:w-1/2">
                   <h3 className="text-white text-[32px] lg:text-[42px]">
-                    FEATURE
+                 Specific Style Sourcing
                   </h3>
                   <h3 className="text-white text-[20px] lg:text-[28px]">
-                    舒適的空間環境
+                    指定款式代購｜
                   </h3>
                   <p className="text-white text-[14px] leading-relaxed mt-2">
-                    打造值得信賴、具品味的精品交換中心，
-                    成為連結精品收藏、品味生活與長期價值的橋樑。
+                  夢幻清單不再遙不可及。KÉSH de¹ 啟動全球頂級買手網絡，無論是專櫃缺貨爆款或稀有限量聯名，我們都能跨越國界精準代尋。您只需許下心願，我們便將那份獨一無二的驚喜帶到您手中。
                   </p>
                 </div>
               </div>
 
               {/* IMAGE */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-                <ParallaxImage src="/images/index/DSCF7416.JPG" alt="" />
+                <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg" alt="" />
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="relative w-full min-h-[70vh] lg:h-screen">
+              <div className="absolute bg-black/50 w-full h-full z-20 left-0 top-0">
+                 
+              </div>
+              {/* TEXT */}
+              <div className="relative z-50 lg:sticky   pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[250px]">
+                <div className="mt-5 text-right w-2/3 lg:w-1/2">
+                  <h3 className="text-white text-[32px] lg:text-[42px]">
+                   Professional Authentication
+                  </h3>
+                  <h3 className="text-white text-[20px] lg:text-[28px]">
+                    專業鑑定｜
+                  </h3>
+                  <p className="text-white text-[14px] leading-relaxed mt-2">
+                   我們拒絕任何存疑。由資深鑑定師針對皮革氣味、縫線工藝至防偽特徵進行嚴密檢測，結合科學儀器輔助驗證。唯有通過極致苛求標準的藏品，才能呈現在您眼前，確保每一份奢華都經得起考驗。
+                  </p>
+                </div>
+              </div>
+
+              {/* IMAGE */}
+              <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
+                <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_3.jpg" alt="" />
               </div>
             </div>
           </div>
@@ -228,7 +245,7 @@ export default function About() {
                 <div className="relative h-[60vh] min-h-[420px] lg:h-screen">
                   <div className="absolute inset-0 flex justify-center">
                     <div className="w-[94%] h-full overflow-hidden will-change-transform">
-                      <ParallaxImage src="/images/index/DSCF7003.jpg" alt="" />
+                      <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_10.jpg" alt="" />
                     </div>
                   </div>
                 </div>
@@ -241,7 +258,7 @@ export default function About() {
                     <div className="absolute inset-0 flex justify-end sm:pr-6 pr-4">
                       <div className="w-[94%] max-w-[420px] max-h-[420px] overflow-hidden will-change-transform">
                         <ParallaxImage
-                          src="/images/index/DSCF7160.webp"
+                          src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_8.jpg"
                           alt=""
                         />
                       </div>
@@ -254,7 +271,7 @@ export default function About() {
                     <div className="absolute inset-0 flex justify-center">
                       <div className="w-[94%] max-w-[420px] max-h-[420px] overflow-hidden will-change-transform">
                         <ParallaxImage
-                          src="/images/index/DSCF6017.jpg"
+                          src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_1.jpg"
                           alt=""
                         />
                       </div>
@@ -282,7 +299,7 @@ export default function About() {
 
                 <p
                   className="
-          text-[#F6F1EB]   font-light leading-loose tracking-wider
+          text-[#F6F1EB] mb-5  font-light leading-loose tracking-wider
           text-[14px] sm:text-[16px]
           mt-4 sm:mt-5
           w-full max-w-prose

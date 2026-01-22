@@ -1,54 +1,28 @@
 import Link from "next/link";
+import Head from "next/head"; // 新增 SEO Head
 import React, { useState, useMemo, useRef } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
-// --- 1. 品牌館資料 (靜態篩選用) ---
-const BRANDS = [
-  { name: "Hermès", count: 12 },
-  { name: "Chanel", count: 28 },
-  { name: "Louis Vuitton", count: 15 },
-  { name: "Dior", count: 8 },
-  { name: "Gucci", count: 6 },
-  { name: "Loewe", count: 5 },
-  { name: "Goyard", count: 3 },
-  { name: "Prada", count: 4 },
-  { name: "Balenciaga", count: 2 },
-  { name: "Saint Laurent", count: 7 },
-  { name: "Celine", count: 9 },
-  { name: "Others", count: 10 },
-];
 
-// --- 2. 商品類別資料 ---
-const CATEGORIES = [
-  { label: "Handbags 包款", key: "Handbags" },
-  { label: "SLG 小皮件", key: "SLG" },
-  { label: "Silk 絲巾", key: "Silk" },
-  { label: "Shoes 鞋履", key: "Shoes" },
-  { label: "Accessories 飾品", key: "Accessories" },
-  { label: "Others 配件", key: "Others" },
-];
-
-// --- 3. 快速連結 ---
+// --- 3. 快速連結 (這部分通常是行銷活動，建議維持靜態或另外開 Tag 管理，這裡先維持靜態) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
-// --- 商品卡片組件 ---
+// --- 商品卡片組件 (維持不變) ---
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
 
   const handleMouseMove = (e) => {
-    const { left, top, width, height } =
-      e.currentTarget.getBoundingClientRect();
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
     setCursorPos({ x, y });
   };
 
   return (
-    // 使用 Link 指向動態路由，例如 /product/[slug]
     <Link
-      href={`/product/${product.slug || product.id}`}
+      href={`/product/${product.slug}`}
       className="group border-b border-gray-400 md:border-r border-gray-400 last:border-r-0 relative flex flex-col bg-white"
     >
       <div
@@ -76,10 +50,11 @@ const ProductCard = ({ product }) => {
             {product.status}
           </span>
         </div>
+        {/* 圖片處理：如果沒有圖片顯示預設圖 */}
         <div
           className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out"
           style={{
-            backgroundImage: `url('${encodeURI(product.image)}')`,
+            backgroundImage: `url('${product.image || "/images/placeholder.jpg"}')`,
             transform: isHovered ? "scale(2)" : "scale(1)",
             transformOrigin: `${cursorPos.x}% ${cursorPos.y}%`,
           }}
@@ -94,7 +69,7 @@ const ProductCard = ({ product }) => {
         <div className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-1">
           {product.brand}
         </div>
-        <h2 className="text-[14px] font-medium text-gray-900 leading-snug tracking-wide group-hover:text-[#ef4628] transition-colors">
+        <h2 className="text-[14px] font-medium text-gray-900 leading-snug tracking-wide group-hover:text-[#ef4628] transition-colors line-clamp-2">
           {product.title}
         </h2>
         <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
@@ -110,12 +85,14 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- FilterSidebar 組件 ---
+// --- FilterSidebar 組件 (改為接收 dynamic props) ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
   isMobile = false,
   onCloseMobile,
+  dynamicBrands = [],     // 新增：從後台抓取的品牌
+  dynamicCategories = []  // 新增：從後台抓取的分類
 }) => {
   const isActive = (type, value) => {
     return activeFilter.type === type && activeFilter.value === value
@@ -123,8 +100,7 @@ const FilterSidebar = ({
       : "text-gray-600 hover:text-black";
   };
 
-  const linkClass =
-    "text-[13px] transition-colors block leading-tight cursor-pointer";
+  const linkClass = "text-[13px] transition-colors block leading-tight cursor-pointer";
 
   return (
     <div
@@ -159,8 +135,7 @@ const FilterSidebar = ({
                   if (isMobile) onCloseMobile();
                 }}
                 className={`text-[13px] border rounded px-3 py-1.5 transition-colors ${
-                  activeFilter.type === "collection" &&
-                  activeFilter.value === link
+                  activeFilter.type === "collection" && activeFilter.value === link
                     ? "bg-[#ef4628] text-white border-[#ef4628]"
                     : "border-gray-300 text-gray-700 hover:border-black"
                 }`}
@@ -171,21 +146,24 @@ const FilterSidebar = ({
           </div>
         </div>
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
+        
+        {/* Dynamic Categories */}
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Categories
           </h3>
           <ul className="space-y-3">
-            {CATEGORIES.map((cat) => (
-              <li key={cat.key}>
+            {dynamicCategories.map((cat) => (
+              <li key={cat.id}>
                 <button
                   onClick={() => {
-                    onFilterChange("category", cat.key);
+                    // 這裡 value 傳入 slug 或 id 進行篩選
+                    onFilterChange("category", cat.slug); 
                     if (isMobile) onCloseMobile();
                   }}
-                  className={`${linkClass} ${isActive("category", cat.key)}`}
+                  className={`${linkClass} ${isActive("category", cat.slug)}`}
                 >
-                  {cat.label}
+                  {cat.name} <span className="text-[10px] opacity-60">({cat.count})</span>
                 </button>
               </li>
             ))}
@@ -193,8 +171,10 @@ const FilterSidebar = ({
         </div>
       </div>
       {isMobile && <div className="border-t border-gray-200"></div>}
+      
+      {/* Dynamic Brands */}
       <div className={isMobile ? "" : "flex-1"}>
-        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
+        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
           Brand
         </h3>
         <ul
@@ -202,16 +182,16 @@ const FilterSidebar = ({
             isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"
           }`}
         >
-          {BRANDS.map((brand) => (
-            <li key={brand.name}>
+          {dynamicBrands.map((brand) => (
+            <li key={brand.id}>
               <button
                 onClick={() => {
-                  onFilterChange("brand", brand.name);
+                  onFilterChange("brand", brand.slug);
                   if (isMobile) onCloseMobile();
                 }}
                 className={`flex justify-between items-center w-full text-left ${linkClass} ${isActive(
                   "brand",
-                  brand.name
+                  brand.slug
                 )}`}
               >
                 <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4">
@@ -235,108 +215,48 @@ const FilterSidebar = ({
   );
 };
 
-// --- CompanyLocation 組件 ---
+// --- CompanyLocation 組件 (維持不變) ---
 const CompanyLocation = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-
-  const overlayOpacity = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [0, 0.4, 0]
-  );
-  const imageScale = useTransform(
-    scrollYProgress,
-    [0, 0.5, 1],
-    [1.15, 1, 1.15]
-  );
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.4, 0]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.15, 1, 1.15]);
 
   return (
-    <section
-      ref={ref}
-      className="company-location relative border-t border-gray-400"
-    >
+    <section ref={ref} className="company-location relative border-t border-gray-400">
       <div className="flex flex-col md:flex-row min-h-[600px]">
         <div className="w-full md:w-1/2 relative overflow-hidden min-h-[400px] md:min-h-full">
-          <motion.div
-            className="absolute inset-0 bg-black z-10 pointer-events-none"
-            style={{ opacity: overlayOpacity }}
-          ></motion.div>
+          <motion.div className="absolute inset-0 bg-black z-10 pointer-events-none" style={{ opacity: overlayOpacity }}></motion.div>
           <motion.div
             className="absolute inset-0 w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage:
-                "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')",
+              backgroundImage: "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')",
               scale: imageScale,
             }}
           ></motion.div>
         </div>
         <div className="w-full md:w-1/2 bg-white p-10 md:p-20 flex flex-col justify-center">
-          <h2 className="text-[32px] font-normal uppercase tracking-wide mb-10">
-            STORE INFO
-          </h2>
+          <h2 className="text-[32px] font-normal uppercase tracking-wide mb-10">STORE INFO</h2>
           <div className="space-y-8">
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Address
-              </h4>
-              <p className="text-[15px] font-medium leading-relaxed">
-                台灣省台中市北區中清路一段 428 號
-              </p>
-              <a
-                href="https://www.google.com/maps"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[13px] underline decoration-gray-400 underline-offset-4 text-gray-600 hover:text-black mt-2 inline-block"
-              >
-                View on Google Maps
-              </a>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Address</h4>
+              <p className="text-[15px] font-medium leading-relaxed">台灣省台中市北區中清路一段 428 號</p>
+              <a href="https://maps.google.com/?q=台灣省台中市北區中清路一段428號" target="_blank" rel="noopener noreferrer" className="text-[13px] underline decoration-gray-400 underline-offset-4 text-gray-600 hover:text-black mt-2 inline-block">View on Google Maps</a>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Open Hours
-              </h4>
-              <p className="text-[15px] font-medium leading-relaxed">
-                13:00 – 20:00 (週一至週六)
-                <br />
-                <span className="text-gray-500 text-[13px]">
-                  [定休日: 週日]
-                </span>
-              </p>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Open Hours</h4>
+              <p className="text-[15px] font-medium leading-relaxed">13:00 – 20:00 (週一至週六)<br /><span className="text-gray-500 text-[13px]">[定休日: 週日]</span></p>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Contact
-              </h4>
-              <p className="text-[15px] font-medium leading-relaxed">
-                TEL: 0938-535-870
-              </p>
-              <div className="flex items-center gap-6 mt-4">
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider hover:text-[#ef4628] transition-colors"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-[13px] font-bold uppercase tracking-wider hover:text-[#06c755] transition-colors"
-                >
-                  LINE
-                </a>
-              </div>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Contact</h4>
+              <p className="text-[15px] font-medium leading-relaxed">TEL: 0938-535-870</p>
             </div>
           </div>
           <div className="mt-12">
-            <Link
-              href="#"
-              className="inline-block bg-black text-white text-[14px] font-bold uppercase tracking-widest py-4 px-10 hover:bg-[#ef4628] transition-colors duration-300"
-            >
-              到店前請提前預約
-            </Link>
+            <Link href="#" className="inline-block bg-black text-white text-[14px] font-bold uppercase tracking-widest py-4 px-10 hover:bg-[#ef4628] transition-colors duration-300">到店前請提前預約</Link>
           </div>
         </div>
       </div>
@@ -345,7 +265,7 @@ const CompanyLocation = () => {
 };
 
 // --- 🔥 主要頁面 Component ---
-export default function Category({ products }) {
+export default function Category({ products, brands, categories }) {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState({
     type: "all",
@@ -354,23 +274,25 @@ export default function Category({ products }) {
 
   const handleFilterChange = (type, value) => {
     setActiveFilter({ type, value });
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-    } else {
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
       const productSection = document.querySelector(".products-content");
       if (productSection) productSection.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  // 前端過濾邏輯 (基於從 SSG 抓取到的 products)
+  // 前端過濾邏輯
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (activeFilter.type === "all") return products;
+    
     return products.filter((product) => {
       if (activeFilter.type === "brand") {
-        return product.brand === activeFilter.value;
+        // 比對產品的 brandSlug
+        return product.brandSlug === activeFilter.value;
       }
       if (activeFilter.type === "category") {
-        return product.category === activeFilter.value;
+        // 比對產品的 categorySlug
+        return product.categorySlug === activeFilter.value;
       }
       if (activeFilter.type === "collection") {
         return product.tags && product.tags.includes(activeFilter.value);
@@ -379,8 +301,45 @@ export default function Category({ products }) {
     });
   }, [activeFilter, products]);
 
+  // --- SEO 結構化資料 (JSON-LD) ---
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Online Store - CIÉMAN 喜曼精品",
+    "description": "嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證",
+    "url": "https://www.cieman.com.tw/shop",
+    "itemListElement": filteredProducts.slice(0, 20).map((product, index) => ({
+      "@type": "Product",
+      "position": index + 1,
+      "name": product.title,
+      "description": product.title, // 建議後台若有短描述可放入
+      "image": product.image,
+      "brand": {
+        "@type": "Brand",
+        "name": product.brand
+      },
+      "offers": {
+        "@type": "Offer",
+        "priceCurrency": "TWD",
+        "price": product.rawPrice,
+        "availability": product.status === "RANK S" ? "https://schema.org/InStock" : "https://schema.org/SoldOut"
+      }
+    }))
+  };
+
   return (
     <>
+      <Head>
+        <title>Online Store | CIÉMAN 喜曼精品 - 二手精品買賣</title>
+        <meta name="description" content="CIÉMAN 喜曼精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.cieman.com.tw/shop" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </Head>
+
       <main className="py-20 bg-white text-black font-sans min-h-screen">
         {/* Title & SEO Section */}
         <section>
@@ -419,28 +378,14 @@ export default function Category({ products }) {
           </div>
         </section>
 
-        {/* Mobile Filter */}
+        {/* Mobile Filter Button */}
         <div className="md:hidden sticky top-[60px] z-40 bg-white border-t border-b border-gray-400 shadow-sm">
           <button
             onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
             className="w-full flex justify-between items-center py-4 px-6 bg-white active:bg-gray-50 transition-colors"
           >
             <span className="text-sm font-bold tracking-widest uppercase flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <line x1="4" x2="20" y1="12" y2="12" />
-                <line x1="4" x2="20" y1="6" y2="6" />
-                <line x1="4" x2="20" y1="18" y2="18" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
               FILTER & CATEGORIES
               {activeFilter.type !== "all" && (
                 <span className="ml-2 text-[#ef4628] text-xs">
@@ -448,39 +393,19 @@ export default function Category({ products }) {
                 </span>
               )}
             </span>
-            <span
-              className={`transform transition-transform duration-300 ${
-                isMobileFilterOpen ? "rotate-180" : ""
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+            <span className={`transform transition-transform duration-300 ${isMobileFilterOpen ? "rotate-180" : ""}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
             </span>
           </button>
-          <div
-            className={`overflow-hidden transition-all duration-500 ease-in-out bg-[#fdfdfd] ${
-              isMobileFilterOpen
-                ? "max-h-[85vh] border-t border-gray-200"
-                : "max-h-0"
-            }`}
-          >
+          <div className={`overflow-hidden transition-all duration-500 ease-in-out bg-[#fdfdfd] ${isMobileFilterOpen ? "max-h-[85vh] border-t border-gray-200" : "max-h-0"}`}>
             <div className="overflow-y-auto max-h-[85vh]">
               <FilterSidebar
                 activeFilter={activeFilter}
                 onFilterChange={handleFilterChange}
                 isMobile={true}
                 onCloseMobile={() => setIsMobileFilterOpen(false)}
+                dynamicBrands={brands}
+                dynamicCategories={categories}
               />
             </div>
           </div>
@@ -494,6 +419,8 @@ export default function Category({ products }) {
                 activeFilter={activeFilter}
                 onFilterChange={handleFilterChange}
                 isMobile={false}
+                dynamicBrands={brands}
+                dynamicCategories={categories}
               />
             </div>
           </div>
@@ -506,23 +433,23 @@ export default function Category({ products }) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-                <p className="text-lg">No products found in this category.</p>
+                <p className="text-lg">該分類下沒有產品</p>
                 <button
                   onClick={() => handleFilterChange("all", null)}
                   className="mt-4 underline hover:text-black"
                 >
-                  View All Products
+                看全部商品
                 </button>
               </div>
             )}
+            {/* SEO Text Block */}
             <div className="p-8 md:p-12 bg-stone-50 border-t border-gray-400">
               <h3 className="text-sm font-bold text-gray-900 mb-3">
                 CIÉMAN 喜曼精品｜台中二手精品買賣、寄賣、置換
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed max-w-4xl">
                 專營 Hermès、Chanel、LV、Dior、Gucci、Loewe
-                等國際精品品牌。提供商品買賣，款式代尋、報價透明公開與優質售後服務。我們打造一樓至二樓的精品展示空間，以柔和的光線、乾淨俐落的動線與高質感材質堆疊，希望每位踏進店裡的貴賓，都能感受專屬於
-                CIÉMAN 的優雅與誠意。
+                等國際精品品牌。我們提供透明公開的報價與優質售後服務，致力於打造台中最優質的二手精品交易平台。
               </p>
             </div>
           </div>
@@ -538,111 +465,102 @@ export default function Category({ products }) {
           </Link>
         </div>
 
-        {/* CompanyLocation 組件 */}
         <CompanyLocation />
       </main>
     </>
   );
 }
 
+// --- 🔥 SSG + ISR 數據抓取 ---
 export async function getStaticProps() {
-  // 1. 讀取環境變數
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
-  // 2. 檢查變數
   if (!WC_URL || !CK || !CS) {
-    console.error("❌ 環境變數讀取失敗，請確認 .env.local 設定並重啟伺服器");
-    return { props: { products: [] }, revalidate: 10 };
+    return { props: { products: [], brands: [], categories: [] }, revalidate: 60 };
   }
 
+  const agent = new https.Agent({ rejectUnauthorized: false });
+  const headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    Accept: "application/json",
+  };
+
   try {
-    console.log("🔥 [Server] 開始抓取 WooCommerce 資料...");
+    // 1. 同時抓取「商品」與「分類」
+    const [productsRes, categoriesRes] = await Promise.all([
+      fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`, { agent, headers }),
+      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100`, { agent, headers })
+    ]);
 
-    // 3. 設定 Agent (忽略 SSL 錯誤)
-    const agent = new https.Agent({
-      rejectUnauthorized: false,
-    });
-
-    // 4. 組合 API 網址
-    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`;
-
-    // 5. 🔥【關鍵修改】加入 User-Agent 標頭來騙過防火牆
-    const res = await fetch(apiUrl, {
-      agent,
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        Accept: "application/json",
-      },
-    });
-
-    // 6. 檢查回應狀態
-    if (!res.ok) {
-      // 嘗試讀取錯誤訊息以便除錯
-      const errorText = await res.text();
-      console.error(
-        `❌ [Server] API 請求被拒絕: ${res.status} ${res.statusText}`
-      );
-      console.error(`❌ [Server] 回應內容: ${errorText.slice(0, 200)}...`); // 只印出前200字避免洗版
-      throw new Error(`Failed to fetch products: ${res.status}`);
+    if (!productsRes.ok || !categoriesRes.ok) {
+      throw new Error("Failed to fetch data");
     }
 
-    const wcProducts = await res.json();
-    console.log(`✅ [Server] 成功抓取到 ${wcProducts.length} 筆商品`);
+    const wcProducts = await productsRes.json();
+    const wcCategories = await categoriesRes.json();
 
-    // 7. 資料轉換
+    // 2. 處理分類結構 (Brand vs Category)
+    // 對應後台 Slug: "品牌館" -> brand, "產品類別" -> categories
+    const brandParent = wcCategories.find(c => c.slug === 'brand');
+    const typeParent = wcCategories.find(c => c.slug === 'categories');
+
+    const brandParentId = brandParent ? brandParent.id : null;
+    const typeParentId = typeParent ? typeParent.id : null;
+
+    // 🔥 修改處：移除 c.count > 0 的判斷，只保留父層級檢查
+    // 這樣就算該分類 count 為 0，也會被加入列表，前端就會顯示 "Hermès (0)"
+    const brandsList = wcCategories
+      .filter(c => c.parent === brandParentId) 
+      .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+
+    const categoriesList = wcCategories
+      .filter(c => c.parent === typeParentId)
+      .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+    
+    // 3. 處理商品資料 (維持不變)
     const formattedProducts = wcProducts.map((p) => {
-      const brandAttr = p.attributes.find(
-        (attr) => attr.name.toLowerCase() === "brand"
-      );
-      const categoryObj =
-        p.categories.length > 0 ? p.categories[0].name : "Others";
+      const pCatIds = p.categories.map(c => c.id);
 
-      let uiCategory = "Others";
-      const catName = categoryObj.toLowerCase();
-      if (catName.includes("handbag") || catName.includes("包"))
-        uiCategory = "Handbags";
-      else if (
-        catName.includes("slg") ||
-        catName.includes("夾") ||
-        catName.includes("wallet")
-      )
-        uiCategory = "SLG";
-      else if (catName.includes("shoes") || catName.includes("鞋"))
-        uiCategory = "Shoes";
-      else if (catName.includes("silk") || catName.includes("絲"))
-        uiCategory = "Silk";
-      else if (catName.includes("accessory") || catName.includes("飾"))
-        uiCategory = "Accessories";
+      const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
+      const uiBrandName = matchedBrand ? matchedBrand.name : "Ciéman Select";
+      const uiBrandSlug = matchedBrand ? matchedBrand.slug : "select";
+
+      const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
+      const uiCategoryName = matchedCategory ? matchedCategory.name : "Accessories";
+      const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
+
+      const rawPrice = p.price ? parseInt(p.price) : 0;
 
       return {
         id: p.id,
         slug: p.slug,
         title: p.name.toUpperCase(),
-        brand: brandAttr ? brandAttr.options[0] : "Ciéman Select",
-        category: uiCategory,
-        price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
-        tags: p.tags.length > 0 ? p.tags.map((t) => t.name) : ["最新現貨"],
+        brand: uiBrandName,
+        brandSlug: uiBrandSlug,
+        category: uiCategoryName,
+        categorySlug: uiCategorySlug,
+        price: `NT$ ${rawPrice.toLocaleString()}`,
+        rawPrice: rawPrice,
+        tags: p.tags.length > 0 ? p.tags.map((t) => t.name) : [],
         status: p.stock_status === "instock" ? "RANK S" : "SOLD",
-        image:
-          p.images.length > 0 ? p.images[0].src : "/images/placeholder.jpg",
+        image: p.images.length > 0 ? p.images[0].src : null,
       };
     });
 
     return {
       props: {
         products: formattedProducts,
+        brands: brandsList,
+        categories: categoriesList,
       },
-      revalidate: 10,
+      revalidate: 10, 
     };
   } catch (error) {
-    console.error("❌ [Server] 抓取過程發生錯誤:", error);
+    console.error("❌ [Server] Error:", error);
     return {
-      props: {
-        products: [],
-      },
+      props: { products: [], brands: [], categories: [] },
       revalidate: 10,
     };
   }

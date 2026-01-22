@@ -16,22 +16,23 @@ const Photos = () => {
 
   // 1. 定義圖片路徑
   const imagePaths = [
-    "/images/Premium_Handbags/shutterstock_2618316423.jpg",
+     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_10.jpg",
+    
 
     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_3.jpg",
-    "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_10.jpg",
+   "/images/Premium_Handbags/shutterstock_2618316423.jpg",
     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_21.jpg",
   ];
 
   // 2. 定義標題
-  const titles = ["Hermès 精選", "Chanel 精選", "最新上架", "高價收購"];
+  const titles = ["最新現貨 New In", "商品代購", "Hermès 專區", "高價收購"];
 
   // 3. 定義簡短描述
   const descriptions = [
-    "經典設計，展現極致工藝與優雅品味。",
-    "每一處細節，皆是完美的音符，譜出奢華樂章。",
-    "突破想像邊界，重新定義您的時尚風格。",
-    "經典設計，展現極致工藝與優雅品味。",
+    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+       "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
   ];
 
   useGSAP(
@@ -468,7 +469,7 @@ const Photos = () => {
                   className="shop-btn "
                   onClick={() => alert(`前往購買: ${title}`)}
                 >
-                  Buy Now
+                 More
                 </button>
               </div>
             ))}

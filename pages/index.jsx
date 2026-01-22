@@ -32,8 +32,8 @@ export default function Home() {
       <motion.div
         style={{ y: y1 }}
         className="absolute z-20 
-                   w-20 h-20 top-10 left-0 
-                   lg:w-[150px] lg:h-[150px] lg:top-20"
+                   w-20 h-20 top-20 left-0 
+                   lg:w-[150px] lg:h-[150px] lg:top-[100px]"
       >
         <Image
           src="/images/bg/bg-stuff-06.png"
@@ -49,7 +49,7 @@ export default function Home() {
         style={{ y: y2 }}
         className="absolute z-20 
                    w-24 h-24 top-16 right-[5%] 
-                   lg:w-[150px] lg:h-[150px] lg:top-20 lg:right-[20%]"
+                   lg:w-[150px] lg:h-[150px] lg:top-[150px] lg:right-[20%]"
       >
         <Image
           src="/images/bg/bg-stuff-03.png"
@@ -113,21 +113,21 @@ export default function Home() {
                 {/* 上半部文字 */}
                 <div className="max-w-full lg:max-w-[400px] mx-auto lg:mx-0">
                   <b className="text-sm lg:text-[18px] tracking-widest block mb-2">
-                    D’RENTY INC.
+                    KESH LUXURY CO., LTD
+
                   </b>
                   <p className="text-xs lg:text-[12px] leading-relaxed font-medium lg:font-normal opacity-90 lg:opacity-100">
-                    株式会社ドレンティでは、店舗・内勤スタッフを募集しています。
-                    詳細は採用情報をご覧ください。
+KÉSH de¹ 凱仕國際精品
                   </p>
                 </div>
 
                 {/* 下半部標題 */}
                 <div>
                   <h1 className="text-6xl md:text-7xl lg:text-[4.8em] tracking-wider leading-tight font-light">
-                    hello.cieman
+                    KÉSH de¹ 
                   </h1>
                   <p className="mt-2 lg:mt-4 text-3xl lg:text-[2.2em] font-serif">
-                    喜曼精品
+                   凱仕國際精品
                   </p>
                 </div>
               </div>
@@ -152,20 +152,29 @@ export default function Home() {
           <div className="container flex lg:flex-row flex-col  max-w-[1920px] w-full xl:w-[85%] mx-auto">
             <div className="left   w-full lg:w-1/2 p-10">
               <h2 className="text-[1.5rem] max-w-[500px] mx-auto text-left font-[400]">
-                我們打造一樓至二樓的精品展示空間，以柔和的光線、乾淨俐落的動線與高質感材質堆疊，
+      品牌理念｜KÉSH de¹ 命名由來
+
               </h2>
               <Scroll />
             </div>
             <div className="left justify-between  flex  flex-col  w-full lg:w-1/2 md:px-8 px-0 2xl:px-20">
               <div className="txt flex pb-4 flex-col justify-center items-center h-full">
                 <p className="text-[1rem] w-[80%] md:w-2/3 leading-relaxed -tracking-tighter">
-                  希望每位踏進店裡的貴賓，都能感受專屬於 CIÉMAN
-                  的優雅與誠意。我們專注 Hermès、Chanel、Dior、Louis Vuitton
-                  等頂級品牌，從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。
+                「1」，代表第一，代表開始。
+de¹ 中的上揚設計，象徵品味的起點與向上的追求。
+在 KÉSH de¹ 的理念中，
+所有選品、服務與細節，
+皆以「1」為核心結構——
+將顧客的感受與體驗，排在第1位。
+對許多人而言，
+這裡，或許正是人生第1個夢想包款的起點，
+品味、收藏與自我風格的開始。
+
                 </p>
                 <p className="text-[1rem] mt-7 w-[80%] md:w-2/3 leading-relaxed -tracking-tighter">
-                  在
-                  CIÉMAN，我們相信精品不僅是商品，更是一種風格、一種質感、一種態度的延伸。
+                 KÉSH de¹ 不是1個系列編號，
+而是1種價值排序。
+
                 </p>
                 <b className="text-[1.2rem] font-bold mt-6">願景 Vision</b>
                 <p className="text-[1rem] mt-7 w-[80%] md:w-2/3 leading-relaxed -tracking-tighter">
@@ -174,7 +183,10 @@ export default function Home() {
               </div>
               <div className="more-about border-t-1 border-stone-400 mt-3">
                 <p className="text-[.8rem] text-center mt-5">
-                  誠實透明，尊重每一位貴賓，專業精準，安靜且高效率的服務體驗
+                在這裡，
+每1個選擇，始於感受；
+每1次收藏，源於信任。
+
                 </p>
               </div>
             </div>
@@ -240,63 +252,69 @@ export default function Home() {
             </div>
           </section>
 
-          {/* 第二區塊 */}
-          <section className="relative overflow-hidden flex flex-col lg:flex-row gap-16 lg:gap-[10em] py-10 lg:py-0">
-            {/* 左側大圖 + 覆蓋文字 */}
-            <div className="relative w-full lg:w-1/2 flex justify-center">
-              <div className="relative top-0 left-0 w-full h-[60vh] lg:h-auto overflow-hidden">
-                <ParallaxImage
-                  src="/images/index/shutterstock_3459837419.mp4"
-                  alt="CIÉMAN Brand Video"
-                />
-              </div>
+    {/* 第二區塊 */}
+<section className="relative flex flex-col lg:flex-row gap-10 lg:gap-[10em] py-10 lg:py-0 overflow-hidden h-auto lg:h-[600px]">
+  
+  {/* 左側大圖 + 覆蓋文字 */}
+  {/* 修正：加入 lg:h-full 確保左側區塊在電腦版佔滿高度 */}
+  <div className="relative w-full lg:w-1/2 flex justify-center lg:h-full">
+    
+    {/* 影片容器 */}
+    {/* 修正：
+        1. 手機版維持 h-[60vh] (或你想要的任何高度)
+        2. 電腦版改為 lg:h-full (填滿父層的 600px)，確保影片一定會顯示
+    */}
+    <div className="relative w-full h-[60vh] lg:h-full overflow-hidden">
+      <ParallaxImage
+        src="/images/index/shutterstock_3459837419.mp4"
+        alt="CIÉMAN Brand Video"
+        // 確保 ParallaxImage 內部有 className="w-full h-full object-cover" 之類的設定
+      />
+    </div>
 
-              {/* 覆蓋文字：更新為品牌核心價值 */}
-              <div className="w-[80%] sm:w-[50%] lg:w-1/3 absolute top-1/2 right-0 sm:right-6 -translate-y-1/2 z-[2] text-center lg:text-left pointer-events-none">
-                <p className="uppercase text-sm lg:text-[14px] font-medium leading-relaxed lg:leading-loose text-white drop-shadow-md tracking-wider">
-                  <br className="hidden lg:block" />
-                  We believe luxury is not just a product, but an extension of
-                  <span className="block mt-4 text-xs opacity-80 font-normal normal-case">
-                    We believe luxury is not just a product, but an extension of
-                    style, quality, and attitude.
-                  </span>
-                </p>
-              </div>
-            </div>
+    {/* 覆蓋文字 */}
+    <div className="w-[80%] sm:w-[50%] lg:w-1/3 absolute top-1/2 right-0 sm:right-6 -translate-y-1/2 z-[2] text-center lg:text-left pointer-events-none">
+      <p className="uppercase text-sm lg:text-[14px] font-medium leading-relaxed lg:leading-loose text-white drop-shadow-md tracking-wider">
+        <br className="hidden lg:block" />
+        We believe luxury is not just a product, but an extension of
+        <span className="block mt-4 text-xs opacity-80 font-normal normal-case">
+          We believe luxury is not just a product, but an extension of
+          style, quality, and attitude.
+        </span>
+      </p>
+    </div>
+  </div>
 
-            {/* 右側分類列表：更新為產品分類 */}
-            <div className="w-full lg:w-1/2 p-10 relative flex justify-center items-center pb-20 lg:pb-0">
-              <div className="relative flex flex-col justify-center items-center gap-12 lg:gap-[2em]">
-                {[
-                  {
-                    title: "Handbags",
-                    sub: "HERMÈS / CHANEL / LV / DIOR",
-                  },
-                  {
-                    title: "Jewellery",
-                    sub: "NECKLACES 項鍊 / EARRINGS 耳環 / RINGS 戒指",
-                  },
-                  {
-                    title: "Accessories",
-                    sub: "SILK 絲巾 / BELTS 皮帶 / SLG 小皮件",
-                  },
-                  {
-                    title: "Footwear",
-                    sub: "MEN'S 男士 / WOMEN'S 女士 / SNEAKERS 運動鞋",
-                  },
-                ].map((item, index) => (
-                  <div key={index} className="text-center flex flex-col group">
-                    <h1 className="text-[#1b1b1b] text-5xl lg:text-[80px] font-normal tracking-[-1px] leading-none group-hover:text-[#9c8c74] transition-colors cursor-pointer">
-                      {item.title}
-                    </h1>
-                    <p className="uppercase text-[#555] group-hover:text-black text-xs lg:text-[14px] font-medium leading-none mt-3 lg:mt-2 tracking-widest transition-colors">
-                      {item.sub}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+  {/* 右側分類列表 */}
+  {/* 修正：加入 lg:h-full 與 items-center 確保垂直置中 */}
+  <div className="w-full lg:w-1/2 py-10 lg:py-0 relative flex justify-center items-center lg:h-full">
+    <div className="relative flex flex-col justify-center items-center gap-8 lg:gap-[2em]">
+      {[
+        {
+          title: "Authenticity Guaranteed",
+          sub: "每件商品皆經專業鑑定與來源確認，附實拍影片與品況說明",
+        },
+        {
+          title: "Condition Verified",
+          sub: "品況分級 S / A / AB / B，完整告知",
+        },
+        {
+          title: "Worldwide Shipping",
+          sub: "24–48 小時出貨，支援國際配送，全程可追蹤",
+        },
+      ].map((item, index) => (
+        <div key={index} className="text-center flex flex-col group px-4">
+          <h1 className="text-[#1b1b1b] text-2xl lg:text-[40px] font-normal tracking-[-1px] leading-none group-hover:text-[#9c8c74] transition-colors cursor-pointer">
+            {item.title}
+          </h1>
+          <p className="uppercase text-[#555] group-hover:text-black text-xs lg:text-[14px] font-medium leading-normal mt-2 lg:mt-2 tracking-widest transition-colors">
+            {item.sub}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
           <section className="relative w-screen mt-5 h-screen overflow-hidden flex justify-center items-center">
             {/* 修改處：這裡補上 h-full，讓它跟 section 一樣高 */}
             <div className="w-full h-full absolute top-0 left-0 overflow-hidden">

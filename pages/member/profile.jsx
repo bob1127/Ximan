@@ -377,7 +377,7 @@ export default function MemberProfile() {
                                         </p>
                                         <StatusBadge status={order.status} />
                                       </div>
-                                      <p className="text-sm text-gray-500 mt-1">
+                                      <p className="text-sm text-stone-900 font-bold mt-1">
                                         {createdDate
                                           ? createdDate.toLocaleString()
                                           : "—"}
@@ -443,7 +443,7 @@ export default function MemberProfile() {
                                   </div>
 
                                   {/* Recipient summary */}
-                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-gray-50 border border-gray-100 rounded-sm p-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4   border border-gray-100 rounded-sm p-4">
                                     <MiniInfo
                                       label="收件人"
                                       value={shippingName}
@@ -584,95 +584,100 @@ export default function MemberProfile() {
                                       </div>
 
                                       {/* Summary */}
-                                      <div className="lg:col-span-1">
-                                        <p className="text-xs text-gray-400 uppercase tracking-wider mb-3">
-                                          Summary
-                                        </p>
+                                      <div className="lg:col-span-1 bg-stone-50 p-2">
+                                        <div className="bg-[#e8b62e] p-4">
+                                          <p className="text-xs text-stone-800 uppercase tracking-wider mb-3">
+                                            Summary
+                                          </p>
 
-                                        <div className="border border-gray-200 rounded-sm p-4 space-y-3">
-                                          <SummaryRow
-                                            label="小計"
-                                            value={`NT$ ${formatMoney(
-                                              order.total -
-                                                (Number(order.shipping_total) ||
-                                                  0) +
-                                                (Number(order.discount_total) ||
-                                                  0)
-                                            )}`}
-                                            muted
-                                          />
-                                          <SummaryRow
-                                            label="折扣"
-                                            value={
-                                              Number(order.discount_total) > 0
-                                                ? `- NT$ ${formatMoney(
-                                                    order.discount_total
-                                                  )}`
-                                                : "—"
-                                            }
-                                            muted
-                                          />
-                                          <SummaryRow
-                                            label="運費"
-                                            value={
-                                              Number(order.shipping_total) > 0
-                                                ? `NT$ ${formatMoney(
-                                                    order.shipping_total
-                                                  )}`
-                                                : "—"
-                                            }
-                                            muted
-                                          />
-                                          <SummaryRow
-                                            label="稅金"
-                                            value={
-                                              Number(order.total_tax) > 0
-                                                ? `NT$ ${formatMoney(
-                                                    order.total_tax
-                                                  )}`
-                                                : "—"
-                                            }
-                                            muted
-                                          />
-                                          <div className="pt-3 border-t border-gray-200">
+                                          <div className="border border-gray-500 text-stone-700 rounded-sm p-4 space-y-3">
                                             <SummaryRow
-                                              label="總計"
+                                              label="小計"
                                               value={`NT$ ${formatMoney(
-                                                order.total
+                                                order.total -
+                                                  (Number(
+                                                    order.shipping_total
+                                                  ) || 0) +
+                                                  (Number(
+                                                    order.discount_total
+                                                  ) || 0)
                                               )}`}
-                                              strong
+                                              muted
                                             />
+                                            <SummaryRow
+                                              label="折扣"
+                                              value={
+                                                Number(order.discount_total) > 0
+                                                  ? `- NT$ ${formatMoney(
+                                                      order.discount_total
+                                                    )}`
+                                                  : "—"
+                                              }
+                                              muted
+                                            />
+                                            <SummaryRow
+                                              label="運費"
+                                              value={
+                                                Number(order.shipping_total) > 0
+                                                  ? `NT$ ${formatMoney(
+                                                      order.shipping_total
+                                                    )}`
+                                                  : "—"
+                                              }
+                                              muted
+                                            />
+                                            <SummaryRow
+                                              label="稅金"
+                                              value={
+                                                Number(order.total_tax) > 0
+                                                  ? `NT$ ${formatMoney(
+                                                      order.total_tax
+                                                    )}`
+                                                  : "—"
+                                              }
+                                              muted
+                                            />
+                                            <div className="pt-3 border-t border-gray-200">
+                                              <SummaryRow
+                                                label="總計"
+                                                value={`NT$ ${formatMoney(
+                                                  order.total
+                                                )}`}
+                                                strong
+                                              />
+                                            </div>
                                           </div>
-                                        </div>
 
-                                        {/* Notes / meta */}
-                                        {(order.customer_note ||
-                                          order.meta_data?.length) && (
-                                          <div className="mt-4 border border-gray-200 rounded-sm p-4">
-                                            <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">
-                                              Notes
-                                            </p>
-                                            {order.customer_note && (
-                                              <p className="text-sm text-gray-700 leading-relaxed">
-                                                {order.customer_note}
+                                          {/* Notes / meta */}
+                                          {(order.customer_note ||
+                                            order.meta_data?.length) && (
+                                            <div className="mt-4 border border-gray-500 rounded-sm p-4">
+                                              <p className="text-xs text-stone-600 uppercase tracking-wider mb-2">
+                                                Notes
                                               </p>
-                                            )}
-                                            {!!order.meta_data?.length && (
-                                              <div className="mt-3 space-y-1">
-                                                {order.meta_data
-                                                  .slice(0, 3)
-                                                  .map((m) => (
-                                                    <p
-                                                      key={m.id || m.key}
-                                                      className="text-xs text-gray-500"
-                                                    >
-                                                      {m.key}：{String(m.value)}
-                                                    </p>
-                                                  ))}
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
+                                              {order.customer_note && (
+                                                <p className="text-sm text-gray-700 leading-relaxed">
+                                                  {order.customer_note}
+                                                </p>
+                                              )}
+                                              {!!order.meta_data?.length && (
+                                                <div className="mt-3 space-y-1">
+                                                  {order.meta_data
+                                                    .slice(0, 3)
+                                                    .map((m) => (
+                                                      <p
+                                                        key={m.id || m.key}
+                                                        className="text-xs text-gray-500"
+                                                      >
+                                                        {m.key}：
+                                                        {String(m.value)}
+                                                      </p>
+                                                    ))}
+                                                </div>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
                                   </motion.div>
@@ -730,10 +735,10 @@ const AddressRow = ({ label, value }) => {
 const MiniInfo = ({ label, value }) => {
   return (
     <div className="min-w-0">
-      <p className="text-[11px] text-gray-400 uppercase tracking-wider">
+      <p className="text-[11px] text-stone-800 uppercase tracking-wider">
         {label}
       </p>
-      <p className="text-sm font-semibold text-gray-800 break-words mt-1">
+      <p className="text-sm font-semibold text-stone-800 break-words mt-1">
         {value}
       </p>
     </div>
@@ -743,7 +748,11 @@ const MiniInfo = ({ label, value }) => {
 const SummaryRow = ({ label, value, strong = false, muted = false }) => {
   return (
     <div className="flex items-center justify-between gap-4">
-      <span className={`text-sm ${muted ? "text-gray-500" : "text-gray-700"}`}>
+      <span
+        className={`font-bold text-sm ${
+          muted ? "text-stone-900" : "text-stone-900"
+        }`}
+      >
         {label}
       </span>
       <span
@@ -794,18 +803,18 @@ const formatWCAddress = (shipping, billing) => {
 // 狀態標籤組件
 const StatusBadge = ({ status }) => {
   const styles = {
-    pending: "bg-yellow-100 text-yellow-800",
-    processing: "bg-blue-100 text-blue-800",
-    completed: "bg-green-100 text-green-800",
-    cancelled: "bg-red-100 text-red-800",
-    refunded: "bg-gray-100 text-gray-800",
-    failed: "bg-red-100 text-red-800",
+    pending: "bg-[#e8b62e] text-stone-800",
+    processing: "bg-[#e8b62e] text-stone-800",
+    completed: "bg-[#e8b62e] text-stone-800",
+    cancelled: "bg-[#e8b62e] text-stone-800",
+    refunded: "bg-[#e8b62e] text-stone-800",
+    failed: "bg-[#e8b62e] text-stone-800",
   };
 
   const labels = {
     pending: "待付款",
-    processing: "處理中",
-    completed: "已完成",
+    processing: "處理中 / 準備出貨",
+    completed: "已完成 / 寄出",
     cancelled: "已取消",
     refunded: "已退款",
     failed: "失敗",

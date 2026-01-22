@@ -7,22 +7,22 @@ const team = [
   {
     name: "Ava Sinclair",
     role: "Creative Director",
-    img: "/images/index/DSCF7132.webp",
+    img: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_4.jpg",
   },
   {
     name: "Liam Archer",
     role: "Brand Strategist",
-    img: "/images/index/DSCF7130.webp",
+     img: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_14.jpg",
   },
   {
     name: "Zoe Clementine",
     role: "Lead Designer",
-    img: "/images/index/DSCF7126.webp",
+     img: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_2.jpg",
   },
   {
     name: "Ethan Hawthorne",
     role: "Chief Innovation Officer",
-    img: "/images/index/DSCF7160.webp",
+    img: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_1.jpg",
   },
 ];
 

@@ -52,7 +52,7 @@ export default function Contact() {
   return (
     <div className="container  my-20 mx-auto">
       <Head>
-        <title>聯繫喜曼 Contact CIÉMAN</title>
+        <title>聯繫凱仕 Contact KÉSH de¹</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 

@@ -99,7 +99,7 @@ export const SlideTabsExample = () => {
     { key: "news", label: "最新消息", href: "#" },
     { key: "SERVICE", label: "服務流程", href: "/service" },
     { key: "NOTE", label: "購物須知", href: "/note" },
-    { key: "CONTACT", label: "聯繫喜曼", href: "/contact" },
+    { key: "CONTACT", label: "聯繫凱仕", href: "/contact" },
     { key: "ABOUT", label: "公司介紹", href: "/about" },
   ];
 
@@ -194,8 +194,8 @@ export const SlideTabsExample = () => {
 
           {/* Center: Logo (Fixed Size, No scroll animation) */}
           <div className="flex-1 flex justify-center items-center">
-            <Link href="/" className="relative block w-[65px] md:w-[80px]">
-              {/* 圖片移除 width animation，改用標準 RWD 設定 */}
+            {/* <Link href="/" className="relative block w-[65px] md:w-[80px]">
+             
               <Image
                 src="/images/logo/喜曼＿Logo＿給檔＿黑-02(1).png"
                 alt="CIEMAN"
@@ -204,7 +204,7 @@ export const SlideTabsExample = () => {
                 priority
                 className="w-full h-auto object-contain"
               />
-            </Link>
+            </Link> */}
           </div>
 
           {/* Right: Account & Cart (with Labels) */}
