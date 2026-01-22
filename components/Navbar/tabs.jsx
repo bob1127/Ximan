@@ -6,14 +6,12 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ShoppingBag, Search } from "lucide-react"; // 新增 Search icon
+import { Menu, X, User, ShoppingBag, Search, Phone, Mail, Globe } from "lucide-react";
 
 export const SlideTabsExample = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState("none");
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-
-  // 滾動狀態 (僅用於邊框陰影顯示，不再用於縮放 Logo)
   const [isScrolled, setIsScrolled] = useState(false);
 
   const { totalQty, setIsCartOpen } = useCart();
@@ -24,10 +22,10 @@ export const SlideTabsExample = () => {
   const userMenuRef = useRef(null);
   const navRef = useRef(null);
 
-  // 監聽滾動事件 (保留陰影效果邏輯)
+  // 監聽滾動事件
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 40) { // 當捲動超過 Top Bar 高度時
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -37,6 +35,7 @@ export const SlideTabsExample = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // 點擊外部關閉選單
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -57,25 +56,20 @@ export const SlideTabsExample = () => {
     return () => document.removeEventListener("mouseover", handleMouseLeave);
   }, []);
 
-  // Fetch User Info
+  // Fetch Categories & User (保留原本邏輯)
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
-    fetch(
-      "https://inf.fjg.mybluehost.me/website_19581d8b/wp-json/wp/v2/users/me",
-      { headers: { Authorization: `Bearer ${token}` } }
-    )
+    if (token) {
+      fetch("https://inf.fjg.mybluehost.me/website_19581d8b/wp-json/wp/v2/users/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       .then((res) => res.json())
       .then((data) => {
-        if (!data.code && typeof setUserInfo === "function") {
-          setUserInfo(data);
-        }
+        if (!data.code && setUserInfo) setUserInfo(data);
       })
-      .catch((err) => console.error("無法取得使用者資訊", err));
-  }, [setUserInfo]);
+      .catch((err) => console.error(err));
+    }
 
-  // Fetch Categories
-  useEffect(() => {
     async function fetchData() {
       try {
         const [resCategories, resBrand] = await Promise.all([
@@ -87,16 +81,16 @@ export const SlideTabsExample = () => {
         setCategoriesChildren(Array.isArray(cats) ? cats : []);
         setBrandChildren(Array.isArray(brands) ? brands : []);
       } catch (err) {
-        console.error("取得 WooCommerce 分類失敗", err);
+        console.error(err);
       }
     }
     fetchData();
-  }, []);
+  }, [setUserInfo]);
 
   const navLinks = [
     { key: "categories", label: "產品類別", href: "/category" },
     { key: "brand", label: "品牌館", href: "/category" },
-    { key: "news", label: "最新消息", href: "#" },
+    { key: "news", label: "最新消息", href: "/news" },
     { key: "SERVICE", label: "服務流程", href: "/service" },
     { key: "NOTE", label: "購物須知", href: "/note" },
     { key: "CONTACT", label: "聯繫凱仕", href: "/contact" },
@@ -105,420 +99,248 @@ export const SlideTabsExample = () => {
 
   const megaVariants = {
     hidden: { opacity: 0, y: -10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      transition: { duration: 0.2, ease: "easeIn" },
-    },
-  };
-
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.3 } },
-    exit: { opacity: 0, transition: { duration: 0.2 } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
   };
 
   return (
     <div ref={navRef} className="relative font-sans text-gray-800">
-      {/* Mobile Menu Backdrop */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            className="fixed inset-0 z-[900] pointer-events-none md:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div
-              className="w-full h-full bg-black/20 backdrop-blur-sm pointer-events-auto"
-              onClick={() => setIsMenuOpen(false)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      
+      {/* --- Top Bar (紅色區塊) --- */}
+      {/* 參考截圖設計：紅色背景，白色文字，高度較小 */}
+      <div className={`bg-[#ef4628] text-white text-[11px] md:text-xs font-medium py-2 px-4 md:px-10 transition-all duration-300 z-[1001] relative ${isScrolled ? 'hidden md:hidden' : 'block'}`}>
+        <div className="max-w-[1920px] mx-auto flex justify-between items-center">
+          {/* 左側：聯絡資訊 */}
+          <div className="flex items-center gap-4 md:gap-6">
+            <a href="tel:+886912345678" className="flex items-center gap-2 hover:opacity-80">
+              <Phone size={14} />
+              <span>+886 912-345-678</span>
+            </a>
+            <a href="mailto:service@kesh.com" className="flex items-center gap-2 hover:opacity-80 hidden sm:flex">
+              <Mail size={14} />
+              <span>service@kesh.com</span>
+            </a>
+          </div>
 
-      {/* Desktop Mega Menu Backdrop */}
-      <AnimatePresence>
-        {openMega !== "none" && (
-          <motion.div
-            // Mega menu top position adjusted for taller header
-            className="fixed inset-0 top-[140px] z-[940] bg-black/20 backdrop-blur-sm hidden md:block"
-            variants={backdropVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            onMouseEnter={() => setOpenMega("none")}
-          />
-        )}
-      </AnimatePresence>
+          {/* 右側：語言與帳戶 */}
+          <div className="flex items-center gap-4 md:gap-6 divide-x divide-white/30">
+            <div className="flex items-center gap-1 cursor-pointer hover:opacity-80">
+              <Globe size={14} />
+              <span>繁體中文</span>
+            </div>
+            <div className="pl-4 md:pl-6 flex gap-3">
+               {userInfo ? (
+                  <Link href="/member/profile" className="hover:opacity-80">
+                    {userInfo.name}
+                  </Link>
+               ) : (
+                 <>
+                   <Link href="/login" className="hover:opacity-80">Login</Link>
+                   <Link href="/register" className="hover:opacity-80">Register</Link>
+                 </>
+               )}
+            </div>
+          </div>
+        </div>
+      </div>
 
-      {/* Main Header Container */}
+      {/* --- Main Header (白色區塊) --- */}
       <div
-        className={`fixed top-0 left-0 w-full z-[1000] transition-all duration-300 bg-[#fcf8f3] ${
-          isScrolled ? "shadow-sm" : ""
+        className={`bg-white border-b border-gray-100 transition-all duration-300 w-full z-[1000] ${
+          isScrolled ? "fixed top-0 left-0 shadow-md py-2" : "relative py-4"
         }`}
       >
-        {/* =========================================================
-            ROW 1: Tools (Search) | Logo | Tools (Account/Cart) 
-            (Desktop Visible, Mobile Adjusted)
-           ========================================================= */}
-        <div className="relative flex justify-between items-center px-4 md:px-10 py-4 max-w-[1920px] mx-auto">
-          {/* Left: Mobile Hamburger / Desktop Search */}
-          <div className="flex items-center w-[200px] flex-shrink-0">
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden text-black p-1 -ml-1 mr-2"
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-            >
-              {isMenuOpen ? (
-                <X size={26} strokeWidth={1.5} />
-              ) : (
-                <Menu size={26} strokeWidth={1.5} />
-              )}
-            </button>
+        <div className="max-w-[1920px] mx-auto px-4 md:px-10">
+          
+          {/* 上半部：Logo 與 工具列 */}
+          <div className="flex justify-between items-center mb-0 md:mb-2">
+            
+            {/* Mobile Menu Button (手機版顯示) */}
+            <div className="md:hidden">
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 -ml-2 text-gray-800">
+                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
 
-            {/* Desktop Search (仿圖樣式) */}
-            <div className="hidden md:flex items-center group cursor-pointer">
-              <Search size={20} strokeWidth={1.5} className="text-gray-800" />
-              <div className="ml-3 relative py-1 border-b border-gray-800 w-[120px] lg:w-[180px]">
-                <span className="text-sm font-bold text-gray-600">搜尋</span>
+            {/* Logo Area (置中) */}
+            {/* 預留空間給 Logo，您可以隨時放入 Image */}
+            <div className="flex-1 md:flex-none flex justify-center md:justify-start">
+              <Link href="/" className="relative block h-[40px] md:h-[50px] flex items-center justify-center">
+                 {/* 暫時用文字代替，您可以取消註解下方的 Image */}
+                 <h1 className="text-2xl font-bold tracking-widest text-black">
+                   KÉSH<span className="text-[#ef4628]">.</span>
+                 </h1>
+                 {/* <Image
+                    src="/images/logo/your-logo.png"
+                    alt="KESH"
+                    width={180}
+                    height={60}
+                    className="h-full w-auto object-contain"
+                  /> 
+                 */}
+              </Link>
+            </div>
+
+            {/* 右側工具列：搜尋、帳戶、購物車 */}
+            <div className="flex items-center gap-4 md:gap-6">
+              {/* Search (Desktop) */}
+              <div className="hidden md:flex items-center bg-gray-50 px-3 py-2 rounded-full border border-gray-100 w-[200px] lg:w-[250px]">
+                  <input 
+                    type="text" 
+                    placeholder="Search..." 
+                    className="bg-transparent border-none outline-none text-sm w-full text-gray-600 placeholder-gray-400"
+                  />
+                  <Search size={18} className="text-gray-400" />
               </div>
-            </div>
-          </div>
 
-          {/* Center: Logo (Fixed Size, No scroll animation) */}
-          <div className="flex-1 flex justify-center items-center">
-            {/* <Link href="/" className="relative block w-[65px] md:w-[80px]">
-             
-              <Image
-                src="/images/logo/喜曼＿Logo＿給檔＿黑-02(1).png"
-                alt="CIEMAN"
-                width={160}
-                height={60}
-                priority
-                className="w-full h-auto object-contain"
-              />
-            </Link> */}
-          </div>
-
-          {/* Right: Account & Cart (with Labels) */}
-          <div className="flex items-center justify-end w-[200px] flex-shrink-0 gap-6">
-            {/* User Account */}
-            <div className="relative hidden md:block" ref={userMenuRef}>
+              {/* Cart */}
               <button
-                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="text-gray-800 hover:opacity-70 transition-opacity flex items-center gap-2"
+                onClick={() => setIsCartOpen(true)}
+                className="relative p-2 hover:bg-gray-50 rounded-full transition-colors group"
               >
-                <User size={22} strokeWidth={1.5} />
-                <span className="text-xs font-bold tracking-wide">
-                  會員帳戶
-                </span>
-              </button>
-
-              {/* User Dropdown */}
-              <AnimatePresence>
-                {isUserMenuOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 top-full mt-4 w-48 bg-white border border-gray-100 shadow-xl rounded-md overflow-hidden z-[1100]"
-                  >
-                    <div className="py-2">
-                      {userInfo ? (
-                        <>
-                          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                            <p className="text-xs text-gray-500">歡迎回來</p>
-                            <p className="text-sm font-bold text-gray-800 truncate">
-                              {userInfo.name}
-                            </p>
-                          </div>
-                          <Link
-                            href="/member/profile"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            會員資料
-                          </Link>
-                          <Link
-                            href="/member/orders"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            訂單查詢
-                          </Link>
-                          <button
-                            onClick={() => {
-                              logout();
-                              setIsUserMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
-                          >
-                            登出
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <Link
-                            href="/login"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            會員登入
-                          </Link>
-                          <Link
-                            href="/register"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            註冊帳號
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Cart */}
-            <button
-              onClick={() => setIsCartOpen(true)}
-              className="text-gray-800 hover:opacity-70 transition-opacity relative flex items-center gap-2"
-            >
-              <div className="relative">
-                <ShoppingBag size={22} strokeWidth={1.5} />
+                <ShoppingBag size={22} className="text-gray-700 group-hover:text-[#ef4628]" />
                 {totalQty > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#ef4628] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  <span className="absolute top-0 right-0 bg-[#ef4628] text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-white">
                     {totalQty}
                   </span>
                 )}
-              </div>
-              <span className="text-xs font-bold tracking-wide hidden md:block">
-                購物車
-              </span>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* =========================================================
-            ROW 2: Navigation Links (Desktop Only)
-           ========================================================= */}
-        <div className="hidden md:flex justify-center pb-4 pt-1">
-          <div className="flex gap-8 lg:gap-12">
-            {navLinks.map((link) => (
-              <div
-                key={link.key}
-                className="relative"
-                onMouseEnter={() => {
-                  if (link.key === "categories") setOpenMega("categories");
-                  else if (link.key === "brand") setOpenMega("brand");
-                  else setOpenMega("none");
-                }}
-              >
-                <Link
-                  href={link.href}
-                  className="text-[13px] font-bold tracking-[0.1em] text-gray-800 hover:text-gray-500 transition-colors uppercase py-2"
-                >
-                  {link.label}
-                </Link>
-                {/* Active/Hover Indicator Line (Optional style) */}
-                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-800 scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
-              </div>
-            ))}
+          {/* 下半部：導航選單 (Desktop Only) */}
+          {/* 只有在非捲動狀態，或是螢幕夠大時顯示完整選單 */}
+          <div className={`hidden md:flex justify-center border-t border-gray-50 mt-4 pt-1 ${isScrolled ? 'md:hidden lg:flex' : ''}`}>
+             <nav className="flex gap-8 lg:gap-12">
+               {navLinks.map((link) => (
+                 <div
+                   key={link.key}
+                   className="relative group py-3"
+                   onMouseEnter={() => {
+                     if (link.key === "categories") setOpenMega("categories");
+                     else if (link.key === "brand") setOpenMega("brand");
+                     else setOpenMega("none");
+                   }}
+                 >
+                   <Link
+                     href={link.href}
+                     className="text-[13px] font-bold tracking-[0.1em] text-gray-700 hover:text-[#ef4628] transition-colors uppercase"
+                   >
+                     {link.label}
+                   </Link>
+                   {/* 紅色底線效果 */}
+                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#ef4628] scale-x-0 transition-transform duration-300 group-hover:scale-x-100 origin-left" />
+                 </div>
+               ))}
+             </nav>
           </div>
+
         </div>
-
-        {/* =========================================================
-            Mega Menu Dropdown (Position adjusted for 2-row header)
-           ========================================================= */}
-        <AnimatePresence>
-          {openMega !== "none" && (
-            <motion.div
-              key="mega-menu"
-              variants={megaVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              // Adjusted top position to sit below the 2nd row
-              className="absolute left-0 right-0 top-full z-[950] bg-[#fcf8f3] border-t border-gray-200 shadow-xl hidden md:block"
-              onMouseEnter={() => setOpenMega(openMega)}
-              onMouseLeave={() => setOpenMega("none")}
-            >
-              <div className="max-w-[1440px] mx-auto px-8 py-12">
-                {/* Header of Mega Menu */}
-                <div className="mb-8 flex items-baseline justify-between border-b border-gray-200 pb-4">
-                  <div className="text-sm tracking-[0.2em] text-gray-500 font-bold uppercase">
-                    {openMega === "categories" ? "Categories" : "Brand"}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    {openMega === "categories" ? "產品類別" : "品牌館"}
-                  </div>
-                </div>
-
-                {/* Content Logic (Same as before) */}
-                {openMega === "brand" ? (
-                  // ... (Brand logic kept exactly the same) ...
-                  (() => {
-                    const featuredBrandsData = [
-                      { name: "Hermès", href: "/category/Hermes" },
-                      { name: "Chanel", href: "/category/Chanel" },
-                      { name: "Louis Vuitton", href: "/category/LouisVuitton" },
-                      { name: "Dior", href: "/category/Dior" },
-                    ];
-                    const featuredBrands = brandChildren
-                      .filter((cat) =>
-                        featuredBrandsData.some((f) =>
-                          cat.name.toLowerCase().includes(f.name.toLowerCase())
-                        )
-                      )
-                      .map((cat) => {
-                        const linkData = featuredBrandsData.find((f) =>
-                          cat.name.toLowerCase().includes(f.name.toLowerCase())
-                        );
-                        return { ...cat, customHref: linkData?.href };
-                      });
-                    const otherBrands = brandChildren.filter(
-                      (cat) =>
-                        !featuredBrandsData.some((f) =>
-                          cat.name.toLowerCase().includes(f.name.toLowerCase())
-                        )
-                    );
-
-                    const renderItem = (cat, isFeatured = false) => (
-                      <Link
-                        key={cat.id}
-                        href={cat.customHref || "/category"}
-                        className="group/item flex flex-col gap-3 text-center"
-                        onClick={() => setOpenMega("none")}
-                      >
-                        {cat.image && cat.image.src && (
-                          <div
-                            className={`overflow-hidden rounded-full relative aspect-square bg-white mb-2 border border-gray-100 group-hover/item:border-gray-400 transition-colors ${
-                              isFeatured ? "w-full" : ""
-                            }`}
-                          >
-                            <Image
-                              src={cat.image.src}
-                              alt={cat.name}
-                              fill
-                              className="object-cover transform group-hover/item:scale-110 transition-transform duration-500"
-                            />
-                          </div>
-                        )}
-                        <span
-                          className={`font-bold tracking-wide text-gray-800 group-hover/item:text-black transition-colors uppercase ${
-                            isFeatured ? "text-base" : "text-sm"
-                          }`}
-                        >
-                          {cat.name}
-                        </span>
-                      </Link>
-                    );
-
-                    return (
-                      <div className="flex flex-col gap-10">
-                        {featuredBrands.length > 0 && (
-                          <div className="grid grid-cols-4 gap-12 px-20">
-                            {featuredBrands.map((cat) => renderItem(cat, true))}
-                          </div>
-                        )}
-                        {featuredBrands.length > 0 &&
-                          otherBrands.length > 0 && (
-                            <div className="w-full h-[1px] bg-gray-200" />
-                          )}
-                        <div className="grid grid-cols-6 gap-8">
-                          {otherBrands.map((cat) => renderItem(cat, false))}
-                        </div>
-                      </div>
-                    );
-                  })()
-                ) : (
-                  // Category Logic
-                  <div className="grid grid-cols-6 gap-8">
-                    {categoriesChildren.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        href="/category"
-                        className="group/item flex flex-col gap-3 text-center"
-                        onClick={() => setOpenMega("none")}
-                      >
-                        {cat.image && cat.image.src && (
-                          <div className="overflow-hidden rounded-full relative aspect-square bg-white mb-2 border border-gray-100 group-hover/item:border-gray-400 transition-colors">
-                            <Image
-                              src={cat.image.src}
-                              alt={cat.name}
-                              fill
-                              className="object-cover transform group-hover/item:scale-110 transition-transform duration-500"
-                            />
-                          </div>
-                        )}
-                        <span className="text-sm font-bold tracking-wide text-gray-800 group-hover/item:text-black transition-colors uppercase">
-                          {cat.name}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
-      {/* Mobile Menu (Sidebar) */}
+      {/* --- Mega Menu (下拉選單) --- */}
       <AnimatePresence>
-        {isMenuOpen && (
+        {openMega !== "none" && (
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden fixed top-[60px] left-0 right-0 bottom-0 z-[950] bg-[#fcf8f3] text-gray-900 shadow-2xl overflow-y-auto"
+            key="mega-menu"
+            variants={megaVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            // top 值需要根據 Header 高度動態調整，這裡預設貼齊下方
+            className="fixed left-0 right-0 top-[135px] z-[950] bg-white border-t border-gray-100 shadow-xl hidden md:block"
+            style={{ top: isScrolled ? '65px' : '145px' }} // 簡單的高度切換邏輯
+            onMouseEnter={() => setOpenMega(openMega)}
+            onMouseLeave={() => setOpenMega("none")}
           >
-            {/* Mobile Menu Content ... (Adjusted slightly for styling consistency) */}
-            <div className="p-6 pb-20">
-              <div className="mb-6 pb-6 border-b border-gray-200">
-                <div className="flex items-center gap-3 text-gray-600 mb-4">
-                  <Search size={20} />
-                  <span className="text-sm">搜尋</span>
-                </div>
-              </div>
-              <div className="flex flex-col gap-6">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.key}
-                    href={link.href}
-                    className="flex items-baseline justify-between group py-2 border-b border-gray-100"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <div className="text-lg font-bold uppercase tracking-wide">
-                      {link.label}
-                    </div>
-                  </Link>
-                ))}
-
-                {/* Mobile User Links */}
-                <div className="mt-4 pt-6 border-t border-gray-300">
-                  <Link
-                    href={userInfo ? "/member/profile" : "/login"}
-                    className="flex items-center gap-3 py-3"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <User size={20} />
-                    <span className="text-sm font-bold">
-                      {userInfo ? "會員中心" : "登入 / 註冊"}
-                    </span>
-                  </Link>
-                </div>
-              </div>
+            <div className="max-w-[1440px] mx-auto px-8 py-10">
+               {/* Header */}
+               <div className="mb-6 flex items-center gap-4 border-b border-gray-100 pb-2">
+                 <h3 className="text-[#ef4628] font-bold uppercase tracking-widest text-sm">
+                    {openMega === "brand" ? "Featured Brands" : "Categories"}
+                 </h3>
+               </div>
+               
+               {/* Content */}
+               <div className="grid grid-cols-6 gap-6">
+                 {(openMega === "brand" ? brandChildren : categoriesChildren).slice(0, 12).map((item) => (
+                    <Link key={item.id} href="/category" className="group flex flex-col gap-3 items-center text-center p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                       {item.image && (
+                         <div className="w-16 h-16 rounded-full overflow-hidden relative border border-gray-100 group-hover:border-[#ef4628] transition-colors">
+                           <Image src={item.image.src} alt={item.name} fill className="object-cover" />
+                         </div>
+                       )}
+                       <span className="text-xs font-bold text-gray-600 group-hover:text-black uppercase">
+                         {item.name}
+                       </span>
+                    </Link>
+                 ))}
+               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* --- Mobile Menu (手機側邊欄) --- */}
+      <AnimatePresence>
+        {isMenuOpen && (
+           <>
+             {/* Backdrop */}
+             <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-[1001] md:hidden"
+                onClick={() => setIsMenuOpen(false)}
+             />
+             {/* Sidebar */}
+             <motion.div
+                initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+                transition={{ type: "tween", duration: 0.3 }}
+                className="fixed top-0 left-0 bottom-0 w-[80%] max-w-[320px] bg-white z-[1002] shadow-2xl md:hidden flex flex-col"
+             >
+                {/* Mobile Header */}
+                <div className="bg-[#ef4628] text-white p-4 flex justify-between items-center">
+                   <span className="font-bold text-lg">MENU</span>
+                   <button onClick={() => setIsMenuOpen(false)}><X size={24} /></button>
+                </div>
+
+                {/* Mobile Links */}
+                <div className="flex-1 overflow-y-auto py-4">
+                   {navLinks.map((link) => (
+                      <Link 
+                        key={link.key} 
+                        href={link.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block px-6 py-4 border-b border-gray-50 text-gray-800 font-medium hover:bg-gray-50 hover:text-[#ef4628]"
+                      >
+                        {link.label}
+                      </Link>
+                   ))}
+                </div>
+
+                {/* Mobile Footer (User) */}
+                <div className="p-6 bg-gray-50 border-t border-gray-100">
+                    {userInfo ? (
+                        <div className="flex items-center gap-3">
+                           <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                             <User size={20} />
+                           </div>
+                           <div>
+                             <p className="text-sm font-bold">{userInfo.name}</p>
+                             <button onClick={logout} className="text-xs text-red-500 mt-1">Logout</button>
+                           </div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                           <Link href="/login" className="text-center py-2 border border-gray-300 rounded text-sm font-bold">Login</Link>
+                           <Link href="/register" className="text-center py-2 bg-[#ef4628] text-white rounded text-sm font-bold">Register</Link>
+                        </div>
+                    )}
+                </div>
+             </motion.div>
+           </>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };
