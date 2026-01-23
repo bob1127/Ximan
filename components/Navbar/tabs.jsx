@@ -87,16 +87,17 @@ export const SlideTabsExample = () => {
     fetchData();
   }, [setUserInfo]);
 
-  const navLinks = [
+ const navLinks = [
     { key: "categories", label: "產品類別", href: "/category" },
     { key: "brand", label: "品牌館", href: "/category" },
     { key: "news", label: "最新消息", href: "/news" },
     { key: "SERVICE", label: "服務流程", href: "/service" },
+    // 在這裡插入 FAQ
+    { key: "FAQ", label: "常見問題", href: "/faq" }, 
     { key: "NOTE", label: "購物須知", href: "/note" },
     { key: "CONTACT", label: "聯繫凱仕", href: "/contact" },
     { key: "ABOUT", label: "公司介紹", href: "/about" },
   ];
-
   const megaVariants = {
     hidden: { opacity: 0, y: -10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
