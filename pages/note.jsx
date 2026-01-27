@@ -280,7 +280,7 @@ export default function ShoppingGuide() {
             {/* 頁尾小語 */}
             <div className="pt-8 text-center">
               <p className="text-sm text-gray-400 italic font-serif">
-                Thank you for choosing CIÉMAN.
+                Thank you for choosing kesh-de1
               </p>
             </div>
           </main>
