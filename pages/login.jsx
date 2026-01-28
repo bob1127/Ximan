@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { useUser } from "../components/context/UserContext";
+import { useUser } from "../components/context/UserContext"; // 請確認路徑是否正確
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 
-// --- SVG Icons (與註冊頁相同，確保視覺統一) ---
+// --- SVG Icons ---
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
     <path
@@ -48,6 +48,7 @@ export default function Login() {
   const { login } = useUser();
   const router = useRouter();
 
+  // --- 一般 Email 登入 ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -58,19 +59,31 @@ export default function Login() {
     if (result.success) {
       router.push("/");
     } else {
-      const cleanMsg = result.message.replace(/<[^>]*>?/gm, "");
+      // 移除 HTML 標籤讓錯誤訊息比較乾淨
+      const cleanMsg = result.message ? result.message.replace(/<[^>]*>?/gm, "") : "登入失敗";
       setError(cleanMsg);
     }
     setIsLoading(false);
   };
 
-  // 處理社交登入邏輯
+  // --- 社交登入邏輯 (已更新 Google 部分) ---
   const handleSocialLogin = (provider) => {
-    // 這裡填入社交登入的邏輯
-    // 如果使用 Nextend Social Login (WordPress)，通常是跳轉到後端的特定 URL
-    console.log(`Attempting login with ${provider}`);
-    // window.location.href = `https://your-api.com/auth/${provider}`; 
-    alert(`即將跳轉至 ${provider} 登入 (需串接後端 API)`);
+    
+    // 1. 設定 WordPress 後端網址 (與註冊頁相同)
+    const wpUrl = "https://inf.fjg.mybluehost.me/website_19581d8b"; 
+    
+    // 2. 抓取目前的前端網址
+    const currentFrontendUrl = typeof window !== "undefined" ? window.location.origin : "";
+
+    if (provider === "google") {
+      // 3. Google 登入轉址
+      const targetUrl = `${wpUrl}/wp-login.php?loginSocial=google&redirect=${encodeURIComponent(currentFrontendUrl)}`;
+      window.location.href = targetUrl;
+    } else {
+      // 處理其他登入 (Line, FB) - 未來可擴充
+      console.log(`Attempting login with ${provider}`);
+      alert(`${provider} 登入尚未設定，請先完成 Google 設定。`);
+    }
   };
 
   return (
@@ -152,6 +165,7 @@ export default function Login() {
             </div>
 
             <div className="grid grid-cols-3 gap-3">
+              {/* LINE (尚未實作) */}
               <button
                 type="button"
                 onClick={() => handleSocialLogin("line")}
@@ -159,6 +173,8 @@ export default function Login() {
               >
                 <LineIcon />
               </button>
+              
+              {/* Facebook (尚未實作) */}
               <button
                 type="button"
                 onClick={() => handleSocialLogin("facebook")}
@@ -166,6 +182,8 @@ export default function Login() {
               >
                 <FacebookIcon />
               </button>
+
+              {/* Google (已完成) */}
               <button
                 type="button"
                 onClick={() => handleSocialLogin("google")}
