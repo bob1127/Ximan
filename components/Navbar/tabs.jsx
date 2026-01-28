@@ -56,42 +56,32 @@ export const SlideTabsExample = () => {
   // 4. Fetch User Data & Categories (核心修改處)
   useEffect(() => {
     // --- (A) 檢查登入狀態 (Google Login 修正版) ---
+   // 在 useEffect 裡面
     const checkUserLogin = async () => {
       try {
-        // WordPress REST API: 取得當前登入者資訊
-        // 記得替換成您的實際後端網址
         const wpApiUrl = "https://inf.fjg.mybluehost.me/website_19581d8b/wp-json/wp/v2/users/me";
 
         const res = await fetch(wpApiUrl, {
           method: "GET",
-          // 🚨 關鍵：帶上後端的 Cookie
-          credentials: "include", 
+          credentials: "include", // ✅ 絕對不能少這行！
           headers: {
             "Content-Type": "application/json",
-            // 如果後端有設 Nonce，這裡可能需要處理，但通常公開讀取不需要
           },
         });
 
         if (res.ok) {
           const data = await res.json();
-          // 如果有 id，代表已登入
           if (data && data.id) {
-            console.log("已登入使用者:", data);
-            setUserInfo(data);
+            console.log("登入成功:", data);
+            setUserInfo(data); // 更新狀態，Header 就會變了
           }
         } else {
-          // 401 代表未登入，嘗試檢查是否有 JWT (相容舊有的 Email 登入)
-          const token = localStorage.getItem("token");
-          if (token) {
-             // 如果 Cookie 沒登入，但 LocalStorage 有 Token，嘗試用 Token 驗證
-             // 這裡可以保留您原本的 JWT 驗證邏輯，或是直接忽略
-          }
+           console.log("未登入 (401)");
         }
       } catch (err) {
-        console.error("檢查登入狀態失敗:", err);
+        console.error("檢查失敗:", err);
       }
     };
-
     // --- (B) 抓取分類資料 ---
     async function fetchCategories() {
       try {
