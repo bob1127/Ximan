@@ -93,7 +93,7 @@ export default function Home() {
       </motion.div>
       {/* Parallax 參考容器 */}
       <div ref={scrollRef} className="relative pt-0 lg:pt-20 z-10">
-        <div className="flex flex-col lg:flex-row lg:mt-0 mt-[100px] w-[95%]  mx-auto relative lg:w-full   h-auto overflow-hidden lg:overflow-visible">
+        <div className="flex flex-col lg:flex-row lg:mt-0 mt-10 sm:mt-[100px] w-[95%]  mx-auto relative lg:w-full   h-auto overflow-hidden lg:overflow-visible">
           {/* 1. 左側欄位 (大螢幕是 1/3, 手機是滿版覆蓋層) */}
           <div className="absolute inset-0 z-30 pointer-events-none lg:static lg:block lg:w-1/3 lg:relative lg:pointer-events-auto">
             {/* 文字定位容器 */}

@@ -127,7 +127,7 @@ export default function Layout({ children }) {
 
       {/* 3. 主要內容 + 平滑捲動 */}
       <ReactLenis root>
-        <div className="min-h-screen mt-20 flex flex-col justify-between">
+        <div className="   flex flex-col justify-between">
            <main>
              {children}
            </main>

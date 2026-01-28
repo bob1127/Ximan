@@ -75,7 +75,7 @@ export default function About() {
                   {/* 圖片容器：設定比例與圓角 */}
                   <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm bg-gray-100">
                     <Image
-                      src="/images/index/DSCF7179.webp"
+                      src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg"
                       alt="CIÉMAN Interior"
                       fill // 使用 fill 讓圖片自動填滿容器
                       className="object-cover hover:scale-105 transition-transform duration-1000 ease-out"
