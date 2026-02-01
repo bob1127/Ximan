@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, User, ShoppingBag, Search, Phone, Mail, Globe } from "lucide-react";
-import { useUser } from "../../components/context/UserContext"; // 請確認路徑正確
-import { useCart } from "../../components/context/CartContext"; // 請確認路徑正確
+import { useUser } from "../../components/context/UserContext"; 
+import { useCart } from "../../components/context/CartContext"; 
 
 export const SlideTabsExample = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,9 +17,10 @@ export const SlideTabsExample = () => {
   const [categoriesChildren, setCategoriesChildren] = useState([]);
   const [brandChildren, setBrandChildren] = useState([]);
   
-  // 取得 UserContext
-  const { userInfo, logout, setUserInfo } = useUser();
-
+  // ⬇️ 修改點 1: 這裡不需要 loginWithToken 了，只要 userInfo 和 logout
+  const { userInfo, logout } = useUser();
+  
+  const router = useRouter(); 
   const userMenuRef = useRef(null);
   const navRef = useRef(null);
 
@@ -53,36 +55,8 @@ export const SlideTabsExample = () => {
     return () => document.removeEventListener("mouseover", handleMouseLeave);
   }, []);
 
-  // 4. Fetch User Data & Categories (核心修改處)
+  // 4. ⬇️ 修改點 2: 移除了 social_token 監聽，只保留抓取分類
   useEffect(() => {
-    // --- (A) 檢查登入狀態 (Google Login 修正版) ---
-   // 在 useEffect 裡面
-    const checkUserLogin = async () => {
-      try {
-        const wpApiUrl = "https://inf.fjg.mybluehost.me/website_19581d8b/wp-json/wp/v2/users/me";
-
-        const res = await fetch(wpApiUrl, {
-          method: "GET",
-          credentials: "include", // ✅ 絕對不能少這行！
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.id) {
-            console.log("登入成功:", data);
-            setUserInfo(data); // 更新狀態，Header 就會變了
-          }
-        } else {
-           console.log("未登入 (401)");
-        }
-      } catch (err) {
-        console.error("檢查失敗:", err);
-      }
-    };
-    // --- (B) 抓取分類資料 ---
     async function fetchCategories() {
       try {
         const [resCategories, resBrand] = await Promise.all([
@@ -98,10 +72,8 @@ export const SlideTabsExample = () => {
       }
     }
 
-    // 執行
-    checkUserLogin();
     fetchCategories();
-  }, [setUserInfo]); // 依賴 setUserInfo
+  }, []); 
 
   const navLinks = [
     { key: "categories", label: "產品類別", href: "/category" },
@@ -145,9 +117,10 @@ export const SlideTabsExample = () => {
               <span>繁體中文</span>
             </div>
             <div className="pl-4 md:pl-6 flex gap-3">
+               {/* 這裡 UserContext 會自動更新 userInfo，UI 會自動變換 */}
                {userInfo ? (
                   <div className="flex items-center gap-3">
-                    <span className="font-bold">Hi, {userInfo.name || userInfo.slug}</span>
+                    <span className="font-bold">Hi, {userInfo.name || userInfo.slug || "User"}</span>
                     <button onClick={logout} className="underline hover:opacity-80">Logout</button>
                   </div>
                ) : (
@@ -161,7 +134,7 @@ export const SlideTabsExample = () => {
         </div>
       </div>
 
-      {/* --- Main Header --- */}
+      {/* --- Main Header (這部分沒有變動) --- */}
       <div
         className={`bg-white border-b border-gray-100 transition-all duration-300 w-full z-[1000] ${
           isScrolled ? "fixed top-0 left-0 shadow-md py-2" : "relative py-4"
@@ -240,7 +213,7 @@ export const SlideTabsExample = () => {
         </div>
       </div>
 
-      {/* --- Mega Menu --- */}
+      {/* --- Mega Menu & Mobile Menu (保持不變) --- */}
       <AnimatePresence>
         {openMega !== "none" && (
           <motion.div
@@ -280,7 +253,6 @@ export const SlideTabsExample = () => {
         )}
       </AnimatePresence>
 
-      {/* --- Mobile Menu --- */}
       <AnimatePresence>
         {isMenuOpen && (
            <>
@@ -319,7 +291,7 @@ export const SlideTabsExample = () => {
                              <User size={20} />
                            </div>
                            <div>
-                             <p className="text-sm font-bold">{userInfo.name}</p>
+                             <p className="text-sm font-bold">{userInfo.name || userInfo.slug}</p>
                              <button onClick={logout} className="text-xs text-red-500 mt-1">Logout</button>
                            </div>
                         </div>
