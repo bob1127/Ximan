@@ -6,12 +6,37 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    service: "精品包購買", // 預設選項
+    service: "商品諮詢", // 預設選項更新
     message: "",
   });
 
   const [status, setStatus] = useState({ type: "", msg: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // --- SEO 設定 ---
+  const siteUrl = "https://www.kesh-de1.com";
+  const pageTitle = "聯絡我們 Contact Us | KÉSH de¹ 凱仕國際精品";
+  const pageDesc = "無論是商品諮詢、精品代購或寄賣服務，歡迎透過官方客服與我們聯繫。KÉSH de¹ 凱仕國際精品提供專業、快速且安心的服務體驗。";
+
+  // --- 結構化資料 (JSON-LD) ---
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "聯絡 KÉSH de¹",
+    "description": pageDesc,
+    "url": `${siteUrl}/contact`,
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "KÉSH de¹ 凱仕國際精品",
+      "url": siteUrl,
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "hello.cieman@gmail.com",
+        "availableLanguage": ["Chinese", "English"]
+      }
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +61,7 @@ export default function Contact() {
           type: "success",
           msg: "您的訊息已發送，我們會盡快聯繫您！",
         });
-        setFormData({ name: "", email: "", service: "建立頁面", message: "" });
+        setFormData({ name: "", email: "", service: "商品諮詢", message: "" });
       } else {
         setStatus({
           type: "error",
@@ -50,21 +75,41 @@ export default function Contact() {
   };
 
   return (
-    <div className="container  my-20 mx-auto">
+    <div className="container my-20 mx-auto">
       <Head>
-        <title>聯繫凱仕 Contact KÉSH de¹</title>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDesc} />
+        <meta property="og:url" content={`${siteUrl}/contact`} />
+        <meta property="og:type" content="website" />
+
+        {/* JSON-LD Script */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </Head>
 
       <main className="main-content flex justify-center !border">
         {/* 左側：品牌資訊區 */}
         <section className="info-section">
-          <h1 className="title">Contact KÉSH de¹</h1>
-          <p className="subtitle">讓我們聊聊您的專案需求</p>
+          <div>
+            <h1 className="title">Contact KÉSH de¹</h1>
+            {/* 更新：這裡植入您的文案 */}
+            <p className="subtitle">
+              無論是商品諮詢、精品代購或寄賣服務，
+              <br />
+              歡迎透過官方客服與我們聯繫。
+            </p>
+          </div>
 
           <div className="contact-details">
             <div className="detail-item">
-              <span className="label">客服時間</span>
+              <span className="label">客服時間 Service Hours</span>
               <span className="value">13:00 – 20:00</span>
             </div>
 
@@ -107,7 +152,7 @@ export default function Contact() {
             <h2 className="form-title">線上需求表單</h2>
 
             <div className="form-group">
-              <label htmlFor="name">您的稱呼 / 公司名稱</label>
+              <label htmlFor="name">您的稱呼 / Title</label>
               <input
                 type="text"
                 id="name"
@@ -115,12 +160,12 @@ export default function Contact() {
                 required
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="例如：陳先生 / 喜曼設計"
+                placeholder="例如：陳小姐 / Mr. Chen"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">聯絡信箱</label>
+              <label htmlFor="email">聯絡信箱 / Email</label>
               <input
                 type="email"
                 id="email"
@@ -131,8 +176,9 @@ export default function Contact() {
                 placeholder="name@example.com"
               />
             </div>
+            
             <div className="form-group">
-              <label htmlFor="service">需求類別</label>
+              <label htmlFor="service">需求類別 / Category</label>
               <div className="select-wrapper">
                 <select
                   name="service"
@@ -140,18 +186,16 @@ export default function Contact() {
                   value={formData.service}
                   onChange={handleChange}
                 >
-                  <option value="二手精品包購買">
-                    精品包購買 (Buy Pre-owned Bags)
-                  </option>
-                  <option value="寄賣相關諮詢">
-                    寄賣相關諮詢 (Consignment)
-                  </option>
+                  <option value="商品諮詢">商品諮詢 (Product Inquiry)</option>
+                  <option value="精品代購">精品代購 (Sourcing Service)</option>
+                  <option value="寄賣服務">寄賣服務 (Consignment)</option>
                   <option value="其他合作">其他合作 (Other)</option>
                 </select>
               </div>
             </div>
+            
             <div className="form-group">
-              <label htmlFor="message">詳細訊息</label>
+              <label htmlFor="message">詳細訊息 / Message</label>
               <textarea
                 id="message"
                 name="message"
@@ -159,7 +203,7 @@ export default function Contact() {
                 required
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="請簡述您的需求內容..."
+                placeholder="請簡述您的需求內容，如欲詢問特定包款，請提供品牌與型號..."
               ></textarea>
             </div>
 
@@ -168,7 +212,7 @@ export default function Contact() {
               className="submit-btn"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "傳送中..." : "確認送出"}
+              {isSubmitting ? "傳送中..." : "確認送出 Send Message"}
             </button>
 
             {status.msg && (
@@ -223,16 +267,17 @@ export default function Contact() {
 
         .title {
           font-size: 32px;
-          margin: 0 0 10px 0;
+          margin: 0 0 15px 0;
           font-weight: 700;
           letter-spacing: 1px;
         }
 
         .subtitle {
-          font-size: 16px;
-          color: #888;
+          font-size: 15px;
+          color: #aaa;
           margin-bottom: 40px;
           font-weight: 300;
+          line-height: 1.6;
         }
 
         .contact-details {
@@ -328,7 +373,7 @@ export default function Contact() {
           font-size: 15px;
           background-color: #fcfcfc;
           transition: border-color 0.2s;
-          box-sizing: border-box; /* 確保 padding 不會撐大寬度 */
+          box-sizing: border-box;
         }
 
         input:focus,
@@ -392,7 +437,7 @@ export default function Contact() {
 
           .info-section {
             padding: 40px;
-            order: 2; /* 手機版讓資訊在下方，表單在上方，或者根據喜好調整 */
+            order: 2;
           }
 
           .form-section {

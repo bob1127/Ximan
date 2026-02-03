@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-
+import Image from "next/image";
 export default function Footer() {
   // 定義新的導航連結結構
   const footerLinks = {
@@ -47,9 +47,7 @@ export default function Footer() {
           
           {/* 1. 左側：品牌資訊 + Slogan (佔 4 欄) */}
           <div className="lg:col-span-4 flex flex-col items-start">
-            <h2 className="text-3xl md:text-4xl font-serif tracking-wider mb-6 text-white">
-              KÉSH de¹
-            </h2>
+           <Image src='/images/logo/KESH Logo-2.png' alt='company-logo' placeholder="empty" loading="lazy" width={400} height={300} className="max-w-[140px]" ></Image>
             <div className="text-gray-400 text-sm leading-loose font-light tracking-wide">
               <p className="italic mb-2 opacity-80">
                 A Value of Priority. <br/>
