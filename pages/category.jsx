@@ -1,14 +1,14 @@
 import Link from "next/link";
-import Head from "next/head"; // 新增 SEO Head
+import Head from "next/head";
 import React, { useState, useMemo, useRef } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
 
-// --- 3. 快速連結 (這部分通常是行銷活動，建議維持靜態或另外開 Tag 管理，這裡先維持靜態) ---
+// --- 3. 快速連結 (靜態行銷用，可保留或由後台 "tags" 控制) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
-// --- 商品卡片組件 (維持不變) ---
+// --- 商品卡片組件 ---
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
@@ -50,10 +50,12 @@ const ProductCard = ({ product }) => {
             {product.status}
           </span>
         </div>
-        {/* 圖片處理：如果沒有圖片顯示預設圖 */}
+        
+        {/* 圖片顯示區域 */}
         <div
           className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out"
           style={{
+            // 如果圖片是 null，顯示 placeholder
             backgroundImage: `url('${product.image || "/images/placeholder.jpg"}')`,
             transform: isHovered ? "scale(2)" : "scale(1)",
             transformOrigin: `${cursorPos.x}% ${cursorPos.y}%`,
@@ -85,14 +87,14 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- FilterSidebar 組件 (改為接收 dynamic props) ---
+// --- FilterSidebar 組件 (動態渲染後台資料) ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
   isMobile = false,
   onCloseMobile,
-  dynamicBrands = [],     // 新增：從後台抓取的品牌
-  dynamicCategories = []  // 新增：從後台抓取的分類
+  dynamicBrands = [],     
+  dynamicCategories = []  
 }) => {
   const isActive = (type, value) => {
     return activeFilter.type === type && activeFilter.value === value
@@ -108,7 +110,9 @@ const FilterSidebar = ({
         isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"
       }`}
     >
+      {/* 左欄：Collection & Categories */}
       <div className={isMobile ? "" : "flex-1"}>
+        {/* Collections (靜態標籤) */}
         <div className="mb-8">
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Collections
@@ -145,64 +149,75 @@ const FilterSidebar = ({
             ))}
           </div>
         </div>
+        
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
         
-        {/* Dynamic Categories */}
+        {/* Dynamic Categories (從後台抓取 "產品類別") */}
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Categories
           </h3>
-          <ul className="space-y-3">
-            {dynamicCategories.map((cat) => (
-              <li key={cat.id}>
+          {dynamicCategories.length > 0 ? (
+            <ul className="space-y-3">
+              {dynamicCategories.map((cat) => (
+                <li key={cat.id}>
+                  <button
+                    onClick={() => {
+                      onFilterChange("category", cat.slug); 
+                      if (isMobile) onCloseMobile();
+                    }}
+                    className={`flex justify-between w-full ${linkClass} ${isActive("category", cat.slug)}`}
+                  >
+                    <span>{cat.name}</span>
+                    <span className="text-[10px] opacity-60">({cat.count})</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+             <p className="text-[12px] text-gray-400">Loading Categories...</p>
+          )}
+        </div>
+      </div>
+
+      {isMobile && <div className="border-t border-gray-200"></div>}
+      
+      {/* 右欄：Dynamic Brands (從後台抓取 "品牌館") */}
+      <div className={isMobile ? "" : "flex-1"}>
+        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
+          Brands
+        </h3>
+        {dynamicBrands.length > 0 ? (
+          <ul
+            className={`${
+              isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"
+            }`}
+          >
+            {dynamicBrands.map((brand) => (
+              <li key={brand.id}>
                 <button
                   onClick={() => {
-                    // 這裡 value 傳入 slug 或 id 進行篩選
-                    onFilterChange("category", cat.slug); 
+                    onFilterChange("brand", brand.slug);
                     if (isMobile) onCloseMobile();
                   }}
-                  className={`${linkClass} ${isActive("category", cat.slug)}`}
+                  className={`flex justify-between items-center w-full text-left ${linkClass} ${isActive(
+                    "brand",
+                    brand.slug
+                  )}`}
                 >
-                  {cat.name} <span className="text-[10px] opacity-60">({cat.count})</span>
+                  <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4">
+                    {brand.name}
+                  </span>
+                  <span className="text-[10px] opacity-60">({brand.count})</span>
                 </button>
               </li>
             ))}
           </ul>
-        </div>
+        ) : (
+          <p className="text-[12px] text-gray-400">Loading Brands...</p>
+        )}
       </div>
-      {isMobile && <div className="border-t border-gray-200"></div>}
-      
-      {/* Dynamic Brands */}
-      <div className={isMobile ? "" : "flex-1"}>
-        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
-          Brand
-        </h3>
-        <ul
-          className={`${
-            isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"
-          }`}
-        >
-          {dynamicBrands.map((brand) => (
-            <li key={brand.id}>
-              <button
-                onClick={() => {
-                  onFilterChange("brand", brand.slug);
-                  if (isMobile) onCloseMobile();
-                }}
-                className={`flex justify-between items-center w-full text-left ${linkClass} ${isActive(
-                  "brand",
-                  brand.slug
-                )}`}
-              >
-                <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4">
-                  {brand.name}
-                </span>
-                <span className="text-[10px] opacity-60">({brand.count})</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
+
       {isMobile && (
         <button
           onClick={onCloseMobile}
@@ -215,7 +230,7 @@ const FilterSidebar = ({
   );
 };
 
-// --- CompanyLocation 組件 (維持不變) ---
+// --- CompanyLocation 組件 ---
 const CompanyLocation = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -256,7 +271,7 @@ const CompanyLocation = () => {
             </div>
           </div>
           <div className="mt-12">
-            <Link href="#" className="inline-block bg-black text-white text-[14px] font-bold uppercase tracking-widest py-4 px-10 hover:bg-[#ef4628] transition-colors duration-300">到店前請提前預約</Link>
+            <Link href="/contact" className="inline-block bg-black text-white text-[14px] font-bold uppercase tracking-widest py-4 px-10 hover:bg-[#ef4628] transition-colors duration-300">到店前請提前預約</Link>
           </div>
         </div>
       </div>
@@ -280,18 +295,16 @@ export default function Category({ products, brands, categories }) {
     }
   };
 
-  // 前端過濾邏輯
+  // 前端過濾邏輯：比對產品身上的 Slug 與 篩選器的 Slug
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (activeFilter.type === "all") return products;
     
     return products.filter((product) => {
       if (activeFilter.type === "brand") {
-        // 比對產品的 brandSlug
         return product.brandSlug === activeFilter.value;
       }
       if (activeFilter.type === "category") {
-        // 比對產品的 categorySlug
         return product.categorySlug === activeFilter.value;
       }
       if (activeFilter.type === "collection") {
@@ -301,7 +314,7 @@ export default function Category({ products, brands, categories }) {
     });
   }, [activeFilter, products]);
 
-  // --- SEO 結構化資料 (JSON-LD) ---
+  // SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -312,12 +325,7 @@ export default function Category({ products, brands, categories }) {
       "@type": "Product",
       "position": index + 1,
       "name": product.title,
-      "description": product.title, // 建議後台若有短描述可放入
       "image": product.image,
-      "brand": {
-        "@type": "Brand",
-        "name": product.brand
-      },
       "offers": {
         "@type": "Offer",
         "priceCurrency": "TWD",
@@ -332,7 +340,6 @@ export default function Category({ products, brands, categories }) {
       <Head>
         <title>Online Store | KÉSH de¹ 凱仕國際精品 - 二手精品買賣</title>
         <meta name="description" content="KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。" />
-        <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.cieman.com.tw/shop" />
         <script
           type="application/ld+json"
@@ -341,7 +348,7 @@ export default function Category({ products, brands, categories }) {
       </Head>
 
       <main className="py-20 bg-white text-black font-sans min-h-screen">
-        {/* Title & SEO Section */}
+        {/* Title Section */}
         <section>
           <div className="title">
             <div className="py-6 px-6 md:px-10">
@@ -411,8 +418,9 @@ export default function Category({ products, brands, categories }) {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content Area */}
         <section className="products-content border-t border-b border-gray-400 flex flex-col md:flex-row">
+          {/* Desktop Sidebar */}
           <div className="filter hidden md:flex w-full md:w-[25%] border-b md:border-b-0 md:border-r border-gray-400 relative bg-white">
             <div className="sticky top-20 h-auto overflow-y-auto max-h-[calc(100vh-100px)] w-full">
               <FilterSidebar
@@ -424,6 +432,8 @@ export default function Category({ products, brands, categories }) {
               />
             </div>
           </div>
+          
+          {/* Product Grid */}
           <div className="products w-full md:w-[75%] min-h-[50vh]">
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-3">
@@ -442,6 +452,7 @@ export default function Category({ products, brands, categories }) {
                 </button>
               </div>
             )}
+            
             {/* SEO Text Block */}
             <div className="p-8 md:p-12 bg-stone-50 border-t border-gray-400">
               <h3 className="text-sm font-bold text-gray-900 mb-3">
@@ -471,46 +482,72 @@ export default function Category({ products, brands, categories }) {
   );
 }
 
-// --- 🔥 SSG + ISR 數據抓取 ---
+// --- 🔥 SSG 數據抓取：強力除錯與圖片修復版 ---
 export async function getStaticProps() {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
   if (!WC_URL || !CK || !CS) {
+    console.error("❌ 環境變數缺失！請檢查 .env.local 檔案");
     return { props: { products: [], brands: [], categories: [] }, revalidate: 60 };
   }
 
+  // 忽略 SSL 錯誤 (開發環境常見問題)
   const agent = new https.Agent({ rejectUnauthorized: false });
+  
+  // 使用 Header 驗證 (解決 401 Unauthorized 最有效的方法)
+  const auth = Buffer.from(`${CK}:${CS}`).toString('base64');
   const headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    Accept: "application/json",
+    "User-Agent": "Mozilla/5.0 (Next.js)",
+    "Accept": "application/json",
+    "Authorization": `Basic ${auth}`
   };
 
   try {
-    // 1. 同時抓取「商品」與「分類」
+    console.log(`🔄 連線中: ${WC_URL}`);
+    
+    // 抓取商品 (Products) 與 分類 (Categories)
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`, { agent, headers }),
-      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100`, { agent, headers })
+      fetch(`${WC_URL}/wp-json/wc/v3/products?status=publish&per_page=100`, { agent, headers }),
+      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?per_page=100`, { agent, headers })
     ]);
 
-    if (!productsRes.ok || !categoriesRes.ok) {
-      throw new Error("Failed to fetch data");
+    // 檢查回應狀態
+    if (!productsRes.ok) {
+        const errText = await productsRes.text();
+        console.error(`❌ 商品 API 錯誤 (${productsRes.status}):`, errText);
+        throw new Error("Product fetch failed");
+    }
+    if (!categoriesRes.ok) {
+        const errText = await categoriesRes.text();
+        console.error(`❌ 分類 API 錯誤 (${categoriesRes.status}):`, errText);
+        throw new Error("Category fetch failed");
     }
 
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    // 2. 處理分類結構 (Brand vs Category)
-    // 對應後台 Slug: "品牌館" -> brand, "產品類別" -> categories
-    const brandParent = wcCategories.find(c => c.slug === 'brand');
+    console.log(`✅ 成功抓取 ${wcProducts.length} 個商品, ${wcCategories.length} 個分類`);
+
+    // 🔥 DEBUG: 印出第一筆商品的圖片資訊，讓您確認 API 是否回傳了圖片
+    if (wcProducts.length > 0) {
+        // console.log("🔍 [DEBUG] 第一個商品的圖片資料:", JSON.stringify(wcProducts[0].images, null, 2));
+    }
+
+    // --- 資料處理 ---
+    // 找出父分類 (根據您的截圖 slug 為 'brand' 和 'categories')
+    const brandParent = wcCategories.find(c => c.slug === 'brand'); 
     const typeParent = wcCategories.find(c => c.slug === 'categories');
+    
+    // 除錯：如果找不到父分類，印出警告
+    if (!brandParent) console.warn("⚠️ 警告：找不到 Slug 為 'brand' 的父分類");
+    if (!typeParent) console.warn("⚠️ 警告：找不到 Slug 為 'categories' 的父分類");
 
     const brandParentId = brandParent ? brandParent.id : null;
     const typeParentId = typeParent ? typeParent.id : null;
 
-    // 🔥 修改處：移除 c.count > 0 的判斷，只保留父層級檢查
-    // 這樣就算該分類 count 為 0，也會被加入列表，前端就會顯示 "Hermès (0)"
+    // 篩選子分類列表
     const brandsList = wcCategories
       .filter(c => c.parent === brandParentId) 
       .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
@@ -519,19 +556,30 @@ export async function getStaticProps() {
       .filter(c => c.parent === typeParentId)
       .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
     
-    // 3. 處理商品資料 (維持不變)
+    // 格式化商品資料
     const formattedProducts = wcProducts.map((p) => {
       const pCatIds = p.categories.map(c => c.id);
-
+      
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
       const uiBrandName = matchedBrand ? matchedBrand.name : "KÉSH de¹ Select";
       const uiBrandSlug = matchedBrand ? matchedBrand.slug : "select";
-
+      
       const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
       const uiCategoryName = matchedCategory ? matchedCategory.name : "Accessories";
       const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
-
+      
       const rawPrice = p.price ? parseInt(p.price) : 0;
+
+      // 🔥 圖片處理核心邏輯：強制轉 HTTPS
+      let imageUrl = null;
+      if (p.images && p.images.length > 0) {
+          let src = p.images[0].src;
+          // 如果網址是 http 開頭，強制換成 https，避免瀏覽器 Mixed Content 錯誤
+          if (src.startsWith('http://')) {
+              src = src.replace('http://', 'https://');
+          }
+          imageUrl = src;
+      }
 
       return {
         id: p.id,
@@ -545,7 +593,7 @@ export async function getStaticProps() {
         rawPrice: rawPrice,
         tags: p.tags.length > 0 ? p.tags.map((t) => t.name) : [],
         status: p.stock_status === "instock" ? "RANK S" : "SOLD",
-        image: p.images.length > 0 ? p.images[0].src : null,
+        image: imageUrl, // 使用處理好的圖片網址
       };
     });
 
@@ -555,10 +603,10 @@ export async function getStaticProps() {
         brands: brandsList,
         categories: categoriesList,
       },
-      revalidate: 10, 
+      revalidate: 10,
     };
   } catch (error) {
-    console.error("❌ [Server] Error:", error);
+    console.error("❌ [Server Error]:", error);
     return {
       props: { products: [], brands: [], categories: [] },
       revalidate: 10,

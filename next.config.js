@@ -1,26 +1,27 @@
+/** @type {import('next').NextConfig} */
 const path = require("path");
 
-module.exports = {
+const nextConfig = {
+  reactStrictMode: true,
+  
+  // 1. Fix Image Loading
   images: {
-   // 這裡設定允許所有 HTTPS 和 HTTP 的來源
-   remotePatterns: [
+    remotePatterns: [
       {
         protocol: "https",
-        hostname: "hfa-mqt-qoqix3fm.landinghub.site",
+        hostname: "**", // Allow all HTTPS images (simplest for dev)
       },
       {
-        protocol: "https",
-        hostname: "d2w53g1q050m78.cloudfront.net", // 你的圖片網址中也有這個 CDN，建議一併加入
-      },
-      // 保留萬用字元以備不時之需
-      {
-        protocol: "https",
-        hostname: "**",
+        protocol: "http",
+        hostname: "**", // Allow all HTTP images (simplest for dev)
       },
     ],
+    // If images still fail, uncomment the line below to disable optimization temporarily
+    // unoptimized: true, 
   },
-  transpilePackages: ["gsap"], // <--- ADD THIS
- 
+
+  transpilePackages: ["gsap"],
+
   webpackDevMiddleware: (config) => {
     config.watchOptions = {
       poll: 1000,
@@ -28,19 +29,15 @@ module.exports = {
     };
     return config;
   },
+
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://external-api.com/:path*",
-      },
-    ];
-  },
 
-  // ⬇️ 加入 WebGL Shader 支援設定
+  // 2. Remove the faulty 'rewrites' section that caused 'external-api.com' errors
+  // async rewrites() { ... }  <-- REMOVED
+
+  // WebGL / Shader support
   webpack(config) {
     config.module.rules.push({
       test: /\.(glsl|vs|fs)$/,
@@ -48,4 +45,11 @@ module.exports = {
     });
     return config;
   },
+  
+  // 3. Fix Styled-Components hydration mismatch (Optional but recommended)
+  compiler: {
+    styledComponents: true,
+  },
 };
+
+module.exports = nextConfig;

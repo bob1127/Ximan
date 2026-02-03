@@ -5,19 +5,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Minus, MessageCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Head from "next/head"; // 如果是 Pages Router
-// 如果是 App Router，通常 Metadata 會寫在 page.js 的 export const metadata，
-// 但為了方便您使用，我這裡會用 script 標籤直接注入 JSON-LD。
 
-// --- 1. SEO 資料設定 ---
+// --- 1. SEO 資料設定 (請依實際狀況修改 url 與 image) ---
 const seoMeta = {
   title: "FAQ 常見問題｜KÉSH de¹ 凱仕國際精品 - 正品鑑定與寄賣服務",
   description: "彙整 KÉSH de¹ 常見問題。提供二手精品買賣、正品鑑定流程（S/A/B級）、寄賣手續費（20%）、國際運送與退換貨政策完整說明。安心選購 Hermès, Chanel, LV 等頂級精品。",
-  url: "https://www.kesh.com.tw/faq", // 請替換為您的實際網址
-  image: "https://www.kesh.com.tw/og-image.jpg" // 請替換為您的 OG 圖片
+  url: "https://www.kesh-de1.com/faq", 
+  image: "https://www.kesh-de1.com/images/og-faq.jpg"
 };
 
-// --- 2. 結構化資料 (Schema.org for GEO/SEO) ---
-// 這是專門給機器人看的純文字版，必須與網頁內容一致，但不能包含 React Component
+// --- 2. 結構化資料 (Schema.org for Google Rich Results) ---
+// 這是專門給機器人看的純文字版，必須與網頁內容一致
 const schemaData = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -73,18 +71,18 @@ const schemaData = {
   ]
 };
 
-// 增加 Organization Schema 強化品牌權威性 (GEO 關鍵)
+// 增加 Organization Schema 強化品牌權威性
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "KÉSH de¹ 凱仕國際精品",
-  "url": seoMeta.url,
-  "logo": "https://www.kesh.com.tw/logo.png", // 請替換 Logo
+  "url": "https://www.kesh-de1.com",
+  "logo": "https://www.kesh-de1.com/images/logo.png",
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+886-2-xxxx-xxxx", // 請填寫電話
+    "telephone": "+886-4-xxxx-xxxx", // 請填寫您的電話
     "contactType": "customer service",
-    "areaServed": ["TW", "JP", "KR", "US", "SG"],
+    "areaServed": ["TW"],
     "availableLanguage": ["Chinese", "English"]
   }
 };
@@ -92,8 +90,7 @@ const organizationSchema = {
 
 // --- 資料結構 (維持 React UI 用) ---
 const faqData = [
-    // ... (這裡保留您原本的 faqData 陣列內容，不需要更動，因為上方已經另外寫了 Schema 用的資料)
-    {
+  {
     category: "一、購買與訂單相關（Shopping & Orders）",
     items: [
       {
@@ -102,7 +99,7 @@ const faqData = [
           <div className="space-y-3">
             <p>是的。KÉSH 僅販售來源嚴格良好的精品，並由專業鑑定師結合國際級鑑定設備進行多重驗證，為您把關每一件商品的真實與品質，100% 正品保障。</p>
             <p>所有商品於上架前皆完成完整鑑定流程，包含：</p>
-            <ul className="list-disc pl-5 space-y-1 text-gray-600 bg-gray-50 p-4 rounded-lg">
+            <ul className="list-disc pl-5 space-y-1 text-gray-600 bg-gray-50 p-4 rounded-lg text-sm">
               <li>皮革紋路與老化狀況</li>
               <li>五金刻印與材質檢查</li>
               <li>車縫線距與結構檢視</li>
@@ -150,7 +147,7 @@ const faqData = [
         a: (
           <div>
             <p>主要受理品牌包含：Hermès、Chanel、Louis Vuitton、Dior、Gucci、Loewe、Celine、YSL、Goyard、Prada 等精品品牌。</p>
-            <p className="mt-2 text-gray-500">其他品牌可先透過客服諮詢評估。</p>
+            <p className="mt-2 text-gray-500 text-sm">其他品牌可先透過客服諮詢評估。</p>
             <Link href="/contact" className="inline-flex items-center gap-1 mt-3 text-[#ef4628] font-bold border-b border-[#ef4628] pb-0.5 hover:opacity-80 transition-opacity">
               點我聯繫客服諮詢 <ArrowRight size={14} />
             </Link>
@@ -372,24 +369,25 @@ const AccordionItem = ({ question, answer }) => {
 const FAQPage = () => {
   return (
     <>
-      {/* 3. 注入 SEO & GEO 結構化數據 (放置於 Head 或 body 內皆可，Next.js 建議這樣處理) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
-      
-      {/* 頁面標題與 Meta (若無全域設定，可在此加強) */}
-      <title>{seoMeta.title}</title>
-      <meta name="description" content={seoMeta.description} />
-      <meta property="og:title" content={seoMeta.title} />
-      <meta property="og:description" content={seoMeta.description} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={seoMeta.url} />
-      <meta property="og:image" content={seoMeta.image} />
+      <Head>
+        <title>{seoMeta.title}</title>
+        <meta name="description" content={seoMeta.description} />
+        <meta property="og:title" content={seoMeta.title} />
+        <meta property="og:description" content={seoMeta.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={seoMeta.url} />
+        <meta property="og:image" content={seoMeta.image} />
+        
+        {/* 結構化資料注入 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </Head>
 
       <div className="min-h-screen bg-white pt-[60px] md:pt-[100px] pb-20 font-sans">
         {/* 頂部標題區域 */}
@@ -416,7 +414,7 @@ const FAQPage = () => {
                 <h2 className="text-lg font-bold text-black border-l-4 border-[#ef4628] pl-4 uppercase tracking-wider inline-block">
                   {section.category}
                 </h2>
-                {/* 如果該分類有額外描述 (如寄賣服務) */}
+                {/* 如果該分類有額外描述 */}
                 {section.description && (
                   <p className="mt-3 text-sm text-gray-500 pl-5 leading-relaxed">
                     {section.description}
