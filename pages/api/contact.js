@@ -30,7 +30,7 @@ export default async function handler(req, res) {
       `,
       html: `
         <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee;">
-          <h2>來自 CIÉMAN 官網的新詢問</h2>
+          <h2>來自 KÉSH de¹ 官網的新詢問</h2>
           <p><strong>姓名：</strong> ${name}</p>
           <p><strong>信箱：</strong> ${email}</p>
           <p><strong>需求項目：</strong> ${service}</p>

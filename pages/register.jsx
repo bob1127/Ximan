@@ -52,7 +52,7 @@ export default function Register() {
             Create Account
           </h1>
           <p className="text-gray-500 text-sm">
-            加入 CIÉMAN 會員，享受尊榮服務
+            加入 KÉSH de¹ 會員，享受尊榮服務
           </p>
         </div>
 

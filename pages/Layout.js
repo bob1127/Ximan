@@ -23,10 +23,10 @@ export default function Layout({ children }) {
 
   // === SEO & 結構化資料設定 ===
   const siteUrl = "https://ximan-test.vercel.app";
-  const siteName = "CIÉMAN 喜曼精品";
-  const siteTitle = "CIÉMAN 喜曼精品｜台中二手精品買賣・寄賣・置換";
+  const siteName = "KÉSH de¹ 凱仕國際精品";
+  const siteTitle = "KÉSH de¹ 凱仕國際精品｜台中二手精品買賣・寄賣・置換";
   const siteDescription =
-    "CIÉMAN 喜曼精品位於台中，專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務。所有商品皆經專業鑑定與品況分級，僅販售 100% 正品。";
+    "KÉSH de¹ 凱仕國際精品位於台中，專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務。所有商品皆經專業鑑定與品況分級，僅販售 100% 正品。";
   const siteImage = `${siteUrl}/default-og-image.jpg`; 
   const storePhone = "0938-535-870";
 
@@ -87,9 +87,9 @@ export default function Layout({ children }) {
         <meta name="description" content={siteDescription} />
         <meta
           name="keywords"
-          content="CIÉMAN, 喜曼精品, 台中精品, 二手精品, 精品收購, 精品寄賣, 精品置換, Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard"
+          content="KÉSH de¹, 凱仕國際精品, 台中精品, 二手精品, 精品收購, 精品寄賣, 精品置換, Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard"
         />
-        <meta name="author" content="CIÉMAN Boutique" />
+        <meta name="author" content="KÉSH de¹ Boutique" />
         <link rel="icon" href="/logo.ico" />
         <link rel="canonical" href={siteUrl} />
 

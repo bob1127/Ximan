@@ -59,7 +59,7 @@ export default function Contact() {
       <main className="main-content flex justify-center !border">
         {/* 左側：品牌資訊區 */}
         <section className="info-section">
-          <h1 className="title">Contact CIÉMAN</h1>
+          <h1 className="title">Contact KÉSH de¹</h1>
           <p className="subtitle">讓我們聊聊您的專案需求</p>
 
           <div className="contact-details">

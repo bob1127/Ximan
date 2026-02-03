@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageReveal from "./ImageReveal";
 
-// ✅ 修改後的資料：CIÉMAN 三大保證
+// ✅ 修改後的資料：KÉSH de¹ 三大保證
 const data = [
   {
     title: "正品鑑定",
@@ -14,7 +14,7 @@ const data = [
     price: "100% 正品保證", // 對應原本價格的位置
     description: "每件商品皆經三重檢查與來源確認。",
     detail:
-      "CIÉMAN 嚴格把關每一件商品的來源，並透過專業鑑定團隊進行多重細節檢驗，杜絕任何仿冒可能，確保您收到的每一件精品皆為真品，讓您買得安心。",
+      "KÉSH de¹ 嚴格把關每一件商品的來源，並透過專業鑑定團隊進行多重細節檢驗，杜絕任何仿冒可能，確保您收到的每一件精品皆為真品，讓您買得安心。",
     mainImages: [
       "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_2.jpg",
       "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_5.jpg",
@@ -30,7 +30,7 @@ const data = [
     price: "值得收藏的精品",
     description: "僅販售值得收藏、品況完整的精品。",
     detail:
-      "我們深知品況的重要性。CIÉMAN 剔除狀況不佳的商品，專注於挑選成色優良、保養得宜的珍稀包款，讓您以最理想的狀態擁有心儀的時尚單品。",
+      "我們深知品況的重要性。KÉSH de¹ 剔除狀況不佳的商品，專注於挑選成色優良、保養得宜的珍稀包款，讓您以最理想的狀態擁有心儀的時尚單品。",
     mainImages: [
       "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_14.jpg",
       "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_4.jpg",

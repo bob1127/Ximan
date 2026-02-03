@@ -117,7 +117,7 @@ export default function ProductDetail({ product, relatedProducts }) {
       "availability": product.specs.inStoreView ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "seller": {
         "@type": "Organization",
-        "name": "CIÉMAN"
+        "name": "KÉSH de¹"
       }
     }
   };
@@ -165,16 +165,16 @@ export default function ProductDetail({ product, relatedProducts }) {
   return (
     <>
       <Head>
-        <title>{`${product.title} | CIÉMAN`}</title>
+        <title>{`${product.title} | KÉSH de¹`}</title>
         <meta name="description" content={product.shortDesc} />
         <link rel="canonical" href={currentUrl} />
 
         {/* Open Graph */}
         <meta property="og:type" content="product" />
-        <meta property="og:title" content={`${product.title} | CIÉMAN`} />
+        <meta property="og:title" content={`${product.title} | KÉSH de¹`} />
         <meta property="og:description" content={product.shortDesc} />
         <meta property="og:url" content={currentUrl} />
-        <meta property="og:site_name" content="CIÉMAN" />
+        <meta property="og:site_name" content="KÉSH de¹" />
         <meta property="og:price:amount" content={product.rawPrice} />
         <meta property="og:price:currency" content="TWD" />
         <meta property="og:image" content={mainImage} />
@@ -497,7 +497,7 @@ export async function getStaticProps({ params }) {
 
     const formattedRelated = Array.isArray(relatedData) ? relatedData.map((item) => {
       const brandAttr = item.attributes.find((a) => a.name.toLowerCase() === "brand");
-      const brandName = brandAttr ? brandAttr.options[0] : "Ciéman Select";
+      const brandName = brandAttr ? brandAttr.options[0] : "KÉSH de¹ Select";
       return {
         id: item.id,
         slug: item.slug,
@@ -526,7 +526,7 @@ export async function getStaticProps({ params }) {
       title: p.name.toUpperCase(),
       price: `NT$ ${rawPrice.toLocaleString()}`,
       rawPrice: rawPrice, // For JSON-LD
-      brand: getAttr("Brand") || "Ciéman Select",
+      brand: getAttr("Brand") || "KÉSH de¹ Select",
       description: p.description || "",
       intro: p.short_description || "",
       shortDesc: (p.short_description || "").replace(/<[^>]+>/g, "").slice(0, 150).replace(/\s+/g, " ").trim(),

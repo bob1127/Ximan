@@ -267,7 +267,7 @@ de¹ 中的上揚設計，象徵品味的起點與向上的追求。
     <div className="relative w-full h-[60vh] lg:h-full overflow-hidden">
       <ParallaxImage
         src="/images/index/shutterstock_3459837419.mp4"
-        alt="CIÉMAN Brand Video"
+        alt="KÉSH de¹ Brand Video"
         // 確保 ParallaxImage 內部有 className="w-full h-full object-cover" 之類的設定
       />
     </div>

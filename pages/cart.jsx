@@ -210,7 +210,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="text-right text-xs text-gray-500 mb-2">
-                    安全結帳由 CIÉMAN 提供支援
+                    安全結帳由 KÉSH de¹ 提供支援
                   </div>
 
                   <Link

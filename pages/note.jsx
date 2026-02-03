@@ -12,12 +12,12 @@ const sections = [
     content: (
       <div className="space-y-4">
         <p>
-          歡迎您來到 CIÉMAN
-          喜曼精品。為了確保雙方的權益，請您在購買前詳細閱讀以下須知。當您進行結帳或付款時，即視為您已同意本站之所有條款。
+          歡迎您來到 KÉSH de¹
+          凱仕國際精品。為了確保雙方的權益，請您在購買前詳細閱讀以下須知。當您進行結帳或付款時，即視為您已同意本站之所有條款。
         </p>
         <ul className="list-disc pl-5 space-y-2 text-gray-600">
           <li>
-            CIÉMAN
+            KÉSH de¹
             所有商品均為實品拍攝，因顯示器不同可能產生些微色差，請以實品顏色為準。
           </li>
           <li>商品尺寸皆為人工測量，可能存在 1-2cm 之誤差，屬正常範圍。</li>
@@ -38,7 +38,7 @@ const sections = [
     enTitle: "Authenticity",
     content: (
       <div className="space-y-4">
-        <p className="font-medium text-black">CIÉMAN 承諾僅販售 100% 正品。</p>
+        <p className="font-medium text-black">KÉSH de¹ 承諾僅販售 100% 正品。</p>
         <p>
           我們擁有專業的鑑定團隊，並配合第三方權威機構（如
           Entrupy）進行雙重驗證。
@@ -135,12 +135,12 @@ const sections = [
     content: (
       <div className="space-y-4 text-sm text-gray-500">
         <p>
-          CIÉMAN
+          KÉSH de¹
           非常重視您的隱私權。我們所收集的個人資料（如姓名、電話、地址、Email）
           僅用於訂單處理、物流配送與會員服務，絕不會將您的資料洩漏、販售或提供給無關之第三方。
         </p>
         <p>
-          本網站採用 SSL 加密技術保護您的交易安全，您可以安心在 CIÉMAN
+          本網站採用 SSL 加密技術保護您的交易安全，您可以安心在 KÉSH de¹
           進行購物。
         </p>
       </div>
@@ -153,7 +153,7 @@ const sections = [
     content: (
       <div className="space-y-4 text-sm text-gray-500">
         <p>
-          使用本網站服務即表示您同意本條款。CIÉMAN
+          使用本網站服務即表示您同意本條款。KÉSH de¹
           保留隨時修改本條款之權利，修改後的條款將公佈於網站上，不另行個別通知。
         </p>
         <p>

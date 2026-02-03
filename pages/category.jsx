@@ -305,7 +305,7 @@ export default function Category({ products, brands, categories }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Online Store - CIÉMAN 喜曼精品",
+    "name": "Online Store - KÉSH de¹ 凱仕國際精品",
     "description": "嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證",
     "url": "https://www.cieman.com.tw/shop",
     "itemListElement": filteredProducts.slice(0, 20).map((product, index) => ({
@@ -330,8 +330,8 @@ export default function Category({ products, brands, categories }) {
   return (
     <>
       <Head>
-        <title>Online Store | CIÉMAN 喜曼精品 - 二手精品買賣</title>
-        <meta name="description" content="CIÉMAN 喜曼精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。" />
+        <title>Online Store | KÉSH de¹ 凱仕國際精品 - 二手精品買賣</title>
+        <meta name="description" content="KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://www.cieman.com.tw/shop" />
         <script
@@ -364,7 +364,7 @@ export default function Category({ products, brands, categories }) {
                         NEWS
                       </span>
                       <p className="text-[13px] font-medium text-gray-800 tracking-wide">
-                        喜曼精品保證所有商品皆經專業鑑定，僅販售 100% 正品。
+                        凱仕國際精品保證所有商品皆經專業鑑定，僅販售 100% 正品。
                       </p>
                       <span className="text-gray-300">|</span>
                       <p className="text-[13px] font-medium text-[#ef4628] tracking-wide">
@@ -445,7 +445,7 @@ export default function Category({ products, brands, categories }) {
             {/* SEO Text Block */}
             <div className="p-8 md:p-12 bg-stone-50 border-t border-gray-400">
               <h3 className="text-sm font-bold text-gray-900 mb-3">
-                CIÉMAN 喜曼精品｜台中二手精品買賣、寄賣、置換
+                KÉSH de¹ 凱仕國際精品｜台中二手精品買賣、寄賣、置換
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed max-w-4xl">
                 專營 Hermès、Chanel、LV、Dior、Gucci、Loewe
@@ -524,7 +524,7 @@ export async function getStaticProps() {
       const pCatIds = p.categories.map(c => c.id);
 
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
-      const uiBrandName = matchedBrand ? matchedBrand.name : "Ciéman Select";
+      const uiBrandName = matchedBrand ? matchedBrand.name : "KÉSH de¹ Select";
       const uiBrandSlug = matchedBrand ? matchedBrand.slug : "select";
 
       const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));

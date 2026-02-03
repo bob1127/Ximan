@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
     const transporter = getTransporter();
     await transporter.sendMail({
-      from: `CIÉMAN <${process.env.GMAIL_USER}>`,
+      from: `KÉSH de¹ <${process.env.GMAIL_USER}>`,
       to: toEmail,
       subject: tpl.subject,
       html: tpl.html,

@@ -64,10 +64,10 @@ export default function About() {
               <div className="lg:col-span-5 flex flex-col gap-8 lg:sticky lg:top-32">
                 <FadeInSection>
                   <h2 className="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase mb-4">
-                    About CIÉMAN
+                    About KÉSH de¹
                   </h2>
                   <h1 className="text-2xl md:text-3xl lg:text-3xl font-serif font-medium leading-tight text-gray-900 mb-8">
-                    感受專屬於CIÉMAN的
+                    感受專屬於KÉSH de¹的
                     <br />
                     優雅與誠意
                   </h1>
@@ -76,7 +76,7 @@ export default function About() {
                   <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm bg-gray-100">
                     <Image
                       src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg"
-                      alt="CIÉMAN Interior"
+                      alt="KÉSH de¹ Interior"
                       fill // 使用 fill 讓圖片自動填滿容器
                       className="object-cover hover:scale-105 transition-transform duration-1000 ease-out"
                       sizes="(max-width: 768px) 100vw, 40vw"
