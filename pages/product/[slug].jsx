@@ -92,7 +92,10 @@ export default function ProductDetail({ product, relatedProducts }) {
   
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cieman.com.tw";
   const currentUrl = `${siteUrl}/product/${product.slug}`;
-  const mainImage = product.images[0] || `${siteUrl}/images/placeholder.jpg`;
+  // 圖片處理：如果沒有圖片，使用預設圖
+  const mainImage = (product.images && product.images.length > 0) 
+    ? product.images[0] 
+    : `${siteUrl}/images/placeholder.jpg`;
 
   // 1. Product Schema (商品結構化資料)
   const productJsonLd = {
@@ -102,7 +105,7 @@ export default function ProductDetail({ product, relatedProducts }) {
     "image": product.images,
     "description": product.shortDesc,
     "sku": product.id,
-    "mpn": product.id, // Manufacturer Part Number
+    "mpn": product.id, 
     "brand": {
       "@type": "Brand",
       "name": product.brand
@@ -111,9 +114,9 @@ export default function ProductDetail({ product, relatedProducts }) {
       "@type": "Offer",
       "url": currentUrl,
       "priceCurrency": "TWD",
-      "price": product.rawPrice, // 使用數字格式
+      "price": product.rawPrice, 
       "priceValidUntil": "2026-12-31",
-      "itemCondition": "https://schema.org/UsedCondition", // 二手商品
+      "itemCondition": "https://schema.org/UsedCondition", 
       "availability": product.specs.inStoreView ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "seller": {
         "@type": "Organization",
@@ -218,6 +221,7 @@ export default function ProductDetail({ product, relatedProducts }) {
               {product.images && product.images.length > 0 ? (
                 product.images.map((imgUrl, index) => (
                   <div key={index} className="w-full relative">
+                    {/* 使用 unoptimized 避免 Next.js 對外部圖片權限的限制，方便除錯 */}
                     <Image
                       src={imgUrl}
                       alt={`${product.title} - view ${index + 1}`}
@@ -225,12 +229,13 @@ export default function ProductDetail({ product, relatedProducts }) {
                       height={1500}
                       className="w-full h-auto object-cover block"
                       priority={index === 0}
+                      unoptimized={true} 
                     />
                   </div>
                 ))
               ) : (
                 <div className="w-full bg-gray-100 aspect-[4/5] flex items-center justify-center text-gray-400">
-                  No Image
+                  No Image Available
                 </div>
               )}
             </div>
@@ -324,7 +329,7 @@ export default function ProductDetail({ product, relatedProducts }) {
             {activeTab === "details" && (
               <div className="animate-fadeIn">
                 <div className="w-full h-[300px] bg-gray-100 mb-8 flex items-center justify-center overflow-hidden relative">
-                  {product.images && product.images[0] && <Image src={product.images[0]} alt="Product Banner" fill className="object-cover opacity-90" />}
+                  {product.images && product.images[0] && <Image src={product.images[0]} alt="Product Banner" fill className="object-cover opacity-90" unoptimized={true} />}
                   <div className="absolute inset-0 bg-black/10"></div>
                   <h3 className="relative z-10 text-white text-3xl font-light tracking-widest uppercase">Classic Elegance</h3>
                 </div>
@@ -442,32 +447,39 @@ export async function getStaticPaths() {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
+  
+  // 為了安全起見，這裡也使用 Header 驗證方式抓取路徑
+  const auth = Buffer.from(`${CK}:${CS}`).toString('base64');
   const agent = new https.Agent({ rejectUnauthorized: false });
+  const headers = {
+    "User-Agent": "Mozilla/5.0 (Next.js)",
+    "Authorization": `Basic ${auth}`
+  };
 
   let paths = [];
 
   try {
-    // 預先抓取前 20 筆熱門商品進行靜態生成 (加速首頁點擊進入的速度)
     const res = await fetch(
-      `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&per_page=20&status=publish`,
-      { agent, headers: { "User-Agent": "Mozilla/5.0..." } }
+      `${WC_URL}/wp-json/wc/v3/products?per_page=20&status=publish`,
+      { agent, headers }
     );
-    const products = await res.json();
     
-    if (Array.isArray(products)) {
-      paths = products.map((product) => ({
-        params: { slug: product.slug },
-      }));
+    if (res.ok) {
+        const products = await res.json();
+        if (Array.isArray(products)) {
+          paths = products.map((product) => ({
+            params: { slug: product.slug },
+          }));
+        }
     }
   } catch (err) {
     console.error("Failed to pre-fetch paths:", err);
   }
 
-  // fallback: 'blocking' -> 沒預先生成的頁面，會在使用者第一次請求時伺服器端生成 (SSR)，然後被快取變成靜態 (SSG)
   return { paths, fallback: "blocking" };
 }
 
-// --- 🔥 ISR: 靜態生成 + 增量更新 ---
+// --- 🔥 ISR: 靜態生成 + 增量更新 (修復圖片抓取) ---
 export async function getStaticProps({ params }) {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
@@ -475,11 +487,18 @@ export async function getStaticProps({ params }) {
   const slug = params.slug;
 
   const agent = new https.Agent({ rejectUnauthorized: false });
+  // 使用 Header 驗證 (解決 401)
+  const auth = Buffer.from(`${CK}:${CS}`).toString('base64');
+  const headers = {
+    "User-Agent": "Mozilla/5.0 (Next.js)",
+    "Accept": "application/json",
+    "Authorization": `Basic ${auth}`
+  };
 
   try {
     // 1. 抓取主要商品
-    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&slug=${encodeURIComponent(slug)}`;
-    const res = await fetch(apiUrl, { agent, headers: { "User-Agent": "Mozilla/5.0..." } });
+    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(slug)}`;
+    const res = await fetch(apiUrl, { agent, headers });
 
     if (!res.ok) throw new Error("Fetch failed");
     const products = await res.json();
@@ -491,21 +510,28 @@ export async function getStaticProps({ params }) {
     const p = products[0];
 
     // 2. 抓取相關商品 (排除自己)
-    const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&exclude=${p.id}&per_page=8&category=${p.categories[0]?.id || ''}`;
-    const relatedRes = await fetch(relatedApiUrl, { agent, headers: { "User-Agent": "Mozilla/5.0..." } });
+    const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?exclude=${p.id}&per_page=8&category=${p.categories[0]?.id || ''}`;
+    const relatedRes = await fetch(relatedApiUrl, { agent, headers });
     const relatedData = await relatedRes.json();
 
     const formattedRelated = Array.isArray(relatedData) ? relatedData.map((item) => {
       const brandAttr = item.attributes.find((a) => a.name.toLowerCase() === "brand");
       const brandName = brandAttr ? brandAttr.options[0] : "KÉSH de¹ Select";
+      
+      // 🔥 相關商品圖片處理
+      let relatedImg = null;
+      if (item.images && item.images.length > 0) {
+          relatedImg = item.images[0].src;
+          if (relatedImg.startsWith('http://')) relatedImg = relatedImg.replace('http://', 'https://');
+      }
+
       return {
         id: item.id,
         slug: item.slug,
         title: item.name.toUpperCase(),
         brand: brandName,
         price: `NT$ ${parseInt(item.price || 0).toLocaleString()}`,
-        originalPrice: item.regular_price && item.sale_price ? `NT$ ${parseInt(item.regular_price).toLocaleString()}` : null,
-        image: item.images.length > 0 ? item.images[0].src : null,
+        image: relatedImg,
         tag: item.on_sale ? "SALE" : "NEW",
         tagColor: item.on_sale ? "red" : "black",
       };
@@ -520,17 +546,27 @@ export async function getStaticProps({ params }) {
     const conditionText = p.product_condition || p.description || "";
     const rawPrice = parseInt(p.price || 0);
 
+    // 🔥 主要商品圖片處理 (建立陣列)
+    let productImages = [];
+    if (p.images && p.images.length > 0) {
+        productImages = p.images.map(img => {
+            let src = img.src;
+            if (src.startsWith('http://')) src = src.replace('http://', 'https://');
+            return src;
+        });
+    }
+
     const formattedProduct = {
       id: p.id,
       slug: p.slug,
       title: p.name.toUpperCase(),
       price: `NT$ ${rawPrice.toLocaleString()}`,
-      rawPrice: rawPrice, // For JSON-LD
+      rawPrice: rawPrice,
       brand: getAttr("Brand") || "KÉSH de¹ Select",
       description: p.description || "",
       intro: p.short_description || "",
       shortDesc: (p.short_description || "").replace(/<[^>]+>/g, "").slice(0, 150).replace(/\s+/g, " ").trim(),
-      images: p.images.length > 0 ? p.images.map((img) => img.src) : [],
+      images: productImages, // 傳入處理過的圖片陣列
       specs: {
         rank: getAttr("Rank") || "Rank S",
         conditionText: conditionText,
@@ -545,8 +581,6 @@ export async function getStaticProps({ params }) {
         product: formattedProduct,
         relatedProducts: formattedRelated,
       },
-      // ISR: 每 60 秒重新驗證一次資料
-      // 如果 60 秒內有新請求，顯示舊快取；超過 60 秒後的請求會觸發背景更新
       revalidate: 10, 
     };
   } catch (error) {

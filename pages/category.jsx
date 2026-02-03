@@ -482,72 +482,58 @@ export default function Category({ products, brands, categories }) {
   );
 }
 
-// --- 🔥 SSG 數據抓取：強力除錯與圖片修復版 ---
+// --- 🔥 SSG 數據抓取：自動抓取後台分類結構 (含除錯功能) ---
 export async function getStaticProps() {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
+  // 1. 檢查環境變數是否讀取成功
   if (!WC_URL || !CK || !CS) {
     console.error("❌ 環境變數缺失！請檢查 .env.local 檔案");
+    // console.log("WC_URL:", WC_URL); // Debug 用
     return { props: { products: [], brands: [], categories: [] }, revalidate: 60 };
   }
 
-  // 忽略 SSL 錯誤 (開發環境常見問題)
+  // 忽略 SSL 憑證錯誤 (針對本機開發環境)
   const agent = new https.Agent({ rejectUnauthorized: false });
-  
-  // 使用 Header 驗證 (解決 401 Unauthorized 最有效的方法)
-  const auth = Buffer.from(`${CK}:${CS}`).toString('base64');
   const headers = {
-    "User-Agent": "Mozilla/5.0 (Next.js)",
-    "Accept": "application/json",
-    "Authorization": `Basic ${auth}`
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    Accept: "application/json",
   };
 
   try {
-    console.log(`🔄 連線中: ${WC_URL}`);
+    console.log("🔄 開始抓取 WooCommerce 資料...");
     
-    // 抓取商品 (Products) 與 分類 (Categories)
+    // 2. 抓取資料
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${WC_URL}/wp-json/wc/v3/products?status=publish&per_page=100`, { agent, headers }),
-      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?per_page=100`, { agent, headers })
+      fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`, { agent, headers }),
+      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100`, { agent, headers })
     ]);
 
-    // 檢查回應狀態
-    if (!productsRes.ok) {
-        const errText = await productsRes.text();
-        console.error(`❌ 商品 API 錯誤 (${productsRes.status}):`, errText);
-        throw new Error("Product fetch failed");
-    }
-    if (!categoriesRes.ok) {
-        const errText = await categoriesRes.text();
-        console.error(`❌ 分類 API 錯誤 (${categoriesRes.status}):`, errText);
-        throw new Error("Category fetch failed");
+    if (!productsRes.ok || !categoriesRes.ok) {
+      console.error(`❌ API 回應錯誤: Products ${productsRes.status}, Categories ${categoriesRes.status}`);
+      throw new Error("Failed to fetch data");
     }
 
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    console.log(`✅ 成功抓取 ${wcProducts.length} 個商品, ${wcCategories.length} 個分類`);
+    console.log(`✅ 成功抓取: ${wcProducts.length} 個商品, ${wcCategories.length} 個分類`);
 
-    // 🔥 DEBUG: 印出第一筆商品的圖片資訊，讓您確認 API 是否回傳了圖片
-    if (wcProducts.length > 0) {
-        // console.log("🔍 [DEBUG] 第一個商品的圖片資料:", JSON.stringify(wcProducts[0].images, null, 2));
-    }
-
-    // --- 資料處理 ---
-    // 找出父分類 (根據您的截圖 slug 為 'brand' 和 'categories')
+    // 3. 處理分類結構
+    // 您的後台截圖顯示 slug 分別為 'brand' 和 'categories'
     const brandParent = wcCategories.find(c => c.slug === 'brand'); 
     const typeParent = wcCategories.find(c => c.slug === 'categories');
-    
-    // 除錯：如果找不到父分類，印出警告
+
+    // Debug: 檢查是否找到父分類
     if (!brandParent) console.warn("⚠️ 警告：找不到 Slug 為 'brand' 的父分類");
     if (!typeParent) console.warn("⚠️ 警告：找不到 Slug 為 'categories' 的父分類");
 
     const brandParentId = brandParent ? brandParent.id : null;
     const typeParentId = typeParent ? typeParent.id : null;
 
-    // 篩選子分類列表
+    // 篩選子分類
     const brandsList = wcCategories
       .filter(c => c.parent === brandParentId) 
       .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
@@ -555,19 +541,21 @@ export async function getStaticProps() {
     const categoriesList = wcCategories
       .filter(c => c.parent === typeParentId)
       .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+
+    console.log("Brands List:", brandsList.map(b => b.name)); // 在終端機印出抓到的品牌
     
-    // 格式化商品資料
+    // 4. 處理商品資料
     const formattedProducts = wcProducts.map((p) => {
       const pCatIds = p.categories.map(c => c.id);
-      
+
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
       const uiBrandName = matchedBrand ? matchedBrand.name : "KÉSH de¹ Select";
       const uiBrandSlug = matchedBrand ? matchedBrand.slug : "select";
-      
+
       const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
       const uiCategoryName = matchedCategory ? matchedCategory.name : "Accessories";
       const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
-      
+
       const rawPrice = p.price ? parseInt(p.price) : 0;
 
       // 🔥 圖片處理核心邏輯：強制轉 HTTPS
@@ -586,9 +574,9 @@ export async function getStaticProps() {
         slug: p.slug,
         title: p.name.toUpperCase(),
         brand: uiBrandName,
-        brandSlug: uiBrandSlug,
+        brandSlug: uiBrandSlug, // 重要：用於前端篩選
         category: uiCategoryName,
-        categorySlug: uiCategorySlug,
+        categorySlug: uiCategorySlug, // 重要：用於前端篩選
         price: `NT$ ${rawPrice.toLocaleString()}`,
         rawPrice: rawPrice,
         tags: p.tags.length > 0 ? p.tags.map((t) => t.name) : [],
