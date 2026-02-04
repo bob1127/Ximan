@@ -236,11 +236,14 @@ export default function Home() {
             <div className="w-full lg:w-1/2 relative flex items-center justify-center">
               <div className="relative flex flex-col justify-center items-center gap-4 lg:gap-[2em]">
                 <div className="text-center flex flex-col">
-                  <h1 className="text-[#1b1b1b] text-5xl lg:text-[80px] font-normal tracking-[-1px] leading-none">
-                    Sunrise
+                  <h1 className="text-[#1b1b1b] text-3xl xl:text-6xl mb-4 font-normal tracking-[-1px] leading-none">
+                 Brand Positioning
+
+
                   </h1>
                   <p className="uppercase text-[#191919] text-xs lg:text-[14px] font-medium leading-none mt-2 lg:mt-0">
-                    Apple Music / Spotify / YouTube
+                    專業鑑定｜正品保證｜顧客寄賣｜指定款式代購｜全球配送
+
                   </p>
                 </div>
               </div>
@@ -251,8 +254,7 @@ export default function Home() {
               </div>
               <div className="!w-[50%] max-w-[500px] lg:w-1/4 absolute top-1/2 right-6 -translate-y-1/2 z-[2] text-center lg:text-left">
                 <p className="uppercase text-sm lg:text-[14px] font-medium leading-relaxed lg:leading-none text-white drop-shadow-md">
-                  Liam Cartwright&apos;s 2023 breakout track “Sundown” climbed the
-                  global charts.
+                Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine
                 </p>
               </div>
             </div>
