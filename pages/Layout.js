@@ -81,43 +81,54 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Head>
-        {/* 基本 SEO */}
-        <title>{siteTitle}</title>
-        <meta name="description" content={siteDescription} />
-        <meta
-          name="keywords"
-          content="KÉSH de¹, 凱仕國際精品, 台中精品, 二手精品, 精品收購, 精品寄賣, 精品置換, Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard"
-        />
-        <meta name="author" content="KÉSH de¹ Boutique" />
-        <link rel="icon" href="/logo.ico" />
-        <link rel="canonical" href={siteUrl} />
+     <Head>
+  {/* 基本 SEO */}
+  <title>{siteTitle}</title>
+  <meta name="description" content={siteDescription} />
+  <meta
+    name="keywords"
+    content="KÉSH de¹, 凱仕國際精品, 台中精品, 二手精品, 精品收購, 精品寄賣, 精品置換, Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard"
+  />
+  <meta name="author" content="KÉSH de¹ Boutique" />
 
-        {/* Open Graph */}
-        <meta property="og:locale" content="zh_TW" />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={siteTitle} />
-        <meta property="og:description" content={siteDescription} />
-        <meta property="og:url" content={siteUrl} />
-        <meta property="og:site_name" content={siteName} />
-        <meta property="og:image" content={siteImage} />
+  {/* === Favicon 設定 (修改處) === */}
+  {/* 1. 基礎 Favicon (建議保留 favicon.ico 在 public 資料夾) */}
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  
+  {/* 2. Google SEO 專用高解析圖示 (請製作一張 192x192 的 icon.png 放進 public) */}
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon.png" />
+  
+  {/* 3. Apple 裝置專用圖示 */}
+  <link rel="apple-touch-icon" href="/icon.png" />
+  
+  {/* 標準網址 */}
+  <link rel="canonical" href={siteUrl} />
 
-        {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={siteTitle} />
-        <meta name="twitter:description" content={siteDescription} />
-        <meta name="twitter:image" content={siteImage} />
+  {/* Open Graph (社群分享預覽) */}
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={siteTitle} />
+  <meta property="og:description" content={siteDescription} />
+  <meta property="og:url" content={siteUrl} />
+  <meta property="og:site_name" content={siteName} />
+  <meta property="og:image" content={siteImage} />
 
-        {/* JSON-LD */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-      </Head>
+  {/* Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={siteTitle} />
+  <meta name="twitter:description" content={siteDescription} />
+  <meta name="twitter:image" content={siteImage} />
+
+  {/* JSON-LD (結構化資料) */}
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+  />
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+  />
+</Head>
 
       {/* 1. 導覽列 */}
       <Navbar />
