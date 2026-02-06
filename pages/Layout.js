@@ -22,7 +22,7 @@ export default function Layout({ children }) {
   }, []);
 
   // === SEO & 結構化資料設定 ===
-  const siteUrl = "https://ximan-test.vercel.app";
+  const siteUrl = "https://www.kesh-de1.com";
   const siteName = "KÉSH de¹ 凱仕國際精品";
   const siteTitle = "KÉSH de¹ 凱仕國際精品｜台中二手精品買賣・寄賣・置換";
   const siteDescription =
