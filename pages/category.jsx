@@ -271,7 +271,14 @@ const CompanyLocation = () => {
             </div>
           </div>
           <div className="mt-12">
-            <Link href="/contact" className="inline-block bg-black text-white text-[14px] font-bold uppercase tracking-widest py-4 px-10 hover:bg-[#ef4628] transition-colors duration-300">到店前請提前預約</Link>
+               <Link
+            href="/contact"
+            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
+          >
+            <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
+            <span className="relative">到店前請提前預約</span>
+          </Link>
+           
           </div>
         </div>
       </div>
@@ -469,9 +476,9 @@ export default function Category({ products, brands, categories }) {
         <div className="flex justify-center py-8 md:py-12 border-b border-gray-400">
           <Link
             href="/all-items"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-black px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
+            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
           >
-            <span className="absolute inset-0 h-full w-full translate-y-full bg-black transition-all duration-300 group-hover:translate-y-0"></span>
+            <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
             <span className="relative">VIEW MORE ITEMS</span>
           </Link>
         </div>

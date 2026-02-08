@@ -42,8 +42,13 @@ const EmblaCarousel = (props) => {
     emblaApi.on("reInit", () => {}).on("scroll", () => {}).on("slideFocus", () => {});
   }, [emblaApi]);
 
-  if (!slides || slides.length === 0) return null;
-
+if (!slides || slides.length === 0) {
+  return (
+    <div className="w-full py-20 text-center border-2 border-red-500 bg-red-100 text-red-600 font-bold">
+      ⚠️ 目前沒有讀取到任何商品資料 (slides is empty)
+    </div>
+  );
+}
   return (
     <div
       className="w-full py-8 mx-auto relative"

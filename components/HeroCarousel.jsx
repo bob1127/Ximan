@@ -33,8 +33,8 @@ const PickleballAnimation = () => {
     { 
         type: "image",
         src: "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg",
-        title: "HIGH PERFORMANCE",
-        category: "EQUIPMENT"
+        title: "Luxury Boutique",
+        category: "KÉSH de¹"
     },
     // 您可以繼續新增混合類型的 Slide
   ];

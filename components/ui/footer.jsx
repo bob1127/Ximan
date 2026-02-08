@@ -47,7 +47,7 @@ export default function Footer() {
           
           {/* 1. 左側：品牌資訊 + Slogan (佔 4 欄) */}
           <div className="lg:col-span-4 flex flex-col items-start">
-           <Image src='/images/logo/KESH Logo-2.png' alt='company-logo' placeholder="empty" loading="lazy" width={400} height={300} className="max-w-[140px]" ></Image>
+           <Image src='/images/logo/KESH-Logo-white.png' alt='company-logo' placeholder="empty" loading="lazy" width={400} height={300} className="max-w-[140px]" ></Image>
             <div className="text-gray-400 text-sm leading-loose font-light tracking-wide">
               <p className="italic mb-2 opacity-80">
                 A Value of Priority. <br/>

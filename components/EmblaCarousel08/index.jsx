@@ -48,14 +48,20 @@ export async function getStaticProps() {
   try {
     // 3. 抓取資料：這裡設定 featured=true (精選商品) 且只抓 10 筆
     // 如果你想抓最新商品，把 featured=true 拿掉即可
+// 👇 修改後 (拿掉 featured=true，只抓最新發布的 10 筆)
+    console.log("🔍 正在嘗試抓取商品..."); // 加入 Log 方便觀察
+    
     const res = await fetch(
-      `${WC_URL}/wp-json/wc/v3/products?featured=true&status=publish&per_page=10`,
+      `${WC_URL}/wp-json/wc/v3/products?status=publish&per_page=10`, 
       { agent, headers }
     );
 
+    // 👇 加入這段來檢查抓到幾筆
+    const products = await res.json();
+    console.log(`✅ 成功抓取到 ${products.length} 筆商品`);
     if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
     
-    const products = await res.json();
+ 
 
     // 4. 資料格式化 (轉成 EmblaCarousel 看得懂的格式)
     const formattedSlides = products.map((p) => {
