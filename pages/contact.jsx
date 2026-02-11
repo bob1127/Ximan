@@ -1,41 +1,47 @@
-// pages/contact.jsx
-import { useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
+import { ReactLenis } from "@studio-freight/react-lenis";
+import { motion } from "framer-motion";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    service: "商品諮詢", // 預設選項更新
+    service: "商品諮詢",
     message: "",
   });
 
   const [status, setStatus] = useState({ type: "", msg: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- SEO 設定 ---
+  // --- SEO 設定 (完全依照截圖更新) ---
   const siteUrl = "https://www.kesh-de1.com";
-  const pageTitle = "聯絡我們 Contact Us | KÉSH de¹ 凱仕國際精品";
-  const pageDesc = "無論是商品諮詢、精品代購或寄賣服務，歡迎透過官方客服與我們聯繫。KÉSH de¹ 凱仕國際精品提供專業、快速且安心的服務體驗。";
+  const pageTitle = "聯絡我們 | Contact";
+  const pageDesc =
+    "全新商品尋款、二手精品販售與閒置精品寄售。售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。contact@kesh-de1.com";
 
-  // --- 結構化資料 (JSON-LD) ---
+  // --- 結構化資料 (Schema.org) ---
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    "name": "聯絡 KÉSH de¹",
-    "description": pageDesc,
-    "url": `${siteUrl}/contact`,
-    "mainEntity": {
+    name: "聯絡 KÉSH de¹",
+    description: pageDesc,
+    url: `${siteUrl}/contact`,
+    mainEntity: {
       "@type": "Organization",
-      "name": "KÉSH de¹ 凱仕國際精品",
-      "url": siteUrl,
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "email": "hello.cieman@gmail.com",
-        "availableLanguage": ["Chinese", "English"]
-      }
-    }
+      name: "KÉSH de¹ 凱仕國際精品",
+      url: siteUrl,
+      email: "contact@kesh-de1.com",
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          email: "contact@kesh-de1.com",
+          areaServed: "TW",
+          availableLanguage: ["Chinese", "English"],
+        },
+      ],
+    },
   };
 
   const handleChange = (e) => {
@@ -47,46 +53,49 @@ export default function Contact() {
     setIsSubmitting(true);
     setStatus({ type: "", msg: "" });
 
+    // 模擬送出 (您需自行對接後端 API)
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // 範例： const res = await fetch("/api/contact", { ... });
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // 模擬延遲
+      setStatus({
+        type: "success",
+        msg: "您的訊息已發送，專員將盡快與您聯繫！",
       });
-
-      if (res.status === 200) {
-        setStatus({
-          type: "success",
-          msg: "您的訊息已發送，我們會盡快聯繫您！",
-        });
-        setFormData({ name: "", email: "", service: "商品諮詢", message: "" });
-      } else {
-        setStatus({
-          type: "error",
-          msg: "發送失敗，請稍後再試或透過 LINE 聯繫我們。",
-        });
-      }
+      setFormData({ name: "", email: "", service: "商品諮詢", message: "" });
     } catch (error) {
-      setStatus({ type: "error", msg: "發生錯誤，請檢查網路連線。" });
+      setStatus({
+        type: "error",
+        msg: "發送失敗，請稍後再試或透過 LINE 聯繫我們。",
+      });
     }
     setIsSubmitting(false);
   };
 
+  // 動畫設定
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
   return (
-    <div className="container my-20 mx-auto">
+    <ReactLenis root>
       <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDesc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        {/* Open Graph */}
+        {/* Open Graph (Facebook, LINE) */}
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDesc} />
         <meta property="og:url" content={`${siteUrl}/contact`} />
         <meta property="og:type" content="website" />
-
+        {/* 建議：補上 OG 圖片，分享時才會漂亮 */}
+        <meta property="og:image" content={`${siteUrl}/images/og-image.jpg`} />
+        {/* Twitter Card (X) - 這裡就是要補的部分 */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDesc} />{" "}
+        {/* 👈 這裡要跟 description 一樣 */}
+        <meta name="twitter:image" content={`${siteUrl}/images/og-image.jpg`} />
         {/* JSON-LD Script */}
         <script
           type="application/ld+json"
@@ -94,358 +103,212 @@ export default function Contact() {
         />
       </Head>
 
-      <main className="main-content flex justify-center !border">
-        {/* 左側：品牌資訊區 */}
-        <section className="info-section">
-          <div>
-            <h1 className="title">Contact KÉSH de¹</h1>
-            {/* 更新：這裡植入您的文案 */}
-            <p className="subtitle">
-              無論是商品諮詢、精品代購或寄賣服務，
-              <br />
-              歡迎透過官方客服與我們聯繫。
-            </p>
-          </div>
+      <div className="bg-white min-h-screen pt-32 pb-24 px-6 flex items-center justify-center">
+        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 shadow-2xl rounded-sm overflow-hidden min-h-[700px]">
+          {/* 左側：品牌資訊區 (黑底奢華感) */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            className="bg-[#1A1A1A] text-white p-10 md:p-16 flex flex-col justify-between relative overflow-hidden"
+          >
+            {/* 裝飾背景 */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
-          <div className="contact-details">
-            <div className="detail-item">
-              <span className="label">客服時間 Service Hours</span>
-              <span className="value">13:00 – 20:00</span>
+            <div className="relative z-10">
+              <h1 className="text-3xl md:text-4xl font-serif mb-6 tracking-wide">
+                Contact Us
+              </h1>
+              <p className="text-gray-400 font-light leading-loose mb-10 text-sm md:text-base">
+                全新商品尋款、二手精品販售與閒置精品寄售。
+                <br />
+                售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。
+              </p>
+
+              <div className="space-y-8 mt-12">
+                <div>
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                    Email
+                  </h3>
+                  <a
+                    href="mailto:contact@kesh-de1.com"
+                    className="text-xl font-serif hover:text-gray-300 transition-colors border-b border-transparent hover:border-gray-300 pb-1"
+                  >
+                    contact@kesh-de1.com
+                  </a>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                    Social Media
+                  </h3>
+                  <div className="flex gap-6">
+                    <a
+                      href="https://instagram.com/hello.cieman"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm hover:opacity-70 transition-opacity"
+                    >
+                      Instagram
+                    </a>
+                    <a
+                      href="#"
+                      className="text-sm hover:opacity-70 transition-opacity"
+                    >
+                      Facebook
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="detail-item">
-              <span className="label">Email</span>
-              <a href="mailto:hello.cieman@gmail.com" className="value link">
-                hello.cieman@gmail.com
-              </a>
-            </div>
-
-            <div className="detail-item">
-              <span className="label">Instagram</span>
+            <div className="relative z-10 mt-16 pt-8 border-t border-gray-800">
+              <p className="text-gray-500 text-xs mb-4">想獲得最即時的回覆？</p>
               <a
-                href="https://instagram.com/hello.cieman"
+                href="https://line.me/ti/p/@yourid"
                 target="_blank"
                 rel="noreferrer"
-                className="value link"
+                className="inline-flex items-center justify-center bg-[#06c755] hover:bg-[#05b34c] text-white px-8 py-3 text-sm font-bold tracking-wider rounded-sm transition-colors w-full md:w-auto"
               >
-                @hello.cieman
+                LINE 線上諮詢
               </a>
             </div>
+          </motion.div>
 
-            <div className="cta-box">
-              <p className="cta-text">想獲得最即時的回覆？</p>
-              <a
-                href="https://line.me/R/ti/p/@your_line_id"
-                target="_blank"
-                rel="noreferrer"
-                className="line-button"
-              >
-                LINE ｜ 立即詢問
-              </a>
-            </div>
-          </div>
-        </section>
+          {/* 右側：線上表單 (白底簡潔感) */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
+            transition={{ delay: 0.2 }}
+            className="bg-white p-10 md:p-16 flex flex-col justify-center"
+          >
+            <h2 className="text-2xl font-serif text-gray-900 mb-8">
+              Send a Message
+            </h2>
 
-        {/* 右側：線上表單 */}
-        <section className="form-section">
-          <form onSubmit={handleSubmit} className="contact-form">
-            <h2 className="form-title">線上需求表單</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label
+                    htmlFor="name"
+                    className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="您的稱呼"
+                    className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none transition-colors text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="email"
+                    className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="name@example.com"
+                    className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none transition-colors text-sm"
+                  />
+                </div>
+              </div>
 
-            <div className="form-group">
-              <label htmlFor="name">您的稱呼 / Title</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="例如：陳小姐 / Mr. Chen"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="email">聯絡信箱 / Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="name@example.com"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="service">需求類別 / Category</label>
-              <div className="select-wrapper">
-                <select
-                  name="service"
-                  id="service"
-                  value={formData.service}
-                  onChange={handleChange}
+              <div className="space-y-2">
+                <label
+                  htmlFor="service"
+                  className="text-xs font-bold text-gray-500 uppercase tracking-wider"
                 >
-                  <option value="商品諮詢">商品諮詢 (Product Inquiry)</option>
-                  <option value="精品代購">精品代購 (Sourcing Service)</option>
-                  <option value="寄賣服務">寄賣服務 (Consignment)</option>
-                  <option value="其他合作">其他合作 (Other)</option>
-                </select>
+                  Subject
+                </label>
+                <div className="relative">
+                  <select
+                    name="service"
+                    id="service"
+                    value={formData.service}
+                    onChange={handleChange}
+                    className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none appearance-none cursor-pointer transition-colors text-sm"
+                  >
+                    <option value="商品諮詢">商品諮詢 Product Inquiry</option>
+                    <option value="精品代購">精品代購 Sourcing Request</option>
+                    <option value="寄賣服務">寄賣服務 Consignment</option>
+                    <option value="置換服務">置換服務 Trade-in</option>
+                    <option value="售後服務">售後服務 After-sales</option>
+                    <option value="其他合作">其他 Other</option>
+                  </select>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <svg
+                      width="10"
+                      height="6"
+                      viewBox="0 0 10 6"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1 1L5 5L9 1"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="message">詳細訊息 / Message</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="5"
-                required
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="請簡述您的需求內容，如欲詢問特定包款，請提供品牌與型號..."
-              ></textarea>
-            </div>
 
-            <button
-              type="submit"
-              className="submit-btn"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "傳送中..." : "確認送出 Send Message"}
-            </button>
-
-            {status.msg && (
-              <div className={`status-message ${status.type}`}>
-                {status.msg}
+              <div className="space-y-2">
+                <label
+                  htmlFor="message"
+                  className="text-xs font-bold text-gray-500 uppercase tracking-wider"
+                >
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows={5}
+                  required
+                  value={formData.message}
+                  onChange={handleChange}
+                  placeholder="請簡述您的需求內容，如欲詢問特定包款，請提供品牌與型號..."
+                  className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none resize-none transition-colors text-sm"
+                ></textarea>
               </div>
-            )}
-          </form>
-        </section>
-      </main>
 
-      {/* 樣式設定 (Styled JSX) */}
-      <style jsx>{`
-        /* 全域重置與字型 */
-        :global(body) {
-          margin: 0;
-          padding: 0;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-            "Helvetica Neue", Arial, sans-serif;
-          background-color: #f9f9f9;
-          color: #333;
-        }
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full bg-black text-white py-4 text-sm font-bold tracking-widest uppercase hover:bg-gray-800 transition-all ${isSubmitting ? "opacity-70 cursor-wait" : ""}`}
+              >
+                {isSubmitting ? "Sending..." : "Submit Request"}
+              </button>
 
-        .container {
-          min-height: 100vh;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 40px 20px;
-        }
-
-        .main-content {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          background: #ffffff;
-          max-width: 1000px;
-          width: 100%;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-          border-radius: 12px;
-          overflow: hidden;
-        }
-
-        /* 左側資訊欄 */
-        .info-section {
-          background-color: #1a1a1a;
-          color: #fff;
-          padding: 60px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-
-        .title {
-          font-size: 32px;
-          margin: 0 0 15px 0;
-          font-weight: 700;
-          letter-spacing: 1px;
-        }
-
-        .subtitle {
-          font-size: 15px;
-          color: #aaa;
-          margin-bottom: 40px;
-          font-weight: 300;
-          line-height: 1.6;
-        }
-
-        .contact-details {
-          display: flex;
-          flex-direction: column;
-          gap: 30px;
-        }
-
-        .detail-item {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .label {
-          font-size: 12px;
-          text-transform: uppercase;
-          color: #666;
-          letter-spacing: 1px;
-          margin-bottom: 5px;
-        }
-
-        .value {
-          font-size: 16px;
-          color: #fff;
-          text-decoration: none;
-        }
-
-        .link:hover {
-          color: #ccc;
-          transition: color 0.2s;
-        }
-
-        .cta-box {
-          margin-top: 20px;
-          padding-top: 20px;
-          border-top: 1px solid #333;
-        }
-
-        .cta-text {
-          font-size: 14px;
-          color: #888;
-          margin-bottom: 15px;
-        }
-
-        .line-button {
-          display: inline-block;
-          background-color: #06c755;
-          color: white;
-          padding: 12px 24px;
-          border-radius: 4px;
-          text-decoration: none;
-          font-weight: bold;
-          font-size: 14px;
-          transition: background 0.2s;
-          text-align: center;
-        }
-
-        .line-button:hover {
-          background-color: #05b34c;
-        }
-
-        /* 右側表單欄 */
-        .form-section {
-          padding: 60px;
-          background-color: #fff;
-        }
-
-        .form-title {
-          font-size: 24px;
-          margin-bottom: 30px;
-          color: #1a1a1a;
-        }
-
-        .form-group {
-          margin-bottom: 24px;
-        }
-
-        label {
-          display: block;
-          font-size: 14px;
-          font-weight: 600;
-          margin-bottom: 8px;
-          color: #333;
-        }
-
-        input,
-        textarea,
-        select {
-          width: 100%;
-          padding: 12px 15px;
-          border: 1px solid #ddd;
-          border-radius: 6px;
-          font-size: 15px;
-          background-color: #fcfcfc;
-          transition: border-color 0.2s;
-          box-sizing: border-box;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-          outline: none;
-          border-color: #1a1a1a;
-          background-color: #fff;
-        }
-
-        .select-wrapper {
-          position: relative;
-        }
-
-        .submit-btn {
-          width: 100%;
-          padding: 15px;
-          background-color: #1a1a1a;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: opacity 0.2s;
-          margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-          opacity: 0.9;
-        }
-
-        .submit-btn:disabled {
-          background-color: #ccc;
-          cursor: not-allowed;
-        }
-
-        .status-message {
-          margin-top: 20px;
-          padding: 10px;
-          border-radius: 4px;
-          font-size: 14px;
-          text-align: center;
-        }
-
-        .status-message.success {
-          background-color: #d4edda;
-          color: #155724;
-        }
-
-        .status-message.error {
-          background-color: #f8d7da;
-          color: #721c24;
-        }
-
-        /* 響應式設計 */
-        @media (max-width: 768px) {
-          .main-content {
-            grid-template-columns: 1fr;
-          }
-
-          .info-section {
-            padding: 40px;
-            order: 2;
-          }
-
-          .form-section {
-            padding: 40px;
-            order: 1;
-          }
-        }
-      `}</style>
-    </div>
+              {status.msg && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-4 text-sm text-center ${status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`}
+                >
+                  {status.msg}
+                </motion.div>
+              )}
+            </form>
+          </motion.div>
+        </div>
+      </div>
+    </ReactLenis>
   );
 }

@@ -3,30 +3,31 @@
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
+
 export default function Footer() {
-  // 定義新的導航連結結構
+  // --- 修改重點：更新連結內容以對應 SEO 頁面 ---
   const footerLinks = {
-    // 主要導航
+    // 主要導航 (Explore)
     explore: [
-      { name: "Brands 品牌分類", href: "/brands" },
-      { name: "Products 商品分類", href: "/products" },
-      { name: "New Arrivals 新品代購", href: "/new-arrival" },
-      { name: "Consignment 寄賣服務", href: "/consignment" },
-      { name: "Membership 會員專區", href: "/membership" },
+      { name: "About 關於我們", href: "/about" },
+      { name: "Services 服務流程", href: "/service" },
+      { name: "News 最新消息", href: "/news" },
+      { name: "Shop 所有商品", href: "/category" },
+      { name: "Consignment 寄賣服務", href: "/service?tab=consignment" }, // 直接導向寄賣 Tab
     ],
-    // 支援與條款
+    // 支援與條款 (Info) - 這裡加入了 SEO 關鍵頁面
     info: [
+      { name: "Authenticity 正品保證", href: "/authenticity" }, // [SEO 重點] 獨立頁面
+      { name: "Shipping 全球配送", href: "/shipping" }, // [SEO 重點] 獨立頁面
       { name: "FAQ 常見問題", href: "/faq" },
-      { name: "Registration 政府立案資訊", href: "/registration-info" },
-      { name: "Shipping 物流與配送", href: "/shipping" },
-      { name: "Terms of Service 服務條款", href: "/terms" },
+      { name: "Contact 聯絡我們", href: "/contact" },
       { name: "Privacy Policy 隱私權政策", href: "/privacy" },
     ],
   };
 
   return (
     <footer className="relative bg-[#111111] pt-[150px] pb-10 text-[#f7f7f6] overflow-hidden">
-      {/* --- 頂部波浪造型 SVG --- */}
+      {/* --- 頂部波浪造型 SVG (保留原設計) --- */}
       <div className="absolute top-[-1px] left-0 w-full overflow-hidden leading-[0] rotate-180">
         <svg
           className="relative block w-[calc(100%+1.3px)] h-[100px] md:h-[150px]"
@@ -44,21 +45,31 @@ export default function Footer() {
       <div className="container max-w-[1440px] mx-auto px-6 lg:px-12 relative z-10">
         {/* --- 主要內容區 (Grid Layout) --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-20 border-b border-white/10 pb-20">
-          
-          {/* 1. 左側：品牌資訊 + Slogan (佔 4 欄) */}
+          {/* 1. 左側：品牌資訊 + Slogan (保留原設計) */}
           <div className="lg:col-span-4 flex flex-col items-start">
-           <Image src='/images/logo/KESH-Logo-white.png' alt='company-logo' placeholder="empty" loading="lazy" width={400} height={300} className="max-w-[140px]" ></Image>
+            <Image
+              src="/images/logo/KESH-Logo-white.png"
+              alt="company-logo"
+              placeholder="empty"
+              loading="lazy"
+              width={400}
+              height={300}
+              className="max-w-[140px]"
+            ></Image>
             <div className="text-gray-400 text-sm leading-loose font-light tracking-wide">
               <p className="italic mb-2 opacity-80">
-                A Value of Priority. <br/>
-                A Beginning of Dreams.
+                A Value of Priority. <br />A Beginning of Dreams.
+              </p>
+              {/* 微調：加入簡單的服務關鍵字，增加頁面相關性 */}
+              <p className="text-xs mt-4 opacity-60">
+                Professional Authentication & Worldwide Shipping.
               </p>
             </div>
           </div>
 
-          {/* 2. 中間：連結列表 (佔 5 欄 - 分兩小欄) */}
+          {/* 2. 中間：連結列表 (保留原設計) */}
           <div className="lg:col-span-5 grid grid-cols-2 gap-8">
-            {/* Column A: Explore / Main Menu */}
+            {/* Column A: Explore */}
             <div>
               <h3 className="text-xs font-bold tracking-[0.2em] text-gray-500 mb-6 uppercase">
                 Explore
@@ -97,14 +108,16 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* 3. 右側：Get in touch (佔 3 欄) */}
+          {/* 3. 右側：Contact Us (保留原設計) */}
           <div className="lg:col-span-3">
             <div className="bg-[#1f1f1f] p-8 md:p-10 rounded-sm h-full flex flex-col justify-center items-start">
               <p className="text-2xl md:text-3xl font-serif mb-2 text-white">
                 Contact Us
               </p>
               <p className="text-xs text-gray-400 mb-8 tracking-widest leading-relaxed">
-                若有任何商品諮詢或寄賣需求，<br />歡迎隨時聯繫我們。
+                若有任何商品諮詢或寄賣需求，
+                <br />
+                歡迎隨時聯繫我們。
               </p>
 
               <Link
@@ -120,7 +133,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* --- 底部版權區 --- */}
+        {/* --- 底部版權區 (保留原設計) --- */}
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
           <p className="tracking-wide">
             © {new Date().getFullYear()} KÉSH de¹ Boutique. All rights reserved.
