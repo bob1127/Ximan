@@ -4,7 +4,7 @@ import Slider from "../components/HeroSlider/page";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import Head from "next/head"; // 引入 Head 處理 SEO
+import Head from "next/head";
 import ParallaxImage from "../components/ParallaxImage";
 
 // --- 子元件：文字區塊動畫設定 ---
@@ -24,38 +24,37 @@ export default function About() {
   // --- SEO 設定 ---
   const siteUrl = "https://www.kesh-de1.com";
   const pageTitle = "關於我們 About Us | KÉSH de¹ 凱仕國際精品";
-  
-  // 重點：將您的文案整合進 Meta Description，這是搜尋引擎最常抓取的摘要
-  const pageDesc = "KÉSH de¹ 凱仕國際精品，專營 Hermès、Chanel 等國際頂級精品。每一件商品皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，提供最高級別的正品保障。";
+  const pageDesc =
+    "KÉSH de¹ 凱仕國際精品，專營 Hermès、Chanel 等國際頂級精品。每一件商品皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，提供最高級別的正品保障。";
 
   // --- 結構化資料 (JSON-LD) ---
-  // 這裡告訴 Google：這個組織的核心價值就是這套鑑定流程
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
         "@id": `${siteUrl}#organization`,
-        "name": "KÉSH de¹ 凱仕國際精品",
-        "url": siteUrl,
-        "logo": `${siteUrl}/images/logo.png`,
-        "description": "每一件商品，皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，通過層層把關，才會正式出貨。",
-        "foundingLocation": {
+        name: "KÉSH de¹ 凱仕國際精品",
+        url: siteUrl,
+        logo: `${siteUrl}/images/logo.png`,
+        description:
+          "每一件商品，皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，通過層層把關，才會正式出貨。",
+        foundingLocation: {
           "@type": "Place",
-          "name": "Taichung, Taiwan"
-        }
+          name: "Taichung, Taiwan",
+        },
       },
       {
         "@type": "AboutPage",
         "@id": `${siteUrl}/about#webpage`,
-        "url": `${siteUrl}/about`,
-        "name": "關於我們 - KÉSH de¹",
-        "description": pageDesc,
-        "mainEntity": {
-          "@id": `${siteUrl}#organization`
-        }
-      }
-    ]
+        url: `${siteUrl}/about`,
+        name: "關於我們 - KÉSH de¹",
+        description: pageDesc,
+        mainEntity: {
+          "@id": `${siteUrl}#organization`,
+        },
+      },
+    ],
   };
 
   // 1. Slider 資料
@@ -91,12 +90,14 @@ export default function About() {
       <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDesc} />
-        {/* Open Graph 設定，分享到 FB/LINE 時顯示這段保證 */}
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDesc} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${siteUrl}/about`} />
-        <meta property="og:image" content="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg" />
+        <meta
+          property="og:image"
+          content="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -144,14 +145,15 @@ export default function About() {
                     KÉSH de¹ 凱仕國際精品
                   </p>
                   <p className="mb-4 text-[#F6F1EB]">
-                    成立於台中市，政府立案營運，
-                    KÉSH de¹ 凱仕國際精品致力打造值得信賴的國際精品交易平台。
+                    成立於台中市，政府立案營運， KÉSH de¹
+                    凱仕國際精品致力打造值得信賴的國際精品交易平台。
                   </p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.3}>
                   <p className="text-[#F6F1EB]">
-                    專營 Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine 等國際知名品牌，
+                    專營 Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine
+                    等國際知名品牌，
                     <span className="text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5">
                       服務涵蓋全新精品與嚴選二手精品販售、顧客寄賣及指定款式代購服務，
                       並提供全球配送服務，讓無論身處何地的貴賓，也能輕鬆擁有。
@@ -171,17 +173,163 @@ export default function About() {
                     <span className="absolute -top-4 left-4 text-4xl text-[#F6F1EB] font-serif">
                       “
                     </span>
-                    凡於 KÉSH 選購之商品，
-                    皆享有國際認可單位之正品認證保障，
+                    凡於 KÉSH 選購之商品， 皆享有國際認可單位之正品認證保障，
                     讓每一次交易皆安心、透明、值得信賴。
                   </blockquote>
                 </FadeInSection>
+
+                {/* --- 新增區塊：公司登記資訊 (對應圖片內容) --- */}
+                <FadeInSection
+                  delay={0.45}
+                  className="py-6 border-t border-gray-700/50"
+                >
+                  <h3 className="text-lg font-bold text-white mb-4">
+                    公司登記資訊 | Corporate Information
+                  </h3>
+
+                  <div className="text-[16px] text-[#F6F1EB] space-y-4 leading-relaxed">
+                    <p>
+                      凱仕國際精品有限公司為
+                      <span className="font-bold text-white">
+                        依法設立之有限公司
+                      </span>
+                      ， 依據台灣相關商業及電子商務法規辦理營運， 並依法開立
+                      <span className="font-bold text-white">
+                        政府核准之統一發票
+                      </span>
+                      。
+                    </p>
+                    <p>
+                      本公司秉持
+                      <span className="font-bold text-white">合法經營</span>、
+                      <span className="font-bold text-white">
+                        交易透明與專業標準
+                      </span>
+                      ， 致力提供值得信賴之精品服務。
+                    </p>
+                  </div>
+
+                  <div className="mt-6 text-[16px] text-[#F6F1EB] space-y-1">
+                    <h4 className="font-bold text-white mb-2 text-base">
+                      公司基本資料 |
+                    </h4>
+                    <p>
+                      公司名稱：
+                      <span className="font-bold text-white">
+                        凱仕國際精品有限公司
+                      </span>
+                    </p>
+                    <p>
+                      英文名稱：
+                      <span className="font-bold text-white">
+                        KESH LUXURY CO. LTD.
+                      </span>
+                    </p>
+                    <p>
+                      統一編號：
+                      <span className="font-bold text-white">60329329</span>
+                    </p>
+                    <p>
+                      登記管轄：
+                      <span className="font-bold text-white">
+                        台中市政府核准設立
+                      </span>
+                    </p>
+                  </div>
+
+                  {/* Legal Notice & Statements (英文區塊) */}
+                  <div className="mt-8 pt-6 border-t border-gray-700/50 text-xs text-gray-400 space-y-6 leading-relaxed">
+                    <div>
+                      <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
+                        Legal Notice
+                      </h4>
+                      <p className="mb-2">
+                        KESH LUXURY CO. LTD. is a{" "}
+                        <span className="font-bold text-gray-200">
+                          duly incorporated and legally registered limited
+                          company in Taiwan
+                        </span>
+                        , operating in full compliance with applicable Taiwanese
+                        commercial and e-commerce regulations.
+                      </p>
+                      <p>
+                        Business Registration No.:{" "}
+                        <span className="font-bold text-gray-200">
+                          60329329
+                        </span>
+                      </p>
+                      <p>
+                        Registered in:{" "}
+                        <span className="font-bold text-gray-200">
+                          Taichung, Taiwan
+                        </span>
+                      </p>
+                      <p className="mt-2">
+                        The company is committed to{" "}
+                        <span className="font-bold text-gray-200">
+                          lawful operations, transparent transactions, and
+                          professional standards
+                        </span>{" "}
+                        in all aspects of its business.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
+                        Authenticity Guarantee
+                      </h4>
+                      <p>
+                        KESH operates as an{" "}
+                        <span className="font-bold text-gray-200">
+                          independent luxury boutique
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1">
+                        All items offered for sale are{" "}
+                        <span className="font-bold text-gray-200">
+                          guaranteed 100% authentic
+                        </span>
+                        .
+                      </p>
+                      <p className="mt-1">
+                        Prior to official listing, each item undergoes a{" "}
+                        <span className="font-bold text-gray-200">
+                          rigorous multi-stage authentication process
+                        </span>{" "}
+                        and comprehensive condition assessment conducted by
+                        qualified professionals to ensure accuracy, integrity,
+                        and quality representation.
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
+                        Non-Affiliation Statement
+                      </h4>
+                      <p>
+                        KESH LUXURY CO. LTD. is an independent entity and is{" "}
+                        <span className="font-bold text-gray-200">
+                          not affiliated with, endorsed by, or an authorized
+                          retailer
+                        </span>{" "}
+                        of the brands featured on this website.
+                      </p>
+                      <p className="mt-1">
+                        All trademarks, brand names, and intellectual property
+                        rights remain the property of their respective owners.
+                      </p>
+                    </div>
+                  </div>
+                </FadeInSection>
+                {/* --- 公司登記資訊結束 --- */}
+
                 <Link
                   href="/contact"
                   className="
-                    group relative inline-flex items-center justify-center
+                    group relative inline-flex items-center justify-center mt-4
                     h-14 w-[14rem] border-white border-1 [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    text-sm tracking-widest
+                    text-[16px] tracking-widest
                   "
                 >
                   <span
@@ -205,13 +353,15 @@ export default function About() {
                 </Link>
                 <FadeInSection delay={0.5}>
                   <div className="h-[1px] w-20 bg-gray-200 mt-8 mb-4"></div>
-                  <p className="text-sm text-gray-400 tracking-wider">
+                  <p className="text-[16px] text-gray-400 tracking-wider">
                     EST. TAICHUNG
                   </p>
                 </FadeInSection>
               </div>
             </div>
           </section>
+
+          {/* ... (其餘下方程式碼保持不變) ... */}
 
           <div className="w-full h-screen relative">
             <div className="txt absolute w-[400px] z-50 left-[13%] top-1/2 -translate-y-1/2">
@@ -222,7 +372,10 @@ export default function About() {
               />
             </div>
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-              <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_5.jpg" alt="" />
+              <ParallaxImage
+                src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_5.jpg"
+                alt=""
+              />
             </div>
           </div>
 
@@ -239,18 +392,22 @@ export default function About() {
                     指定款式代購｜
                   </h3>
                   <p className="text-white text-[14px] leading-relaxed mt-2">
-                    夢幻清單不再遙不可及。KÉSH de¹ 啟動全球頂級買手網絡，無論是專櫃缺貨爆款或稀有限量聯名，我們都能跨越國界精準代尋。您只需許下心願，我們便將那份獨一無二的驚喜帶到您手中。
+                    夢幻清單不再遙不可及。KÉSH de¹
+                    啟動全球頂級買手網絡，無論是專櫃缺貨爆款或稀有限量聯名，我們都能跨越國界精準代尋。您只需許下心願，我們便將那份獨一無二的驚喜帶到您手中。
                   </p>
                 </div>
               </div>
 
               {/* IMAGE */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-                <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg" alt="" />
+                <ParallaxImage
+                  src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg"
+                  alt=""
+                />
               </div>
             </div>
 
-            {/* RIGHT - 專業鑑定區塊 (文案更新處) */}
+            {/* RIGHT - 專業鑑定區塊 */}
             <div className="relative w-full min-h-[70vh] lg:h-screen">
               <div className="absolute bg-black/50 w-full h-full z-20 left-0 top-0"></div>
               {/* TEXT */}
@@ -262,7 +419,6 @@ export default function About() {
                   <h3 className="text-white text-[20px] lg:text-[28px]">
                     專業鑑定｜
                   </h3>
-                  {/* --- 更新：將文案植入此處 --- */}
                   <p className="text-white text-[14px] leading-relaxed mt-2">
                     每一件商品，皆經兩位合格鑑定師人工鑑定，
                     <br className="hidden lg:block" />
@@ -275,7 +431,10 @@ export default function About() {
 
               {/* IMAGE */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
-                <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_3.jpg" alt="" />
+                <ParallaxImage
+                  src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_3.jpg"
+                  alt=""
+                />
               </div>
             </div>
           </div>
@@ -287,7 +446,10 @@ export default function About() {
                 <div className="relative h-[60vh] min-h-[420px] lg:h-screen">
                   <div className="absolute inset-0 flex justify-center">
                     <div className="w-[94%] h-full overflow-hidden will-change-transform">
-                      <ParallaxImage src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_10.jpg" alt="" />
+                      <ParallaxImage
+                        src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_10.jpg"
+                        alt=""
+                      />
                     </div>
                   </div>
                 </div>
@@ -355,7 +517,7 @@ export default function About() {
                   className="
                     group relative inline-flex items-center justify-center
                     h-14 w-[14rem] border-white border-1 [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    text-sm tracking-widest
+                    text-[16px] tracking-widest
                   "
                 >
                   <span
@@ -389,7 +551,7 @@ export default function About() {
                 <FadeInSection>
                   <h4 className="text-2xl font-serif mb-10 border-b border-gray-200 pb-4">
                     Service Spirit{" "}
-                    <span className="text-sm font-sans text-gray-400 ml-2">
+                    <span className="text-[16px] font-sans text-gray-400 ml-2">
                       服務精神
                     </span>
                   </h4>
@@ -424,7 +586,7 @@ export default function About() {
                           <span className="font-serif text-lg text-gray-900 mr-3">
                             {item.en}
                           </span>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-[16px] text-gray-500">
                             {item.desc}
                           </span>
                         </div>
@@ -437,12 +599,12 @@ export default function About() {
                 </FadeInSection>
               </div>
 
-              {/* 右欄：三大保證 (同步更新描述) */}
+              {/* 右欄：三大保證 */}
               <div>
                 <FadeInSection delay={0.2}>
                   <h4 className="text-2xl font-serif mb-10 border-b border-gray-200 pb-4">
                     Our Guarantee{" "}
-                    <span className="text-sm font-sans text-gray-400 ml-2">
+                    <span className="text-[16px] font-sans text-gray-400 ml-2">
                       三大保證
                     </span>
                   </h4>
@@ -451,7 +613,6 @@ export default function About() {
                       {
                         title: "正品保證",
                         sub: "Authenticity",
-                        // --- 更新：同步更新三大保證的描述 ---
                         desc: "兩位鑑定師人工審核 + Entrupy 科技驗證，杜絕任何仿冒疑慮。",
                       },
                       {
@@ -477,7 +638,7 @@ export default function About() {
                             {item.sub}
                           </span>
                         </div>
-                        <p className="text-gray-500 text-sm leading-relaxed">
+                        <p className="text-gray-500 text-[16px] leading-relaxed">
                           {item.desc}
                         </p>
                       </div>
