@@ -152,16 +152,20 @@ export default function Authenticity() {
                   <li>
                     除外項目：不含五金零件拋光/更換、皮革破損修復、內裡更換或染色服務。
                   </li>
-                  <li>使用方式：請提前預約並攜帶保證卡至門市辦理。</li>
+                  {/* 🔥 依據截圖修改的區域 */}
+                  <li>
+                    使用方式：請以客服LINE或線上表單提前預約，並將商品寄到指定地址。
+                  </li>
                 </ul>
               </div>
             </motion.section>
           </div>
 
           {/* 底部聯繫 */}
+          {/* 🔥 依據截圖修改的區域 */}
           <div className="mt-24 pt-10 border-t border-gray-100 text-center">
             <p className="text-gray-500 text-sm mb-4">
-              對商品真偽或保養有任何疑問？
+              若需了解商品狀態或保養細節，歡迎聯繫客服團隊。
             </p>
             <a
               href="/contact"

@@ -192,6 +192,7 @@ module.exports = {
     require('@tailwindcss/forms'), // Forms plugin
     nextui(), // NextUI plugin
     require("tailwindcss-animate"), // Animation plugin
+    require('@tailwindcss/typography'),
   ],
 };
 

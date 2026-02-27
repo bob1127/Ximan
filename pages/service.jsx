@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { motion, AnimatePresence } from "framer-motion";
 import Head from "next/head";
+import Link from "next/link";
 
 // --- 各服務詳細資料 ---
 const servicesData = {
@@ -35,12 +36,24 @@ const servicesData = {
       "依據品牌、款式熱門度、當前二手市場行情及商品實際保存狀況（年份、磨損、配件完整度）進行綜合鑑價。",
     faq: [
       {
-        q: "收購價格與寄賣價格有差嗎？",
-        a: "有的。收購由店方承擔庫存風險，價格通常會略低於寄賣；優點是能立即拿到現金，不需等待銷售期。",
+        q: "什麼是收購 (Buy-in)？",
+        a: "收購是指由本公司直接買斷商品，經雙方確認價格後，即不再屬於合作銷售或上架代售模式，商品所有權將轉移予本公司。",
       },
       {
-        q: "沒有購買證明可以收購嗎？",
-        a: "可以。但部分特定品牌或款式（如 Chanel 雷標款、Hermes）若無配件可能會影響收購價格，建議盡量附上。",
+        q: "收購價格是如何評估的？",
+        a: "收購價格將依商品品牌、款式市場需求、當前市場行情，以及商品實際保存狀況（包含年份、使用痕跡與配件完整度）進行綜合評估後提出報價。",
+      },
+      {
+        q: "確認收購後，流程與撥款方式為何？",
+        a: "雙方確認價格並達成共識後，將以線上方式完成收購確認文件並請您將商品寄送至本公司指定地址。\n\n商品收件後，本公司將依實際商品狀態進行檢視；若實際狀態與事前提供之照片或資訊存在明顯差異，將第一時間與賣方聯繫說明並於雙方達成共識後，視情況調整收購價格或終止收購流程。\n\n商品狀態確認無誤後，將於 7 個工作天內完成款項撥付。",
+      },
+      {
+        q: "商品狀態與描述不符，會發生什麼情況？",
+        a: "若實際商品狀態與提交資料有明顯落差，我們將即時與您聯繫說明，並重新確認是否調整價格或終止收購流程。",
+      },
+      {
+        q: "商品完成收購後，是否還能反悔或取回？",
+        a: "收購完成並確認付款後，商品即完成所有權轉移，恕不再提供取回或取消收購之服務。",
       },
     ],
   },
@@ -78,8 +91,28 @@ const servicesData = {
         a: "可以。若在合約期內取回，可能需支付少許整新保管費；合約期滿未售出則可免費取回。",
       },
       {
-        q: "寄賣商品會被隨意觸摸嗎？",
-        a: "不會。KÉSH de¹ 門市採預約制或嚴格控管，高單價商品皆展示於櫃內，僅由服務人員配戴手套展示。",
+        q: "商品售出後，款項多久可以收到？",
+        a: "商品完成交易並確認無退貨情形後，預計7-14天內撥款，售出後我們會主動告知您，並告知預計撥款時間，流程透明可查。",
+      },
+      {
+        q: "平台服務費包含哪些內容？",
+        a: "平台服務費已包含商品價格評估、拍攝、上架曝光、銷售處理寄送服務與售後協助等必要成本，無額外隱藏費用。",
+      },
+      {
+        q: "我想寄賣的商品是否一定能被上架銷售？",
+        a: "不一定。本平台僅接受保存狀況良好且來源正當之商品。所有商品皆須經本公司專業團隊進行審核，評估市場適配度。未通過審核之商品，將不會進入上架銷售流程。",
+      },
+      {
+        q: "商品價格是誰決定？會被隨意降價嗎？",
+        a: "商品上架價格將於合作前經雙方確認後設定，未經同意不會自行調整售價，任何價格建議或市場調整，皆會事前與商品提供方溝通。",
+      },
+      {
+        q: "商品在合作期間如何保存？會不會刮傷或變形？",
+        a: "所有商品皆依精品保存標準妥善管理，包含防塵、防壓與環境控管措施，並避免不必要的移動與堆疊，確保商品維持原有保存狀態。",
+      },
+      {
+        q: "為什麼需要提供身分驗證資料？",
+        a: "身分驗證僅用於確認合作對象與交易安全，符合相關法規與平台合規需求，不作為其他用途。",
       },
     ],
   },
@@ -116,8 +149,16 @@ const servicesData = {
         a: "可以。您可以使用多個閒置商品累計金額，來換購一個高單價商品。",
       },
       {
+        q: "什麼是置換 (Trade-in)？",
+        a: "置換是指以您現有之精品商品，折抵本平台商品之部分金額，以完成換購流程。折抵金額將依商品評估結果計算，並套用於指定商品或訂單。",
+      },
+      {
+        q: "是否所有商品都適合進行置換？",
+        a: "不一定。僅限保存狀況良好、具市場流通性之精品進行評估。實際是否適用，仍需經本團隊鑑定團隊審核。",
+      },
+      {
         q: "如果舊包價值高於新包怎麼辦？",
-        a: "若舊包價值較高，我們會將差額以現金或匯款方式退還給您。",
+        a: "若舊包評估價值高於換購商品金額，多出的金額將保留為平台折抵額度，可彈性使用於未來換購或消費。",
       },
     ],
   },
@@ -179,6 +220,32 @@ const servicesData = {
       "代購屬於「依消費者指定需求進行採購之客製化商品」，依《消費者保護法》第19條規定，不適用七日鑑賞期，訂單成立並付款後除缺貨外恕無法取消或退換貨。",
     shipping:
       "國際專櫃現貨約 7-14 工作天；歐洲通路約 14-21 工作天；特殊款依實際回覆為準。",
+    faq: [
+      {
+        q: "你們的代購商品來源是哪裡？",
+        a: "所有代購商品皆透過合法且可信的國際採購取得，包含品牌專櫃、及授權之零售商，確保來源正當且可追溯。",
+      },
+      {
+        q: "為什麼代購需要先付款？",
+        a: "代購屬於依需求專屬採購服務，商品需依客戶指定條件進行尋找與下單，因此需於確認報價後完成付款，以確保採購流程順利進行。",
+      },
+      {
+        q: "代購商品是否接受退換？",
+        a: "代購服務屬於依客戶需求進行之專屬採購，恕不提供取消或退換服務。建議於確認款式、尺寸與細節後再委託代購。",
+      },
+      {
+        q: "你們會提供購證或相關文件嗎？",
+        a: "代購確認後，本店將提供相應之代購確認文件，以保障雙方權益。如品牌通路有提供相關文件，將一併隨貨附上；實際附屬文件內容，將依各品牌與採購通路之規範為準。",
+      },
+      {
+        q: "大約需要多久可以收到商品？",
+        a: "實際到貨時間將依商品來源地與採購進度而有所不同。於確認代購後，我們將提供預估時程，並持續回報進度。",
+      },
+      {
+        q: "如果找不到指定商品，會怎麼處理？",
+        a: "若商品缺貨、停產或其他不可控因素導致無法完成採購，將主動通知並依約定方式處理後續安排退款。",
+      },
+    ],
   },
 };
 
@@ -196,11 +263,10 @@ const COMMON_REQUIREMENTS = {
 };
 
 export default function Services() {
-  const router = useRouter(); // [SEO優化] 1. 引入 Router
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("buy-in");
 
-  // [SEO優化] 2. 監聽 URL 參數變化，自動切換 Tab
-  // 這樣 Google 爬蟲或是用戶分享連結 (e.g. /services?tab=consignment) 時能直接看到對應內容
+  // 監聽 URL 參數變化，自動切換 Tab
   useEffect(() => {
     if (router.isReady && router.query.tab) {
       const tabParam = router.query.tab;
@@ -210,7 +276,7 @@ export default function Services() {
     }
   }, [router.isReady, router.query.tab]);
 
-  // [SEO優化] 3. 切換 Tab 時同步修改 URL (Shallow routing 不刷新頁面)
+  // 切換 Tab 時同步修改 URL
   const handleTabChange = (key) => {
     setActiveTab(key);
     router.push(
@@ -223,16 +289,12 @@ export default function Services() {
     );
   };
 
-  // --- SEO 與 Meta 設定 (根據截圖修改) ---
   const siteUrl = "https://www.kesh-de1.com";
-  // [SEO更新] Title 與截圖一致
   const pageTitle = "收購・寄售・置換・專屬尋款 | Services";
-  // [SEO更新] Description 與截圖一致 (法律/實名驗證取向)
   const pageDesc =
     "申請上述服務者須提供有效之雙重身分證明文件（身分證及第二證件，如健保卡、駕照或護照）以完成實名驗證。資料僅作身份驗證及法規遵循之用途，不另作他用。";
 
-  // --- 結構化資料 1: Service (服務列表) ---
-  // [結構化更新] 加入了 'url' 屬性指向特定參數網址，幫助生成 Sitelinks
+  // 結構化資料... (保持不變)
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -247,7 +309,6 @@ export default function Services() {
       "@type": "Country",
       name: "Taiwan",
     },
-    // [結構化更新] 這裡的 name 和 description 也要跟著 Meta 改，保持一致性
     name: "KÉSH de¹ 精品服務流程",
     description: pageDesc,
     hasOfferCatalog: {
@@ -261,7 +322,7 @@ export default function Services() {
             name: "精品收購 Buy-in",
             description:
               "提供具競爭力的市場報價，現場確認無誤即刻撥款，最快速的變現方式。",
-            url: `${siteUrl}/services?tab=buy-in`, // [關鍵優化] 指向具體參數
+            url: `${siteUrl}/services?tab=buy-in`,
           },
         },
         {
@@ -271,7 +332,7 @@ export default function Services() {
             name: "精品寄賣 Consignment",
             description:
               "協助您為閒置精品包款進行合理定價並上架寄賣。從合約簽訂、銷售到成交收款，流程透明清楚。",
-            url: `${siteUrl}/services?tab=consignment`, // [關鍵優化]
+            url: `${siteUrl}/services?tab=consignment`,
           },
         },
         {
@@ -281,7 +342,7 @@ export default function Services() {
             name: "以舊換新 Trade-in",
             description:
               "用您手邊的閒置精品，折抵換購店內的心儀款式，讓收藏流動。",
-            url: `${siteUrl}/services?tab=trade-in`, // [關鍵優化]
+            url: `${siteUrl}/services?tab=trade-in`,
           },
         },
         {
@@ -291,18 +352,18 @@ export default function Services() {
             name: "精品代購 Sourcing",
             description:
               "提供專業精品代購與尋款服務，依照您的需求協助尋找合適款式，100% 正品保證。",
-            url: `${siteUrl}/services?tab=sourcing`, // [關鍵優化]
+            url: `${siteUrl}/services?tab=sourcing`,
           },
         },
       ],
     },
   };
 
-  // --- 結構化資料 2: FAQPage (問答集) ---
   const allFaqs = [
     ...(servicesData["buy-in"].faq || []),
     ...(servicesData["consignment"].faq || []),
     ...(servicesData["trade-in"].faq || []),
+    ...(servicesData["sourcing"].faq || []),
   ];
 
   const faqSchema = {
@@ -318,7 +379,6 @@ export default function Services() {
     })),
   };
 
-  // --- 結構化資料 3: Breadcrumb (麵包屑) ---
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -379,7 +439,6 @@ export default function Services() {
               Our Services
             </h1>
             <p className="text-gray-500 font-light max-w-2xl mx-auto">
-              {/* 更新為符合 Description 的法律聲明提示，增加一致性 */}
               為確保交易安全與合規，申請服務前請詳閱身分驗證需求。
             </p>
           </div>
@@ -389,7 +448,7 @@ export default function Services() {
             {Object.keys(servicesData).map((key) => (
               <button
                 key={key}
-                onClick={() => handleTabChange(key)} // [更新] 使用新的切換函數
+                onClick={() => handleTabChange(key)}
                 className={`pb-4 px-4 md:px-10 text-sm md:text-base tracking-widest uppercase transition-all relative ${
                   activeTab === key
                     ? "text-black font-medium"
@@ -536,7 +595,36 @@ export default function Services() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-900 text-white p-6 md:p-8 rounded-sm text-center">
+                  {/* 代購 FAQ */}
+                  {servicesData.sourcing.faq && (
+                    <div className="mt-16">
+                      <h3 className="text-xl font-serif mb-8 text-center">
+                        FAQ 常見問答
+                      </h3>
+                      <div className="grid md:grid-cols-2 gap-8">
+                        {servicesData.sourcing.faq.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="border border-gray-100 p-6 hover:shadow-sm transition-shadow"
+                          >
+                            <p className="font-medium text-black mb-3">
+                              Q.{" "}
+                              {item.q
+                                .replace("Q.", "")
+                                .replace("Q1.", "")
+                                .replace("Q7.", "")
+                                .trim()}
+                            </p>
+                            <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-wrap">
+                              A. {item.a.replace("A.", "").trim()}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="bg-gray-900 text-white p-6 md:p-8 rounded-sm text-center mt-12">
                     <h4 className="text-lg font-serif mb-4">我們的承諾</h4>
                     <p className="text-sm md:text-base font-light leading-relaxed max-w-2xl mx-auto opacity-90">
                       KÉSH de¹
@@ -548,11 +636,11 @@ export default function Services() {
                 // --- Buy-in, Consignment, Trade-in 共用詳細內容 ---
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 bg-gray-50 p-8 md:p-12 rounded-sm">
-                    {/* 左側：門市現場 */}
+                    {/* 左側：線上提交須知 (修改自 門市現場需備) */}
                     <div>
                       <h4 className="flex items-center text-lg font-medium mb-6">
-                        <span className="w-2 h-2 bg-black rounded-full mr-3"></span>
-                        門市現場需備
+                        <span className="w-2 h-2 bg-[#ef4628] rounded-full mr-3"></span>
+                        線上提交須知
                       </h4>
                       <ul className="space-y-3">
                         {COMMON_REQUIREMENTS.inStore.map((item, i) => (
@@ -615,22 +703,47 @@ export default function Services() {
                             className="border border-gray-100 p-6 hover:shadow-sm transition-shadow"
                           >
                             <p className="font-medium text-black mb-3">
-                              Q. {item.q}
+                              Q. {item.q.replace("Q.", "").trim()}
                             </p>
-                            <p className="text-sm text-gray-500 leading-relaxed">
-                              A. {item.a}
+                            <p className="text-sm text-gray-500 leading-relaxed whitespace-pre-wrap">
+                              A. {item.a.replace("A.", "").trim()}
                             </p>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
+
+                  {/* 收購/寄賣/置換 共用結語區塊 */}
+                  <div className="mt-16 pt-12 border-t border-gray-200 text-center max-w-2xl mx-auto space-y-6">
+                    <p className="text-[#ef4628] font-bold tracking-wide">
+                      收購與合作銷售服務：
+                    </p>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      為確保評估結果準確並使流程順利進行，
+                      <br className="hidden md:block" />
+                      請提供清晰、完整且能如實反映商品實際狀態之資訊與照片。
+                    </p>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      如有任何流程或細節需要進一步說明，
+                      <br className="hidden md:block" />
+                      歡迎隨時與我們聯繫，我們將樂意協助。
+                    </p>
+                    <div className="pt-4">
+                      <Link
+                        href="/contact"
+                        className="inline-block border-b-2 border-black pb-1 text-sm font-bold tracking-widest hover:text-[#ef4628] hover:border-[#ef4628] transition-colors"
+                      >
+                        聯繫客服團隊
+                      </Link>
+                    </div>
+                  </div>
                 </>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* 底部 CTA */}
+          {/* 底部 CTA 按鈕區 */}
           <div className="mt-20 text-center border-t border-gray-100 pt-16">
             <p className="text-gray-500 mb-6">
               {activeTab === "sourcing"
@@ -646,12 +759,12 @@ export default function Services() {
               >
                 LINE 線上{activeTab === "sourcing" ? "諮詢代購" : "估價"}
               </a>
-              <a
+              <Link
                 href="/contact"
                 className="bg-black text-white px-8 py-3 text-sm tracking-widest hover:bg-gray-800 transition-colors"
               >
-                預約門市鑑賞
-              </a>
+                {activeTab === "sourcing" ? "提交代購需求" : "預約門市鑑賞"}
+              </Link>
             </div>
           </div>
         </div>
