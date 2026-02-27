@@ -1,11 +1,8 @@
 // pages/api/categories.js
 
 export default async function handler(req, res) {
-  const { slug } = req.query;
-
-  if (!slug) {
-    return res.status(400).json({ error: "slug is required" });
-  }
+  // 🔥 1. 取得前端傳過來的 lang 參數 (例如 'zh', 'en', 'ko')
+  const { lang } = req.query;
 
   const baseUrl = process.env.WC_SITE_URL;
   const key = process.env.WC_CONSUMER_KEY;
@@ -14,17 +11,21 @@ export default async function handler(req, res) {
   if (!baseUrl || !key || !secret) {
     return res.status(500).json({
       error: "WooCommerce env variables are not set",
-      detail: { baseUrl, hasKey: !!key, hasSecret: !!secret },
     });
   }
 
   try {
-    // ✅ 用 WooCommerce v2，orderby 改成 name（你的錯誤訊息允許的值）
-    const url =
-      `${baseUrl}/wp-json/wc/v2/products/categories` +
+    // 建議使用 v3 版本較穩定，並加上 hide_empty=false
+    let url =
+      `${baseUrl}/wp-json/wc/v3/products/categories` +
       `?per_page=100&hide_empty=false&orderby=name&order=asc` +
       `&consumer_key=${encodeURIComponent(key)}` +
       `&consumer_secret=${encodeURIComponent(secret)}`;
+
+    // 🔥 2. 如果前端有傳 lang，就把它加進 WooCommerce 的請求中！
+    if (lang) {
+      url += `&lang=${lang}`;
+    }
 
     const wcRes = await fetch(url);
     const text = await wcRes.text();
@@ -36,7 +37,6 @@ export default async function handler(req, res) {
       console.error("解析 WooCommerce 回應失敗：", text);
       return res.status(500).json({
         error: "failed to parse WooCommerce response",
-        detail: text,
       });
     }
 
@@ -44,30 +44,15 @@ export default async function handler(req, res) {
       console.error("WooCommerce API error:", wcRes.status, text);
       return res.status(500).json({
         error: "failed to fetch product categories from WooCommerce",
-        detail: { status: wcRes.status, body: text },
       });
     }
 
-    console.log("全部分類數量:", allCategories.length);
+    console.log(`成功抓取 ${lang || '預設'} 語言的全部分類數量:`, allCategories.length);
 
-    // 1️⃣ 找到父分類 (slug = "categories" / "brand")
-    const parent = allCategories.find((cat) => cat.slug === slug);
-
-    if (!parent) {
-      console.warn("找不到父分類 slug:", slug);
-      return res.status(200).json([]); // 找不到就回空陣列
-    }
-
-    console.log("父分類找到:", parent.id, parent.name);
-
-    // 2️⃣ 從同一批資料裡 filter 出子分類
-    const children = allCategories.filter(
-      (cat) => cat.parent === parent.id
-    );
-
-    console.log(`子分類數量 (${slug}):`, children.length);
-
-    return res.status(200).json(children);
+    // 🔥 3. 我們不需要在後端篩選父子分類了，直接把該語言的「所有分類」回傳給前端
+    // 前端的 Navbar (SlideTabsExample) 會自己透過 includes('brand') 去抓出對應的子分類
+    return res.status(200).json(allCategories);
+    
   } catch (error) {
     console.error("Unhandled WooCommerce API error:", error);
     return res.status(500).json({

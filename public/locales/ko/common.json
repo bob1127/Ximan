@@ -1,0 +1,185 @@
+{
+  "navbar": {
+    "categories": "제품 카테고리",
+    "brand": "브랜드",
+    "authenticity": "정품 보증",
+    "shipping": "글로벌 배송",
+    "service": "서비스 절차",
+    "news": "최신 소식",
+    "faq": "자주 묻는 질문",
+    "contact": "문의하기",
+    "about": "회사 소개",
+    "search": "검색..."
+  },
+  "lang": {
+    "zh-TW": "繁體中文",
+    "en": "English",
+    "ko": "한국어"
+  },
+  "mega": {
+    "categories": "카테고리",
+    "brands": "추천 브랜드",
+    "view_all": "모두 보기",
+    "no_products": "해당 카테고리에 제품이 없습니다"
+  },
+  "home": {
+    "editorial_title": "Editorial Selection",
+    "editorial_subtitle": "스타일 제안",
+    "featured_collections": "추천 컬렉션",
+    "philosophy_title": "브랜드 철학 | KÉSH de¹의 유래",
+    "philosophy_desc": "'1'은 최고와 시작을 의미합니다. de¹의 위로 향하는 디자인은 취향의 시작과 향상에 대한 끝없는 추구를 상징합니다.",
+    "vision_title": "비전 Vision",
+    "vision_desc": "신뢰할 수 있고 품격 있는 명품 교환 센터를 구축합니다.",
+    "contact_title": "CONTACT US",
+    "contact_btn": "문의하기"
+  },
+  "guarantees": {
+    "item1": {
+      "title": "정품 감정",
+      "subtitle": "Authenticity Verification",
+      "price": "100% 정품 보장",
+      "description": "모든 제품은 3중 검수 및 출처 확인을 거칩니다.",
+      "detail": "KÉSH de¹는 모든 제품의 출처를 엄격하게 관리하며, 전문 감정팀을 통해 다중 세부 검사를 진행하여 가품의 가능성을 차단하고, 고객님이 받으시는 모든 명품이 진품임을 보장하여 안심하고 구매하실 수 있도록 합니다."
+    },
+    "item2": {
+      "title": "엄선된 상태",
+      "subtitle": "Condition Selection",
+      "price": "소장 가치가 있는 명품",
+      "description": "소장 가치가 있고 상태가 완벽한 명품만 판매합니다.",
+      "detail": "저희는 상태의 중요성을 잘 알고 있습니다. KÉSH de¹는 상태가 좋지 않은 제품을 제외하고, 상태가 우수하고 관리가 잘 된 희귀한 가방을 선택하는 데 집중하여, 고객님이 원하시는 패션 아이템을 최상의 상태로 소유하실 수 있도록 합니다."
+    },
+    "item3": {
+      "title": "빠른 배송",
+      "subtitle": "Fast Shipping",
+      "price": "24~48시간 내 배송",
+      "description": "재고가 있는 상품은 대부분 24~48시간 이내에 배송됩니다.",
+      "detail": "오래 기다리실 필요가 없습니다. 고객님의 기대하는 마음을 이해합니다. 주문 확인 후, 재고가 있는 상품은 최고 효율로 아름답게 포장되어 발송되며, 패션이 고객님의 손에 신속하게 도착하여 바로 즐기실 수 있습니다."
+    }
+  },
+  "hero": {
+    "slides": [
+      {
+        "title": "신상품 입고",
+        "description": "엄선된 명품 | 신상품 구매 대행 | 전문 감정 | 정품 보장 | 글로벌 배송",
+        "button": "자세히 보기"
+      },
+      {
+        "title": "구매 대행",
+        "description": "엄선된 명품 | 신상품 구매 대행 | 전문 감정 | 정품 보장 | 글로벌 배송",
+        "button": "자세히 보기"
+      },
+      {
+        "title": "에르메스 컬렉션",
+        "description": "엄선된 명품 | 신상품 구매 대행 | 전문 감정 | 정품 보장 | 글로벌 배송",
+        "button": "자세히 보기"
+      },
+      {
+        "title": "프리미엄 매입",
+        "description": "엄선된 명품 | 신상품 구매 대행 | 전문 감정 | 정품 보장 | 글로벌 배송",
+        "button": "자세히 보기"
+      }
+    ]
+  },
+  "authenticity": {
+    "seo_title": "정품 보증 | Authenticity & Standards",
+    "seo_desc": "KÉSH de¹에서 구매한 모든 제품은 전문 감정을 거치며 감정 서류와 구매 영수증이 첨부되어 평생 정품을 보장합니다. 구매일로부터 2년 이내에 1회 무료 기본 가죽 관리 및 클리닝 서비스를 제공합니다.",
+    "page_title": "Authenticity & Standards",
+    "page_subtitle": "정품 보증 및 감정 기준",
+    "commitment_title": "진품에 대한 우리의 약속",
+    "commitment_desc1": "KÉSH de¹에서 구매한 제품은 두 명의 자격을 갖춘 감정사의 수동 검토와 Entrupy 기술 검증을 거칩니다. 관련 감정 서류 및 구매 영수증이 첨부되며 ",
+    "commitment_highlight": "평생 정품 보장",
+    "commitment_desc2": "을 제공합니다. 신뢰가 명품 거래의 초석임을 잘 알고 있습니다.",
+    "badge_tech": "Entrupy Verified",
+    "badge_human": "Double Authentication",
+    "process_title": "엄격한 감정 절차",
+    "process_1_title": "01. 과학적 검증",
+    "process_1_desc": "Entrupy 인공지능 감정 시스템을 도입하여 현미경 렌즈를 통해 가죽 질감과 장인 정신의 세부 사항을 분석하고 글로벌 데이터베이스와 대조하여 99.1%의 정확도를 자랑합니다.",
+    "process_2_title": "02. 전문가 검수",
+    "process_2_desc": "모든 제품은 폰트, 하드웨어, 스티치가 브랜드의 장인 정신 기준에 부합하는지 확인하기 위해 두 명의 수석 감정사가 독립적으로 검사해야 합니다.",
+    "process_3_title": "03. 완벽한 이력",
+    "process_3_desc": "KÉSH de¹ 전용 보증서 및 감정 보고서가 제품과 함께 제공되어 제품의 완벽한 이력을 구축하므로 안심하고 수집할 수 있습니다.",
+    "care_title": "사후 관리 서비스",
+    "care_subtitle": "전용 가죽 케어",
+    "care_desc1": "구매일로부터 2년 이내에 구매 증빙 자료를 제시하시면 ",
+    "care_highlight": "1회 무료 기본 가죽 관리 및 클리닝 서비스",
+    "care_desc2": "를 제공합니다. 전문가의 관리 아래 사랑하는 가방이 매력적인 광택을 이어가도록 하세요.",
+    "care_list_1": "본 서비스 포함 사항: 가죽 표면 먼지 제거, 보습 케어, 기본 관리.",
+    "care_list_2": "제외 항목: 하드웨어 폴리싱/교체, 가죽 찢어짐 복원, 안감 교체 또는 염색 서비스는 포함되지 않습니다.",
+    "care_list_3": "이용 방법: 고객센터 LINE 또는 온라인 양식으로 사전 예약 후, 지정된 주소로 상품을 발송해 주시기 바랍니다.",
+    "contact_desc": "상품 상태 또는 관리 세부 사항에 대해 알고 싶으시면 언제든지 고객센터 팀에 문의해 주세요.",
+    "contact_btn": "고객센터 문의"
+  },
+  "footer": {
+    "slogan_1": "우선순위의 가치.",
+    "slogan_2": "꿈의 시작.",
+    "slogan_3": "전문적인 감정 및 글로벌 배송.",
+    "explore_title": "탐색",
+    "support_title": "고객 지원",
+    "links": {
+      "about": "회사 소개",
+      "services": "서비스 안내",
+      "news": "최신 소식",
+      "shop": "전체 상품",
+      "consignment": "위탁 판매",
+      "authenticity": "정품 보증",
+      "shipping": "글로벌 배송",
+      "faq": "자주 묻는 질문",
+      "contact": "문의하기",
+      "privacy": "개인정보 처리방침"
+    },
+    "contact_us": "문의하기",
+    "contact_desc_1": "상품 문의나 위탁 판매가 필요하시면",
+    "contact_desc_2": "언제든지 연락해 주세요.",
+    "get_in_touch": "연락하기",
+    "designed_by": "Designed by",
+    "geek_design": "Jeek Web Design",
+    "rights": "KÉSH de¹ Boutique. All rights reserved."
+  },
+  "login": {
+    "title": "Member Login",
+    "subtitle": "KÉSH de¹에 로그인하여 컬렉션을 확인하세요",
+    "google": "Continue with Google",
+    "facebook": "Continue with Facebook",
+    "or_email": "또는 이메일로 로그인",
+    "email_label": "이메일 (Email)",
+    "email_placeholder": "name@example.com",
+    "password_label": "비밀번호 (Password)",
+    "password_placeholder": "비밀번호를 입력하세요",
+    "forgot_password": "비밀번호 찾기?",
+    "sign_in": "로그인",
+    "no_account": "아직 계정이 없으신가요?",
+    "register": "무료 회원가입",
+    "error_invalid": "이메일 또는 비밀번호가 잘못되었습니다",
+    "reset_title": "Reset Password",
+    "reset_subtitle": "가입 시 사용한 이메일 주소를 입력하시면 비밀번호 재설정 링크를 보내드립니다.",
+    "reset_btn": "재설정 링크 보내기",
+    "reset_error": "전송에 실패했습니다. 나중에 다시 시도하거나 이메일이 정확한지 확인하십시오.",
+    "back_to_login": "로그인으로 돌아가기",
+    "sent_title": "Check Your Mail",
+    "sent_desc_1": "비밀번호 재설정 링크를 다음 주소로 보냈습니다:",
+    "sent_desc_2": "받은 편지함과 스팸함을 확인해 주세요."
+  },
+  "register": {
+    "title_step1": "회원가입",
+    "title_step2": "이메일 인증",
+    "subtitle_step1": "KÉSH de¹ 회원으로 가입하고 특별한 혜택을 누리세요",
+    "subtitle_step2": "인증번호가 다음 이메일로 발송되었습니다:",
+    "google": "Google로 빠른 회원가입",
+    "facebook": "Facebook으로 빠른 회원가입",
+    "or_email": "또는 이메일로 가입하기",
+    "username_label": "사용자 이름 (Username)",
+    "username_placeholder": "예: 홍길동",
+    "email_label": "이메일 (Email)",
+    "email_placeholder": "name@example.com",
+    "password_label": "비밀번호 설정 (Password)",
+    "password_placeholder": "6자리 이상의 비밀번호를 입력하세요",
+    "send_otp": "인증번호 발송",
+    "otp_label": "6자리 인증번호를 입력하세요",
+    "otp_placeholder": "000000",
+    "complete_register": "회원가입 완료",
+    "back_to_edit": "이메일 수정으로 돌아가기",
+    "have_account": "이미 계정이 있으신가요?",
+    "login": "로그인",
+    "success_alert": "가입이 완료되었습니다! 계정 정보로 로그인해 주세요."
+  }
+}

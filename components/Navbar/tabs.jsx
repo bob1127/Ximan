@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Head from "next/head";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu,
@@ -20,11 +20,13 @@ import {
 
 import { useSession, signOut } from "next-auth/react";
 import { useCart } from "../../components/context/CartContext";
+import { useTranslation } from "next-i18next";
 
 export const SlideTabsExample = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openMega, setOpenMega] = useState("none");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLangOpen, setIsLangOpen] = useState(false);
 
   const { data: session, status } = useSession();
   const { totalQty, setIsCartOpen } = useCart();
@@ -35,8 +37,8 @@ export const SlideTabsExample = () => {
 
   const navRef = useRef(null);
   const router = useRouter();
+  const { t } = useTranslation("common");
 
-  // --- 滾動監聽 ---
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
@@ -45,21 +47,46 @@ export const SlideTabsExample = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // --- 抓取 Mega Menu 資料 ---
+  // --- 🔥 改良版：抓取 Mega Menu 資料 ---
   useEffect(() => {
     async function fetchMenuData() {
       try {
         setLoading(true);
-        const [resCats, resBrands] = await Promise.all([
-          fetch("/api/categories?slug=categories"),
-          fetch("/api/categories?slug=brand"),
-        ]);
+        // 取得目前語系
+        const currentLang = router.locale || "zh-TW";
+        // 轉換給 WP 用的語系代碼
+        const wpLang = currentLang === "zh-TW" ? "zh" : currentLang;
 
-        const catsData = resCats.ok ? await resCats.json() : [];
-        const brandsData = resBrands.ok ? await resBrands.json() : [];
+        // 我們不再用 slug 抓了，我們直接去你的 Next.js 後端 API (假設你有這支 API)
+        // 或是我們直接去 WordPress 抓該語言的所有分類，然後在前端自己分
 
-        setCategoriesChildren(Array.isArray(catsData) ? catsData : []);
-        setBrandChildren(Array.isArray(brandsData) ? brandsData : []);
+        // ⚠️ 這裡我改為呼叫你的 WP API (請確保環境變數有抓到，或者你的 /api/categories 支援直接回傳所有該語言分類)
+        // 假設你原本的 /api/categories 是可以接受 lang 參數並吐出所有分類的
+        const res = await fetch(`/api/categories?lang=${wpLang}`);
+        const allCats = res.ok ? await res.json() : [];
+
+        // 如果你的 /api/categories 是一支 Next.js API route，請確保它會去 WP 抓取 &lang=${wpLang}
+        // 以下邏輯：找出「品牌館」跟「產品類別」的父分類 ID，再把底下的子分類塞進去
+        const brandParent = allCats.find(
+          (c) => c.slug.includes("brand") || c.slug.includes("브랜드"),
+        );
+        const typeParent = allCats.find(
+          (c) => c.slug.includes("categories") || c.slug.includes("카테고리"),
+        );
+
+        if (brandParent) {
+          setBrandChildren(allCats.filter((c) => c.parent === brandParent.id));
+        } else {
+          setBrandChildren([]); // 沒找到就給空
+        }
+
+        if (typeParent) {
+          setCategoriesChildren(
+            allCats.filter((c) => c.parent === typeParent.id),
+          );
+        } else {
+          setCategoriesChildren([]);
+        }
       } catch (error) {
         console.error("選單資料載入失敗:", error);
       } finally {
@@ -67,9 +94,8 @@ export const SlideTabsExample = () => {
       }
     }
     fetchMenuData();
-  }, []);
+  }, [router.locale]);
 
-  // --- 關閉 Mega Menu (滑鼠移出導航列時) ---
   useEffect(() => {
     const handleMouseLeave = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
@@ -80,17 +106,47 @@ export const SlideTabsExample = () => {
     return () => document.removeEventListener("mouseover", handleMouseLeave);
   }, []);
 
-  // --- 導航連結 (新增正品保證 & 全球配送) ---
+  const changeLanguage = (newLocale) => {
+    router.push(router.pathname, router.asPath, { locale: newLocale });
+    setIsLangOpen(false);
+  };
+
   const navLinks = [
-    { key: "categories", label: "產品類別", href: "/category", hasMega: true },
-    { key: "brand", label: "品牌館", href: "/category", hasMega: true },
-    { key: "AUTHENTICITY", label: "正品保證", href: "/authenticity" }, // [NEW]
-    { key: "SHIPPING", label: "全球配送", href: "/shipping" }, // [NEW]
-    { key: "SERVICE", label: "服務流程", href: "/service" },
-    { key: "news", label: "最新消息", href: "/news" },
-    { key: "FAQ", label: "常見問題", href: "/faq" },
-    { key: "CONTACT", label: "聯繫凱仕", href: "/contact" },
-    { key: "ABOUT", label: "公司介紹", href: "/about" },
+    {
+      key: "categories",
+      label: t("navbar.categories") || "產品類別",
+      href: "/category",
+      hasMega: true,
+    },
+    {
+      key: "brand",
+      label: t("navbar.brand") || "品牌館",
+      href: "/category",
+      hasMega: true,
+    },
+    {
+      key: "AUTHENTICITY",
+      label: t("navbar.authenticity") || "正品保證",
+      href: "/authenticity",
+    },
+    {
+      key: "SHIPPING",
+      label: t("navbar.shipping") || "全球配送",
+      href: "/shipping",
+    },
+    {
+      key: "SERVICE",
+      label: t("navbar.service") || "服務流程",
+      href: "/service",
+    },
+    { key: "news", label: t("navbar.news") || "最新消息", href: "/news" },
+    { key: "FAQ", label: t("navbar.faq") || "常見問題", href: "/faq" },
+    {
+      key: "CONTACT",
+      label: t("navbar.contact") || "聯繫凱仕",
+      href: "/contact",
+    },
+    { key: "ABOUT", label: t("navbar.about") || "公司介紹", href: "/about" },
   ];
 
   const siteNavigationSchema = {
@@ -120,7 +176,6 @@ export const SlideTabsExample = () => {
     <>
       <Head>
         <script
-          type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(siteNavigationSchema),
           }}
@@ -151,11 +206,62 @@ export const SlideTabsExample = () => {
               </a>
             </div>
             <div className="flex gap-4 divide-x divide-white/30">
-              <div className="flex items-center gap-1">
-                <Globe size={14} /> 繁體中文
+              <div className="relative flex items-center">
+                <button
+                  onClick={() => setIsLangOpen(!isLangOpen)}
+                  className="flex items-center gap-1 hover:opacity-80 transition-opacity focus:outline-none"
+                >
+                  <Globe size={14} />
+                  <span>{t(`lang.${router.locale}`) || "繁體中文"}</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform ${isLangOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+
+                <AnimatePresence>
+                  {isLangOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 5 }}
+                      className="absolute top-[120%] right-0 mt-2 w-32 bg-white rounded-sm shadow-xl border border-gray-100 overflow-hidden z-[1100]"
+                    >
+                      <div className="flex flex-col text-gray-700 text-xs text-left">
+                        <button
+                          onClick={() => changeLanguage("zh-TW")}
+                          className="px-4 py-3 text-left hover:bg-gray-50 hover:text-[#ef4628] transition-colors w-full border-b border-gray-50"
+                        >
+                          繁體中文
+                        </button>
+                        <button
+                          onClick={() => changeLanguage("en")}
+                          className="px-4 py-3 text-left hover:bg-gray-50 hover:text-[#ef4628] transition-colors w-full border-b border-gray-50"
+                        >
+                          English
+                        </button>
+                        <button
+                          onClick={() => changeLanguage("ko")}
+                          className="px-4 py-3 text-left hover:bg-gray-50 hover:text-[#ef4628] transition-colors w-full"
+                        >
+                          한국어
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
+
               <div className="pl-4 flex gap-3">
-                {/* 電腦版會員區塊 */}
                 {status === "authenticated" && session ? (
                   <div className="flex items-center gap-3">
                     <Link
@@ -196,24 +302,19 @@ export const SlideTabsExample = () => {
 
         {/* Main Navbar 白色導航 */}
         <div
-          className={`bg-white border-b border-gray-100 w-full transition-all duration-300 ${
-            isScrolled ? "py-2" : "py-4"
-          }`}
+          className={`bg-white border-b border-gray-100 w-full transition-all duration-300 ${isScrolled ? "py-2" : "py-4"}`}
         >
           <div className="max-w-[1920px] mx-auto px-6 md:px-10 flex justify-between items-center">
-            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button onClick={() => setIsMenuOpen(true)} className="p-2 -ml-2">
                 <Menu size={24} />
               </button>
             </div>
 
-            {/* Logo */}
             <Link href="/" className="text-2xl font-bold tracking-widest">
               KÉSH<span className="text-[#ef4628]">.</span>
             </Link>
 
-            {/* Desktop Navigation Links */}
             <nav className="hidden md:flex gap-6 lg:gap-8 items-center">
               {navLinks.map((link) => (
                 <div
@@ -230,18 +331,16 @@ export const SlideTabsExample = () => {
                   >
                     {link.label}
                   </Link>
-                  {/* Hover Underline Animation */}
                   <span className="absolute bottom-0 left-0 w-full h-[2px] bg-[#ef4628] scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
                 </div>
               ))}
             </nav>
 
-            {/* Right Icons: Search & Cart */}
             <div className="flex items-center gap-4">
               <div className="hidden lg:flex items-center bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 hover:border-gray-300 transition-colors">
                 <input
                   type="text"
-                  placeholder="Search..."
+                  placeholder={t("navbar.search") || "Search..."}
                   className="bg-transparent text-sm w-32 outline-none placeholder:text-gray-400"
                 />
                 <Search size={16} className="text-gray-400" />
@@ -279,13 +378,15 @@ export const SlideTabsExample = () => {
               <div className="max-w-[1440px] mx-auto px-10 py-12 min-h-[300px]">
                 <div className="mb-8 border-b border-gray-100 pb-2 flex justify-between items-end">
                   <h3 className="text-[#ef4628] font-bold uppercase tracking-widest text-sm">
-                    {openMega === "brand" ? "Featured Brands" : "Categories"}
+                    {openMega === "brand"
+                      ? t("mega.brands")
+                      : t("mega.categories")}
                   </h3>
                   <Link
                     href="/category"
                     className="text-xs text-gray-400 hover:text-black flex items-center transition-colors"
                   >
-                    View All <ChevronRight size={12} />
+                    {t("mega.view_all")} <ChevronRight size={12} />
                   </Link>
                 </div>
 
@@ -295,7 +396,6 @@ export const SlideTabsExample = () => {
                   </div>
                 ) : (
                   <>
-                    {/* 判斷顯示 Brand 還是 Category */}
                     {(openMega === "brand" ? brandChildren : categoriesChildren)
                       .length > 0 ? (
                       <div className="grid grid-cols-4 lg:grid-cols-6 gap-8">
@@ -331,12 +431,12 @@ export const SlideTabsExample = () => {
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center h-40 text-gray-400">
-                        <p className="text-sm">該分類下沒有產品</p>
+                        <p className="text-sm">{t("mega.no_products")}</p>
                         <Link
                           href="/shop"
                           className="mt-2 text-xs border-b border-gray-400 pb-0.5 hover:text-black hover:border-black transition-colors"
                         >
-                          看看全部商品
+                          {t("mega.view_all")}
                         </Link>
                       </div>
                     )}
@@ -347,11 +447,10 @@ export const SlideTabsExample = () => {
           )}
         </AnimatePresence>
 
-        {/* Mobile Menu Sidebar (Overlay + Drawer) */}
+        {/* Mobile Menu Sidebar */}
         <AnimatePresence>
           {isMenuOpen && (
             <>
-              {/* Overlay */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -360,7 +459,6 @@ export const SlideTabsExample = () => {
                 onClick={() => setIsMenuOpen(false)}
               />
 
-              {/* Drawer Content */}
               <motion.div
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
@@ -392,62 +490,6 @@ export const SlideTabsExample = () => {
                       </Link>
                     </div>
                   ))}
-                </div>
-
-                {/* 手機版會員區塊 */}
-                <div className="p-6 bg-gray-50 border-t border-gray-100">
-                  {status === "authenticated" && session ? (
-                    <div className="flex items-center gap-3 bg-white p-3 rounded-lg shadow-sm">
-                      <Link href="/member" onClick={() => setIsMenuOpen(false)}>
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden bg-gray-200 border border-gray-300">
-                          {session.user.image ? (
-                            <img
-                              src={session.user.image}
-                              alt="user"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <User size={20} className="text-gray-500" />
-                          )}
-                        </div>
-                      </Link>
-                      <div className="flex-1 min-w-0">
-                        <Link
-                          href="/member"
-                          onClick={() => setIsMenuOpen(false)}
-                          className="block truncate"
-                        >
-                          <p className="text-sm font-bold text-gray-800 truncate">
-                            {session.user.name}
-                          </p>
-                          <p className="text-xs text-gray-500">會員中心</p>
-                        </Link>
-                      </div>
-                      <button
-                        onClick={() => signOut({ callbackUrl: "/" })}
-                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                      >
-                        <LogOut size={18} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-4">
-                      <Link
-                        href="/login"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-center py-2.5 border border-gray-300 rounded text-xs font-bold uppercase hover:border-black hover:bg-black hover:text-white transition-all"
-                      >
-                        Login
-                      </Link>
-                      <Link
-                        href="/register"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-center py-2.5 bg-[#ef4628] text-white rounded text-xs font-bold uppercase hover:bg-black transition-all shadow-md hover:shadow-lg"
-                      >
-                        Register
-                      </Link>
-                    </div>
-                  )}
                 </div>
               </motion.div>
             </>

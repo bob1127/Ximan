@@ -5,6 +5,8 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
+// 🔥 1. 引入伺服器端翻譯載入器
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // --- 3. 快速連結 (靜態行銷用) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
@@ -86,7 +88,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- 🔥 FilterSidebar 組件 (樣式修正重點) ---
+// --- 🔥 FilterSidebar 組件 ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
@@ -95,12 +97,10 @@ const FilterSidebar = ({
   dynamicBrands = [],     
   dynamicCategories = []  
 }) => {
-  
-  // 🔥 這裡控制選中時的顏色與粗體
   const isActive = (type, value) => {
     return activeFilter.type === type && activeFilter.value === value
-      ? "text-[#ef4628] font-extrabold" // 選中：橘紅色 + 特粗體
-      : "text-gray-600 hover:text-black"; // 未選中：灰色
+      ? "text-[#ef4628] font-extrabold" 
+      : "text-gray-600 hover:text-black"; 
   };
 
   const linkClass = "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
@@ -109,44 +109,9 @@ const FilterSidebar = ({
     <div className={`flex ${isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"}`}>
       {/* 左欄：Collection & Categories */}
       <div className={isMobile ? "" : "flex-1"}>
-        {/* Collections */}
-        <div className="mb-8">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            Collections
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href="/category/all" 
-              className={`text-[13px] border rounded px-3 py-1.5 transition-colors ${
-                activeFilter.type === "all"
-                  ? "bg-black text-white border-black"
-                  : "border-gray-300 text-gray-700 hover:border-black"
-              }`}
-            >
-              All Items
-            </Link>
-            {QUICK_LINKS.map((link) => (
-              <button
-                key={link}
-                onClick={() => {
-                   onFilterChange("collection", link); 
-                   if (isMobile) onCloseMobile();
-                }}
-                className={`text-[13px] border rounded px-3 py-1.5 transition-colors ${
-                  activeFilter.type === "collection" && activeFilter.value === link
-                    ? "bg-[#ef4628] text-white border-[#ef4628]"
-                    : "border-gray-300 text-gray-700 hover:border-black"
-                }`}
-              >
-                {link}
-              </button>
-            ))}
-          </div>
-        </div>
-        
+         
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
         
-        {/* Categories (使用 Link 跳轉) */}
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Categories
@@ -176,7 +141,7 @@ const FilterSidebar = ({
 
       {isMobile && <div className="border-t border-gray-200"></div>}
       
-      {/* 右欄：Brands (使用 Link 跳轉) */}
+      {/* 右欄：Brands */}
       <div className={isMobile ? "" : "flex-1"}>
         <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
           Brands
@@ -262,10 +227,8 @@ export default function CategoryPage({ products, brands, categories, initialFilt
   const router = useRouter();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   
-  // 初始化 Filter 狀態：根據 getStaticProps 傳來的 initialFilter
   const [activeFilter, setActiveFilter] = useState(initialFilter || { type: 'all', value: null });
 
-  // 當網址改變時更新 Filter
   useEffect(() => {
     if (initialFilter) {
       setActiveFilter(initialFilter);
@@ -304,7 +267,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
       </Head>
 
       <main className="py-20 bg-white text-black font-sans min-h-screen">
-        {/* Title Section */}
         <section>
           <div className="title">
             <div className="py-6 px-6 md:px-10">
@@ -400,7 +362,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
   );
 }
 
-// --- 🔥 1. getStaticPaths ---
 export async function getStaticPaths() {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
@@ -410,7 +371,6 @@ export async function getStaticPaths() {
   if (!WC_URL || !CK || !CS) return { paths: [], fallback: 'blocking' };
 
   try {
-    // 🔥 加上 hide_empty=false 確保能生成所有分類的路徑
     const res = await fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100&hide_empty=false`, { agent });
     const categories = await res.json();
 
@@ -424,27 +384,31 @@ export async function getStaticPaths() {
   }
 }
 
-// --- 🔥 2. getStaticProps ---
-export async function getStaticProps({ params }) {
+// 🔥 2. 關鍵修正：接收 locale，並傳給 API，最後返回 serverSideTranslations
+export async function getStaticProps({ params, locale }) {
   const { slug } = params;
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
   const agent = new https.Agent({ rejectUnauthorized: false });
 
+  // 🔥 取得語系 (將 zh-TW 轉成 WP 的 zh)
+  const currentLang = locale || 'en';
+  const wpLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
+
   try {
-    // 🔥 加上 hide_empty=false，確保側邊欄抓得到目前還沒有商品的品牌
+    // 🔥 在 API 網址後方補上 &lang=${wpLang}
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100`, { agent }),
-      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100&hide_empty=false`, { agent })
+      fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100&lang=${wpLang}`, { agent }),
+      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100&hide_empty=false&lang=${wpLang}`, { agent })
     ]);
 
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    // 處理分類樹
-    const brandParent = wcCategories.find(c => c.slug === 'brand');
-    const typeParent = wcCategories.find(c => c.slug === 'categories');
+    // 處理分類樹 (這裡可能因語系不同，slug 會有變，如果是英文可能是 brand-en，依你後台設定為主)
+    const brandParent = wcCategories.find(c => c.slug.includes('brand'));
+    const typeParent = wcCategories.find(c => c.slug.includes('categories'));
     
     const brandsList = brandParent 
       ? wcCategories.filter(c => c.parent === brandParent.id).map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }))
@@ -454,14 +418,12 @@ export async function getStaticProps({ params }) {
       ? wcCategories.filter(c => c.parent === typeParent.id).map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }))
       : [];
 
-    // 判斷目前的 slug
     let initialFilter = { type: 'all', value: null };
     if (slug !== 'all') {
       if (brandsList.some(b => b.slug === slug)) initialFilter = { type: 'brand', value: slug };
       else if (categoriesList.some(c => c.slug === slug)) initialFilter = { type: 'category', value: slug };
     }
 
-    // 格式化商品
     const formattedProducts = Array.isArray(wcProducts) ? wcProducts.map((p) => {
       const pCatIds = p.categories.map(c => c.id);
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
@@ -492,6 +454,8 @@ export async function getStaticProps({ params }) {
 
     return {
       props: {
+        // 🔥 最關鍵的一行：把翻譯檔送進去元件
+        ...(await serverSideTranslations(currentLang, ['common'])),
         products: formattedProducts,
         brands: brandsList,
         categories: categoriesList,
@@ -501,6 +465,15 @@ export async function getStaticProps({ params }) {
     };
   } catch (error) {
     console.error("SSG Error:", error);
-    return { props: { products: [], brands: [], categories: [], initialFilter: { type: 'all', value: null } }, revalidate: 60 };
+    return { 
+      props: { 
+        ...(await serverSideTranslations(currentLang, ['common'])),
+        products: [], 
+        brands: [], 
+        categories: [], 
+        initialFilter: { type: 'all', value: null } 
+      }, 
+      revalidate: 60 
+    };
   }
 }

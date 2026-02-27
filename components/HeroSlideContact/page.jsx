@@ -3,10 +3,15 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { CustomEase } from "gsap/CustomEase";
+// 🔥 1. 引入翻譯 Hook
+import { useTranslation } from "next-i18next";
 
 gsap.registerPlugin(CustomEase);
 
 const Photos = () => {
+  // 🔥 2. 初始化翻譯 Hook
+  const { t } = useTranslation("common");
+
   const sliderRef = useRef(null);
   const sliderImagesRef = useRef(null);
   const counterRef = useRef(null);
@@ -14,38 +19,29 @@ const Photos = () => {
   const indicatorsRef = useRef(null);
   const previewsRef = useRef([]);
 
-  // 1. 定義圖片路徑
+  // 1. 定義圖片路徑 (保留在元件內)
   const imagePaths = [
-     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_10.jpg",
-    
-
+    "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_10.jpg",
     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_3.jpg",
-   "/images/Premium_Handbags/shutterstock_2618316423.jpg",
+    "/images/Premium_Handbags/shutterstock_2618316423.jpg",
     "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_21.jpg",
   ];
 
-  // 2. 定義標題
-  const titles = ["最新現貨 New In", "商品代購", "Hermès 專區", "高價收購"];
-
-  // 3. 定義簡短描述
-  const descriptions = [
-    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
-    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
-       "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
-    "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
-  ];
+  // 🔥 3. 從 JSON 取得翻譯資料陣列
+  // 這裡我們直接取用陣列長度，以符合原本的迴圈邏輯
+  const slidesData = t("hero.slides", { returnObjects: true }) || [];
 
   useGSAP(
     () => {
       const hop2 = CustomEase.create(
         "hop2",
-        "M0,0 C0.071,0.505 0.192,0.726 0.318,0.852 0.45,0.984 0.504,1 1,1"
+        "M0,0 C0.071,0.505 0.192,0.726 0.318,0.852 0.45,0.984 0.504,1 1,1",
       );
 
       let currentImg = 1;
       const totalSlides = imagePaths.length;
       let indicatorRotation = 0;
-      let autoSlideTimer = null; // 定義計時器變數
+      let autoSlideTimer = null;
 
       if (previewsRef.current[0]) {
         previewsRef.current[0].classList.add("active");
@@ -55,7 +51,6 @@ const Photos = () => {
         const counterHeight = 24;
         const counterY = -counterHeight * (currentImg - 1);
 
-        // 自動抓取 Title 區塊的實際高度
         let titleHeight = 180;
         if (titlesRef.current && titlesRef.current.children.length > 0) {
           titleHeight = titlesRef.current.children[0].offsetHeight;
@@ -122,7 +117,7 @@ const Photos = () => {
               duration: 1.5,
               ease: "hop2",
             },
-            0
+            0,
           )
           .to(
             slideImgElem,
@@ -131,7 +126,7 @@ const Photos = () => {
               duration: 1.5,
               ease: "hop2",
             },
-            0
+            0,
           )
           .call(() => cleanupSlides(), null, 1.5);
 
@@ -167,29 +162,22 @@ const Photos = () => {
         updateCounterAndTitlePosition();
       }
 
-      // --- 自動輪播控制函式 ---
       function startAutoSlide() {
-        // 先清除舊的，避免重複疊加
         if (autoSlideTimer) clearInterval(autoSlideTimer);
-        // 設定 4000ms (4秒) 切換一次
         autoSlideTimer = setInterval(() => {
           nextSlide();
         }, 4000);
       }
 
-      // 啟動自動輪播
       startAutoSlide();
 
       function handleClick(event) {
         if (!sliderRef.current) return;
-
-        // 當使用者有互動時，重置自動輪播計時器，避免使用者剛點完馬上又跳轉
         startAutoSlide();
 
         const sliderWidth = sliderRef.current.clientWidth;
         const clickPosition = event.clientX;
 
-        // 避免點擊到按鈕時觸發換頁
         if (event.target.closest(".shop-btn")) {
           return;
         }
@@ -229,11 +217,10 @@ const Photos = () => {
 
       return () => {
         sliderEl.removeEventListener("click", handleClick);
-        // 清除計時器，避免 Memory Leak
         if (autoSlideTimer) clearInterval(autoSlideTimer);
       };
     },
-    { scope: sliderRef }
+    { scope: sliderRef },
   );
 
   return (
@@ -306,14 +293,13 @@ const Photos = () => {
           margin: 0;
         }
 
-        /* --- 主要內容區塊 --- */
         .slider-title {
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           width: 100%;
-          height: 180px; /* 桌機高度 */
+          height: 180px;
           overflow: hidden;
           z-index: 10;
           pointer-events: none;
@@ -326,9 +312,8 @@ const Photos = () => {
           pointer-events: auto;
         }
 
-        /* 單個文字群組設定 */
         .text-group {
-          height: 180px; /* 桌機高度 (與上方一致) */
+          height: 180px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -371,13 +356,12 @@ const Photos = () => {
           color: black;
         }
 
-        /* 手機版設定 (小於 900px) */
         @media (max-width: 900px) {
           .slider-title {
-            height: 240px; /* 稍微再加高一點，避免斷行內容被切掉 */
+            height: 240px;
           }
           .text-group {
-            height: 240px; /* 必須與 .slider-title 一致 */
+            height: 240px;
           }
           .text-group h2 {
             font-size: 32px;
@@ -461,18 +445,20 @@ const Photos = () => {
 
         <div className="slider-title">
           <div className="slider-title-wrapper" ref={titlesRef}>
-            {titles.map((title, index) => (
-              <div className="text-group" key={index}>
-                <h2>{title}</h2>
-                <p>{descriptions[index]}</p>
-                <button
-                  className="shop-btn "
-                  onClick={() => alert(`前往購買: ${title}`)}
-                >
-                 More
-                </button>
-              </div>
-            ))}
+            {/* 🔥 4. 改用 JSON 抓回來的 slidesData 陣列來渲染 */}
+            {Array.isArray(slidesData) &&
+              slidesData.map((slide, index) => (
+                <div className="text-group" key={index}>
+                  <h2>{slide.title}</h2>
+                  <p>{slide.description}</p>
+                  <button
+                    className="shop-btn "
+                    onClick={() => alert(`${slide.button}: ${slide.title}`)}
+                  >
+                    {slide.button || "More"}
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
 

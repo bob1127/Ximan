@@ -6,8 +6,9 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import Marquee from "react-marquee-slider";
 import https from "https";
 import useEmblaCarousel from "embla-carousel-react";
-
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // 其他原本首頁的元件
+import { useTranslation } from "next-i18next";
 import HeroSlider from "../components/Slider/Slider";
 import ParallaxImage from "../components/ParallaxImage";
 import Gallery from "../components/ImageTextSlider";
@@ -17,6 +18,7 @@ import HeroCarousel from "../components/HeroCarousel";
 import { ParallaxProvider, Parallax } from "react-scroll-parallax";
 
 export default function Home({ featuredProducts }) {
+  const { t } = useTranslation("common"); // 🔥 加入這行
   // --- 1. 頁面滾動特效 ---
   const scrollRef = useRef(null);
   const { scrollY } = useScroll({
@@ -121,8 +123,12 @@ export default function Home({ featuredProducts }) {
         <section className="flex relative gap-4 my-[100px]">
           <div className="text absolute left-1/2 -translate-x-1/2 top-[40%] -translate-y-1/2 z-50">
             <div className="flex flex-col justify-center items-center">
-              <h3 className="text-xl text-stone-100">Editorial Selection</h3>
-              <h3 className="text-xl text-stone-100">精選風格提案</h3>
+              <h3 className="text-xl text-stone-100">
+                {t("home.editorial_title")}
+              </h3>
+              <h3 className="text-xl text-stone-100">
+                {t("home.editorial_subtitle")}
+              </h3>
             </div>
           </div>
           <Marquee velocity={25}>
@@ -231,19 +237,20 @@ export default function Home({ featuredProducts }) {
           <div className="container flex lg:flex-row flex-col max-w-[1920px] w-full xl:w-[85%] mx-auto">
             <div className="left w-full lg:w-1/2 p-10">
               <h2 className="text-[1.5rem] max-w-[500px] mx-auto text-left font-[400]">
-                品牌理念｜KÉSH de¹ 命名由來
+                {t("home.philosophy_title")}
               </h2>
               <Scroll />
             </div>
             <div className="left justify-between flex flex-col w-full lg:w-1/2 md:px-8 px-0 2xl:px-20">
               <div className="txt flex pb-4 flex-col justify-center items-center h-full">
                 <p className="text-[1rem] w-[80%] md:w-2/3 leading-relaxed -tracking-tighter">
-                  「1」，代表第一，代表開始。 de¹
-                  中的上揚設計，象徵品味的起點與向上的追求。
+                  {t("home.philosophy_desc")}
                 </p>
-                <b className="text-[1.2rem] font-bold mt-6">願景 Vision</b>
+                <b className="text-[1.2rem] font-bold mt-6">
+                  {t("home.vision_title")}
+                </b>
                 <p className="text-[1rem] mt-7 w-[80%] md:w-2/3 leading-relaxed -tracking-tighter">
-                  打造值得信賴、具品味的精品交換中心。
+                  {t("home.vision_desc")}
                 </p>
               </div>
             </div>
@@ -263,11 +270,16 @@ export default function Home({ featuredProducts }) {
             </div>
             <div className="relative text-center z-10">
               <h1 className="uppercase text-white text-[3rem] xl:text-[5rem] font-normal tracking-[-1px] leading-none">
-                CONTACT US
+                {/* 🔥 替換標題 */}
+                {t("home.contact_title")}
               </h1>
-              <button className="border mt-3 border-stone-300 px-3 py-1 text-[#f0f0f0] bg-[#f83f23] rounded-full">
-                Link to Contact
-              </button>
+              {/* 💡 順便幫你加上 Link 導向，這樣點擊按鈕才會真正前往 contact 頁面 */}
+              <Link href="/contact">
+                <button className="border mt-3 border-stone-300 px-3 py-1 text-[#f0f0f0] bg-[#f83f23] rounded-full hover:bg-white hover:text-[#f83f23] transition-colors">
+                  {/* 🔥 替換按鈕文字 */}
+                  {t("home.contact_btn")}
+                </button>
+              </Link>
             </div>
           </section>
         </div>
@@ -277,14 +289,23 @@ export default function Home({ featuredProducts }) {
 }
 
 // --- SSG: 服務端抓取資料 ---
-export async function getStaticProps() {
+// 🔥 修改 1：接收 locale 參數
+export async function getStaticProps({ locale }) {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
+  // 🔥 修改 2：設定當前語系
+  const currentLang = locale || "zh-TW";
+
   if (!WC_URL || !CK || !CS) {
     console.error("❌ 環境變數缺失！");
-    return { props: { featuredProducts: [] } };
+    return {
+      props: {
+        featuredProducts: [],
+        ...(await serverSideTranslations(currentLang, ["common"])), // 即使錯誤也要載入翻譯
+      },
+    };
   }
 
   const agent = new https.Agent({ rejectUnauthorized: false });
@@ -305,7 +326,6 @@ export async function getStaticProps() {
     const products = await res.json();
     console.log(`✅ 成功抓取到 ${products.length} 筆商品`);
 
-    // 資料格式化
     const formattedSlides = products.map((p) => {
       let imageUrl = "/images/placeholder.jpg";
       if (p.images && p.images.length > 0) {
@@ -334,6 +354,8 @@ export async function getStaticProps() {
 
     return {
       props: {
+        // 🔥 修改 3：把翻譯檔載入給畫面用
+        ...(await serverSideTranslations(currentLang, ["common"])),
         featuredProducts: formattedSlides,
       },
       revalidate: 60,
@@ -341,7 +363,10 @@ export async function getStaticProps() {
   } catch (error) {
     console.error("❌ Carousel Fetch Error:", error);
     return {
-      props: { featuredProducts: [] },
+      props: {
+        featuredProducts: [],
+        ...(await serverSideTranslations(currentLang, ["common"])), // 即使錯誤也要載入翻譯
+      },
       revalidate: 60,
     };
   }

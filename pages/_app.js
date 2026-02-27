@@ -2,6 +2,7 @@
 import "../src/globals.css"; // 請確認您的 CSS 路徑是否正確
 import { NextUIProvider } from "@nextui-org/react";
 import { SessionProvider } from "next-auth/react"; // 🔥 關鍵：引入 SessionProvider
+import { appWithTranslation } from "next-i18next"; // 🔥 引入 i18n 包裝器
 
 // 您的舊有 Context (保留以避免其他沒改到的頁面壞掉)
 import { AuthProvider } from "../components/AuthProvider";
@@ -48,4 +49,5 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   );
 }
 
-export default MyApp;
+// 🔥 用 appWithTranslation 包起 MyApp 導出
+export default appWithTranslation(MyApp);

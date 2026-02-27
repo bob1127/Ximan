@@ -1,0 +1,185 @@
+{
+  "navbar": {
+    "categories": "產品類別",
+    "brand": "品牌館",
+    "authenticity": "正品保證",
+    "shipping": "全球配送",
+    "service": "服務流程",
+    "news": "最新消息",
+    "faq": "常見問題",
+    "contact": "聯繫凱仕",
+    "about": "公司介紹",
+    "search": "搜尋..."
+  },
+  "lang": {
+    "zh-TW": "繁體中文",
+    "en": "English",
+    "ko": "한국어"
+  },
+  "mega": {
+    "categories": "產品類別",
+    "brands": "精選品牌",
+    "view_all": "查看全部",
+    "no_products": "該分類下沒有產品"
+  },
+  "home": {
+    "editorial_title": "Editorial Selection",
+    "editorial_subtitle": "精選風格提案",
+    "featured_collections": "Featured Collections",
+    "philosophy_title": "品牌理念｜KÉSH de¹ 命名由來",
+    "philosophy_desc": "「1」，代表第一，代表開始。 de¹ 中的上揚設計，象徵品味的起點與向上的追求。",
+    "vision_title": "願景 Vision",
+    "vision_desc": "打造值得信賴、具品味的精品交換中心。",
+    "contact_title": "CONTACT US",
+    "contact_btn": "聯繫我們"
+  },
+  "guarantees": {
+    "item1": {
+      "title": "正品鑑定",
+      "subtitle": "Authenticity Verification",
+      "price": "100% 正品保證",
+      "description": "每件商品皆經三重檢查與來源確認。",
+      "detail": "KÉSH de¹ 嚴格把關每一件商品的來源，並透過專業鑑定團隊進行多重細節檢驗，杜絕任何仿冒可能，確保您收到的每一件精品皆為真品，讓您買得安心。"
+    },
+    "item2": {
+      "title": "嚴選品況",
+      "subtitle": "Condition Selection",
+      "price": "值得收藏的精品",
+      "description": "僅販售值得收藏、品況完整的精品。",
+      "detail": "我們深知品況的重要性。KÉSH de¹ 剔除狀況不佳的商品，專注於挑選成色優良、保養得宜的珍稀包款，讓您以最理想的狀態擁有心儀的時尚單品。"
+    },
+    "item3": {
+      "title": "快速出貨",
+      "subtitle": "Fast Shipping",
+      "price": "24–48 小時出貨",
+      "description": "現貨商品多於 24–48 小時內出貨。",
+      "detail": "無需漫長等待，我們理解您急切的心情。確認訂單後，現貨商品將以最高效率進行精美包裝並寄出，讓時尚迅速抵達您的手中，即刻享受。"
+    }
+  },
+  "hero": {
+    "slides": [
+      {
+        "title": "最新現貨 New In",
+        "description": "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+        "button": "了解更多"
+      },
+      {
+        "title": "商品代購",
+        "description": "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+        "button": "了解更多"
+      },
+      {
+        "title": "Hermès 專區",
+        "description": "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+        "button": "了解更多"
+      },
+      {
+        "title": "高價收購",
+        "description": "嚴選國際精品｜當季新品代購｜專業鑑定｜正品保證｜全球配送",
+        "button": "了解更多"
+      }
+    ]
+  },
+  "authenticity": {
+    "seo_title": "正品保證 | Authenticity & Standards",
+    "seo_desc": "於 KÉSH de¹ 購買之商品，皆經專業鑑定並附相關鑑定文件與購買憑證，終身正品保障。自購買日起兩年內，提供一次免費皮革基礎保養與清潔服務（不含五金零件及皮革修復或更換）。",
+    "page_title": "Authenticity & Standards",
+    "page_subtitle": "正品保證與鑑定標準",
+    "commitment_title": "我們對真實性的承諾",
+    "commitment_desc1": "於 KÉSH de¹ 購買之商品，皆經兩位合格鑑定師人工審核，並搭配 Entrupy 科技驗證， 附相關鑑定文件與購買憑證，提供",
+    "commitment_highlight": "終身正品保障",
+    "commitment_desc2": "。我們深知，信任是精品交易的基石。",
+    "badge_tech": "Entrupy Verified",
+    "badge_human": "Double Authentication",
+    "process_title": "嚴謹鑑定流程",
+    "process_1_title": "01. 科學驗證",
+    "process_1_desc": "採用 Entrupy 人工智慧鑑定系統，透過顯微鏡頭分析皮革紋路與工藝細節，比對全球數據庫，準確率高達 99.1%。",
+    "process_2_title": "02. 專家把關",
+    "process_2_desc": "每一件商品皆須經過內部兩位資深鑑定師獨立查驗，確認字體、五金、縫線符合品牌工藝標準。",
+    "process_3_title": "03. 完整履歷",
+    "process_3_desc": "隨貨附上 KÉSH de¹ 專屬保證卡與相關鑑定報告，建立商品完整履歷，讓您收藏無後顧之憂。",
+    "care_title": "售後保養服務",
+    "care_subtitle": "專屬皮革護理",
+    "care_desc1": "自購買日起兩年內，憑購買證明，我們提供",
+    "care_highlight": "一次免費皮革基礎保養與清潔服務",
+    "care_desc2": "。 讓您的愛包在專業護理下，延續其迷人光澤。",
+    "care_list_1": "本服務包含：皮革表面除塵、滋潤保養、基礎護理。",
+    "care_list_2": "除外項目：不含五金零件拋光/更換、皮革破損修復、內裡更換或染色服務。",
+    "care_list_3": "使用方式：請以客服LINE或線上表單提前預約，並將商品寄到指定地址。",
+    "contact_desc": "若需了解商品狀態或保養細節，歡迎聯繫客服團隊。",
+    "contact_btn": "聯繫客服團隊"
+  },
+  "footer": {
+    "slogan_1": "A Value of Priority.",
+    "slogan_2": "A Beginning of Dreams.",
+    "slogan_3": "Professional Authentication & Worldwide Shipping.",
+    "explore_title": "Explore",
+    "support_title": "Support",
+    "links": {
+      "about": "About 關於我們",
+      "services": "Services 服務流程",
+      "news": "News 最新消息",
+      "shop": "Shop 所有商品",
+      "consignment": "Consignment 寄賣服務",
+      "authenticity": "Authenticity 正品保證",
+      "shipping": "Shipping 全球配送",
+      "faq": "FAQ 常見問題",
+      "contact": "Contact 聯絡我們",
+      "privacy": "Privacy Policy 隱私權政策"
+    },
+    "contact_us": "Contact Us",
+    "contact_desc_1": "若有任何商品諮詢或寄賣需求，",
+    "contact_desc_2": "歡迎隨時聯繫我們。",
+    "get_in_touch": "Get in Touch",
+    "designed_by": "Designed by",
+    "geek_design": "極客網頁設計",
+    "rights": "KÉSH de¹ Boutique. All rights reserved."
+  },
+  "login": {
+    "title": "Member Login",
+    "subtitle": "登入 KÉSH de¹ 會員，查看您的收藏",
+    "google": "Continue with Google",
+    "facebook": "Continue with Facebook",
+    "or_email": "Or login with email",
+    "email_label": "電子信箱 (Email)",
+    "email_placeholder": "name@example.com",
+    "password_label": "密碼 (Password)",
+    "password_placeholder": "請輸入密碼",
+    "forgot_password": "忘記密碼?",
+    "sign_in": "Sign In",
+    "no_account": "還沒有帳號嗎?",
+    "register": "免費註冊",
+    "error_invalid": "帳號或密碼錯誤",
+    "reset_title": "Reset Password",
+    "reset_subtitle": "請輸入您註冊時使用的電子信箱，我們將發送重設密碼的連結給您。",
+    "reset_btn": "發送重設連結",
+    "reset_error": "發送失敗，請稍後再試或確認信箱是否正確。",
+    "back_to_login": "返回登入",
+    "sent_title": "Check Your Mail",
+    "sent_desc_1": "我們已將重設密碼的連結發送至",
+    "sent_desc_2": "請檢查您的收件匣與垃圾郵件匣。"
+  },
+  "register": {
+    "title_step1": "註冊會員",
+    "title_step2": "驗證電子信箱",
+    "subtitle_step1": "加入 KÉSH de¹ 會員，享受尊榮服務",
+    "subtitle_step2": "驗證碼已發送至",
+    "google": "使用 Google 快速註冊",
+    "facebook": "使用 Facebook 快速註冊",
+    "or_email": "或使用電子信箱註冊",
+    "username_label": "使用者名稱 (Username)",
+    "username_placeholder": "例如：王小明",
+    "email_label": "電子信箱 (Email)",
+    "email_placeholder": "name@example.com",
+    "password_label": "設定密碼 (Password)",
+    "password_placeholder": "請輸入至少 6 位數密碼",
+    "send_otp": "發送驗證碼",
+    "otp_label": "請輸入 6 位數驗證碼",
+    "otp_placeholder": "000000",
+    "complete_register": "完成註冊",
+    "back_to_edit": "返回修改信箱",
+    "have_account": "已經有帳號了嗎?",
+    "login": "登入",
+    "success_alert": "註冊成功！請使用您的帳號密碼登入。"
+  }
+}

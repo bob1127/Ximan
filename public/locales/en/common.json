@@ -1,0 +1,185 @@
+{
+  "navbar": {
+    "categories": "Categories",
+    "brand": "Brands",
+    "authenticity": "Authenticity",
+    "shipping": "Shipping",
+    "service": "Services",
+    "news": "News",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "about": "About Us",
+    "search": "Search..."
+  },
+  "lang": {
+    "zh-TW": "繁體中文",
+    "en": "English",
+    "ko": "한국어"
+  },
+  "mega": {
+    "categories": "Categories",
+    "brands": "Featured Brands",
+    "view_all": "View All",
+    "no_products": "No products found"
+  },
+  "home": {
+    "editorial_title": "Editorial Selection",
+    "editorial_subtitle": "Style Proposals",
+    "featured_collections": "Featured Collections",
+    "philosophy_title": "Brand Philosophy | The Origin of KÉSH de¹",
+    "philosophy_desc": "The '1' represents being the first and the beginning. The upward design in de¹ symbolizes the starting point of taste and the continuous pursuit of elevation.",
+    "vision_title": "Our Vision",
+    "vision_desc": "To build a trusted and tasteful exchange center for luxury goods.",
+    "contact_title": "CONTACT US",
+    "contact_btn": "Contact Us"
+  },
+  "guarantees": {
+    "item1": {
+      "title": "Authenticity Verification",
+      "subtitle": "Guaranteed Authentic",
+      "price": "100% Authenticity",
+      "description": "Triple checked and source verified.",
+      "detail": "KÉSH de¹ rigorously controls the source of every item. Our professional appraisal team conducts multiple detailed inspections to eliminate any possibility of counterfeits, ensuring every luxury piece you receive is genuine for your peace of mind."
+    },
+    "item2": {
+      "title": "Condition Selection",
+      "subtitle": "Curated Quality",
+      "price": "Collectible Luxury",
+      "description": "We only sell collectible pieces in complete condition.",
+      "detail": "We understand the importance of condition. KÉSH de¹ rejects items in poor condition, focusing on selecting well-maintained, rare bags with excellent color, allowing you to own your desired fashion piece in its most ideal state."
+    },
+    "item3": {
+      "title": "Fast Shipping",
+      "subtitle": "Express Delivery",
+      "price": "Ships in 24-48 Hours",
+      "description": "In-stock items are typically shipped within 24-48 hours.",
+      "detail": "No long waits; we understand your eagerness. Upon order confirmation, in-stock items will be beautifully packaged and dispatched with maximum efficiency, delivering fashion to your hands swiftly for immediate enjoyment."
+    }
+  },
+  "hero": {
+    "slides": [
+      {
+        "title": "New Arrivals",
+        "description": "Curated Luxury | Season's Newest | Authenticated | 100% Genuine | Global Shipping",
+        "button": "Discover More"
+      },
+      {
+        "title": "Personal Shopping",
+        "description": "Curated Luxury | Season's Newest | Authenticated | 100% Genuine | Global Shipping",
+        "button": "Discover More"
+      },
+      {
+        "title": "Hermès Collection",
+        "description": "Curated Luxury | Season's Newest | Authenticated | 100% Genuine | Global Shipping",
+        "button": "Discover More"
+      },
+      {
+        "title": "Premium Buyback",
+        "description": "Curated Luxury | Season's Newest | Authenticated | 100% Genuine | Global Shipping",
+        "button": "Discover More"
+      }
+    ]
+  },
+  "authenticity": {
+    "seo_title": "Authenticity & Standards | KÉSH de¹",
+    "seo_desc": "All items purchased at KÉSH de¹ undergo professional authentication and come with verification documents and receipts, offering a lifetime guarantee of authenticity. Enjoy one free basic leather care and cleaning service within two years of purchase.",
+    "page_title": "Authenticity & Standards",
+    "page_subtitle": "Our Authentication Standards",
+    "commitment_title": "Our Commitment to Authenticity",
+    "commitment_desc1": "All items purchased at KÉSH de¹ undergo manual inspection by two qualified appraisers, combined with Entrupy technology verification. They come with relevant appraisal documents and proof of purchase, providing ",
+    "commitment_highlight": "a lifetime guarantee of authenticity",
+    "commitment_desc2": ". We know that trust is the cornerstone of luxury trading.",
+    "badge_tech": "Entrupy Verified",
+    "badge_human": "Double Authentication",
+    "process_title": "Strict Authentication Process",
+    "process_1_title": "01. Scientific Verification",
+    "process_1_desc": "We use the Entrupy AI authentication system, analyzing leather textures and craftsmanship details through microscopic lenses and comparing them with a global database, achieving an accuracy rate of 99.1%.",
+    "process_2_title": "02. Expert Gatekeeping",
+    "process_2_desc": "Every item must undergo independent inspection by two senior appraisers to confirm that the font, hardware, and stitching meet the brand's craftsmanship standards.",
+    "process_3_title": "03. Complete Record",
+    "process_3_desc": "A KÉSH de¹ exclusive warranty card and appraisal report are included with the shipment, establishing a complete history for the item, so you can collect with peace of mind.",
+    "care_title": "After-Sales Care Service",
+    "care_subtitle": "Exclusive Leather Care",
+    "care_desc1": "Within two years from the date of purchase, with proof of purchase, we offer ",
+    "care_highlight": "one free basic leather care and cleaning service",
+    "care_desc2": ". Let your beloved bag continue its charming luster under professional care.",
+    "care_list_1": "This service includes: leather surface dusting, moisturizing care, and basic nursing.",
+    "care_list_2": "Exclusions: Hardware polishing/replacement, leather tear repair, interior replacement, or dyeing services are not included.",
+    "care_list_3": "How to use: Please make an appointment in advance via Customer Service LINE or online form, and send the item to the designated address.",
+    "contact_desc": "If you need to know about the condition of the item or care details, please contact our customer service team.",
+    "contact_btn": "Contact Customer Service"
+  },
+  "footer": {
+    "slogan_1": "A Value of Priority.",
+    "slogan_2": "A Beginning of Dreams.",
+    "slogan_3": "Professional Authentication & Worldwide Shipping.",
+    "explore_title": "Explore",
+    "support_title": "Support",
+    "links": {
+      "about": "About Us",
+      "services": "Services",
+      "news": "News",
+      "shop": "Shop All",
+      "consignment": "Consignment",
+      "authenticity": "Authenticity",
+      "shipping": "Global Shipping",
+      "faq": "FAQ",
+      "contact": "Contact Us",
+      "privacy": "Privacy Policy"
+    },
+    "contact_us": "Contact Us",
+    "contact_desc_1": "For any product inquiries or consignment needs,",
+    "contact_desc_2": "please feel free to contact us.",
+    "get_in_touch": "Get in Touch",
+    "designed_by": "Designed by",
+    "geek_design": "Jeek Web Design",
+    "rights": "KÉSH de¹ Boutique. All rights reserved."
+  },"login": {
+    "title": "Member Login",
+    "subtitle": "Log in to KÉSH de¹ to view your collection",
+    "google": "Continue with Google",
+    "facebook": "Continue with Facebook",
+    "or_email": "Or login with email",
+    "email_label": "Email",
+    "email_placeholder": "name@example.com",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "forgot_password": "Forgot Password?",
+    "sign_in": "Sign In",
+    "no_account": "Don't have an account?",
+    "register": "Register for free",
+    "error_invalid": "Invalid email or password",
+    "reset_title": "Reset Password",
+    "reset_subtitle": "Enter your registered email address and we will send you a link to reset your password.",
+    "reset_btn": "Send Reset Link",
+    "reset_error": "Failed to send. Please try again later or check if the email is correct.",
+    "back_to_login": "Back to Login",
+    "sent_title": "Check Your Mail",
+    "sent_desc_1": "We have sent a password reset link to",
+    "sent_desc_2": "Please check your inbox and spam folder."
+  },
+  "register": {
+    "title_step1": "Member Registration",
+    "title_step2": "Verify Email",
+    "subtitle_step1": "Join KÉSH de¹ and enjoy exclusive services",
+    "subtitle_step2": "Verification code has been sent to",
+    "google": "Register with Google",
+    "facebook": "Register with Facebook",
+    "or_email": "Or register with email",
+    "username_label": "Username",
+    "username_placeholder": "e.g., John Doe",
+    "email_label": "Email",
+    "email_placeholder": "name@example.com",
+    "password_label": "Set Password",
+    "password_placeholder": "Enter at least 6 characters",
+    "send_otp": "Send Verification Code",
+    "otp_label": "Enter 6-digit Verification Code",
+    "otp_placeholder": "000000",
+    "complete_register": "Complete Registration",
+    "back_to_edit": "Back to edit email",
+    "have_account": "Already have an account?",
+    "login": "Login",
+    "success_alert": "Registration successful! Please log in with your credentials."
+  }
+
+}

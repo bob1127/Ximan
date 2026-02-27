@@ -1,12 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+// 🔥 修正：Pages Router 必須使用 next/router
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { signIn } from "next-auth/react";
-import { Eye, EyeOff, ArrowLeft, MailCheck } from "lucide-react"; // 引入返回與信件 Icon
+import { Eye, EyeOff, ArrowLeft, MailCheck } from "lucide-react";
 
-// --- Icons (與註冊頁共用) ---
+// 🔥 引入多語系套件
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+
+// --- Icons ---
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 24 24">
     <path
@@ -42,17 +47,14 @@ const Spinner = ({ colorClass = "border-gray-400" }) => (
 
 export default function Login() {
   const router = useRouter();
+  const { t } = useTranslation("common"); // 🔥 啟用翻譯
 
-  // 畫面狀態：'login' | 'forgot-password' | 'email-sent'
   const [view, setView] = useState("login");
-
-  // 登入狀態
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
 
-  // 忘記密碼狀態
   const [resetEmail, setResetEmail] = useState("");
   const [resetLoading, setResetLoading] = useState(false);
   const [resetErrorMsg, setResetErrorMsg] = useState("");
@@ -62,7 +64,6 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 1. 社交登入
   const handleSocialLogin = async (provider) => {
     try {
       await signIn(provider, { callbackUrl: "/" });
@@ -71,7 +72,6 @@ export default function Login() {
     }
   };
 
-  // 2. 帳號密碼登入
   const handleCredentialsLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -84,7 +84,7 @@ export default function Login() {
         password: formData.password,
       });
 
-      if (result?.error) throw new Error("帳號或密碼錯誤");
+      if (result?.error) throw new Error(t("login.error_invalid")); // 🔥 動態錯誤訊息
       router.push("/");
     } catch (error) {
       setErrorMsg(error.message);
@@ -100,29 +100,23 @@ export default function Login() {
     try {
       const response = await fetch("/api/auth/forgot-password", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail }),
       });
 
-      // 防呆：先確認 response 是不是 OK
       if (!response.ok) {
-        // 嘗試解析 JSON 錯誤訊息，如果後端大當機回傳 HTML，這裡就不會掛掉
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || "發送失敗，請稍後再試");
+        throw new Error(errData.message || t("login.reset_error")); // 🔥 動態錯誤訊息
       }
 
-      // 請求成功，切換到成功畫面
       setView("email-sent");
     } catch (error) {
-      setResetErrorMsg(
-        error.message || "發送失敗，請稍後再試或確認信箱是否正確。",
-      );
+      setResetErrorMsg(error.message || t("login.reset_error"));
     } finally {
       setResetLoading(false);
     }
   };
+
   return (
     <main className="min-h-screen bg-white flex flex-col justify-center items-center pt-24 pb-24 px-6 overflow-hidden">
       <div className="w-full max-w-[480px] relative">
@@ -138,11 +132,9 @@ export default function Login() {
             >
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
-                  Member Login
+                  {t("login.title")}
                 </h1>
-                <p className="text-gray-500 text-sm">
-                  登入 KÉSH de¹ 會員，查看您的收藏
-                </p>
+                <p className="text-gray-500 text-sm">{t("login.subtitle")}</p>
               </div>
 
               {/* 社交登入 */}
@@ -155,7 +147,7 @@ export default function Login() {
                     <GoogleIcon />
                   </div>
                   <span className="text-sm font-bold text-gray-700 group-hover:text-black uppercase tracking-wide">
-                    Continue with Google
+                    {t("login.google")}
                   </span>
                 </button>
                 <button
@@ -166,7 +158,7 @@ export default function Login() {
                     <FacebookIcon />
                   </div>
                   <span className="text-sm font-bold text-gray-700 group-hover:text-[#1877F2] uppercase tracking-wide">
-                    Continue with Facebook
+                    {t("login.facebook")}
                   </span>
                 </button>
               </div>
@@ -177,7 +169,7 @@ export default function Login() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase tracking-widest">
                   <span className="bg-white px-4 text-gray-400">
-                    Or login with email
+                    {t("login.or_email")}
                   </span>
                 </div>
               </div>
@@ -192,7 +184,7 @@ export default function Login() {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                    電子信箱 (Email)
+                    {t("login.email_label")}
                   </label>
                   <input
                     type="email"
@@ -201,21 +193,21 @@ export default function Login() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
-                    placeholder="name@example.com"
+                    placeholder={t("login.email_placeholder")}
                   />
                 </div>
 
                 <div>
                   <div className="flex justify-between mb-1.5">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
-                      密碼 (Password)
+                      {t("login.password_label")}
                     </label>
                     <button
                       type="button"
                       onClick={() => setView("forgot-password")}
                       className="text-[10px] text-gray-400 hover:text-black underline"
                     >
-                      忘記密碼?
+                      {t("login.forgot_password")}
                     </button>
                   </div>
                   <div className="relative">
@@ -226,7 +218,7 @@ export default function Login() {
                       value={formData.password}
                       onChange={handleInputChange}
                       className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm pr-12"
-                      placeholder="請輸入密碼"
+                      placeholder={t("login.password_placeholder")}
                     />
                     <button
                       type="button"
@@ -243,17 +235,21 @@ export default function Login() {
                   disabled={loading}
                   className="w-full bg-[#ef4628] text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black transition-colors flex justify-center items-center"
                 >
-                  {loading ? <Spinner colorClass="border-white" /> : "Sign In"}
+                  {loading ? (
+                    <Spinner colorClass="border-white" />
+                  ) : (
+                    t("login.sign_in")
+                  )}
                 </button>
               </form>
 
               <div className="mt-8 text-center text-sm text-gray-600">
-                還沒有帳號嗎?{" "}
+                {t("login.no_account")}{" "}
                 <Link
                   href="/register"
                   className="text-black font-bold underline underline-offset-4 hover:text-[#ef4628] transition-colors"
                 >
-                  免費註冊
+                  {t("login.register")}
                 </Link>
               </div>
             </motion.div>
@@ -276,15 +272,15 @@ export default function Login() {
                   size={16}
                   className="mr-2 group-hover:-translate-x-1 transition-transform"
                 />
-                返回登入
+                {t("login.back_to_login")}
               </button>
 
               <div className="mb-8">
                 <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
-                  Reset Password
+                  {t("login.reset_title")}
                 </h1>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  請輸入您註冊時使用的電子信箱，我們將發送重設密碼的連結給您。
+                  {t("login.reset_subtitle")}
                 </p>
               </div>
 
@@ -297,7 +293,7 @@ export default function Login() {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                    電子信箱 (Email)
+                    {t("login.email_label")}
                   </label>
                   <input
                     type="email"
@@ -305,7 +301,7 @@ export default function Login() {
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
                     className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
-                    placeholder="name@example.com"
+                    placeholder={t("login.email_placeholder")}
                   />
                 </div>
 
@@ -317,7 +313,7 @@ export default function Login() {
                   {resetLoading ? (
                     <Spinner colorClass="border-white" />
                   ) : (
-                    "發送重設連結"
+                    t("login.reset_btn")
                   )}
                 </button>
               </form>
@@ -338,20 +334,20 @@ export default function Login() {
                 <MailCheck size={32} />
               </div>
               <h1 className="text-2xl font-bold tracking-widest uppercase mb-4">
-                Check Your Mail
+                {t("login.sent_title")}
               </h1>
               <p className="text-gray-500 text-sm leading-relaxed mb-8">
-                我們已將重設密碼的連結發送至 <br />
+                {t("login.sent_desc_1")} <br />
                 <span className="font-bold text-black">{resetEmail}</span>{" "}
                 <br />
-                請檢查您的收件匣與垃圾郵件匣。
+                {t("login.sent_desc_2")}
               </p>
 
               <button
                 onClick={() => setView("login")}
                 className="w-full border border-black text-black font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black hover:text-white transition-colors flex justify-center items-center"
               >
-                返回登入
+                {t("login.back_to_login")}
               </button>
             </motion.div>
           )}
@@ -359,4 +355,13 @@ export default function Login() {
       </div>
     </main>
   );
+}
+
+// 🔥 加上這段，Navbar 就會有正確翻譯了！
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "zh-TW", ["common"])),
+    },
+  };
 }

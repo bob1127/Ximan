@@ -5,8 +5,11 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
+// 🔥 1. 引入翻譯 Hook 與 ServerSide 載入器
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// --- 3. 快速連結 (這些是標籤，維持頁內篩選) ---
+// --- 3. 快速連結 (這裡建議未來也可以放進 i18n 的 json 裡) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
 // --- 商品卡片組件 ---
@@ -15,7 +18,8 @@ const ProductCard = ({ product }) => {
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
 
   const handleMouseMove = (e) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const { left, top, width, height } =
+      e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
     setCursorPos({ x, y });
@@ -51,7 +55,7 @@ const ProductCard = ({ product }) => {
             {product.status}
           </span>
         </div>
-        
+
         <div
           className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out"
           style={{
@@ -81,71 +85,35 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- 🔥 FilterSidebar (這裡改最多) ---
+// --- 🔥 FilterSidebar ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
   isMobile = false,
   onCloseMobile,
-  dynamicBrands = [],     
-  dynamicCategories = []  
+  dynamicBrands = [],
+  dynamicCategories = [],
 }) => {
-  
-  // 判斷是否為當前頁面 (橘紅粗體)
+  const { t } = useTranslation("common"); // 🔥 引入翻譯
+
   const isActive = (type, value) => {
-    // 這裡的邏輯是給 "Collections" 用的，因為 Brands/Categories 現在是用 Link 跳轉
     return activeFilter.type === type && activeFilter.value === value
       ? "text-[#ef4628] font-extrabold"
       : "text-gray-600 hover:text-black";
   };
 
-  const linkClass = "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
+  const linkClass =
+    "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
 
   return (
-    <div className={`flex ${isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"}`}>
-      
+    <div
+      className={`flex ${isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"}`}
+    >
       {/* 左欄：Collections & Categories */}
       <div className={isMobile ? "" : "flex-1"}>
-        {/* Collections */}
-        <div className="mb-8">
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            Collections
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {/* All Items 導向總覽頁 */}
-            <Link
-              href="/category/all"
-              className={`text-[13px] border rounded px-3 py-1.5 transition-colors ${
-                activeFilter.type === "all"
-                  ? "bg-black text-white border-black"
-                  : "border-gray-300 text-gray-700 hover:border-black"
-              }`}
-            >
-              All Items
-            </Link>
-            {/* Quick Links 維持頁內篩選 (因為沒有對應的 slug 頁面) */}
-            {QUICK_LINKS.map((link) => (
-              <button
-                key={link}
-                onClick={() => {
-                  onFilterChange("collection", link);
-                  if (isMobile) onCloseMobile();
-                }}
-                className={`text-[13px] border rounded px-3 py-1.5 transition-colors ${
-                  activeFilter.type === "collection" && activeFilter.value === link
-                    ? "bg-[#ef4628] text-white border-[#ef4628]"
-                    : "border-gray-300 text-gray-700 hover:border-black"
-                }`}
-              >
-                {link}
-              </button>
-            ))}
-          </div>
-        </div>
-        
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
-        
-        {/* 🔥 Categories: 改用 Link 導向動態頁面 */}
+
+        {/* Categories */}
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Categories
@@ -158,45 +126,53 @@ const FilterSidebar = ({
                     href={`/category/${cat.slug}`}
                     onClick={() => isMobile && onCloseMobile()}
                     className={`flex justify-between w-full ${linkClass} ${
-                        // 簡單判斷：如果網址包含這個 slug 就亮起 (簡單版)
-                        // 嚴謹版由 getStaticProps 傳入 activeFilter 判斷
-                        activeFilter.value === cat.slug ? "text-[#ef4628] font-extrabold" : "text-gray-600 hover:text-black"
+                      activeFilter.value === cat.slug
+                        ? "text-[#ef4628] font-extrabold"
+                        : "text-gray-600 hover:text-black"
                     }`}
                   >
                     <span>{cat.name}</span>
-                    <span className="text-[10px] opacity-60">({cat.count})</span>
+                    <span className="text-[10px] opacity-60">
+                      ({cat.count})
+                    </span>
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
-             <p className="text-[12px] text-gray-400">Loading Categories...</p>
+            <p className="text-[12px] text-gray-400">Loading Categories...</p>
           )}
         </div>
       </div>
 
       {isMobile && <div className="border-t border-gray-200"></div>}
-      
-      {/* 🔥 Brands: 改用 Link 導向動態頁面 */}
+
+      {/* Brands */}
       <div className={isMobile ? "" : "flex-1"}>
         <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
           Brands
         </h3>
         {dynamicBrands.length > 0 ? (
-          <ul className={`${isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"}`}>
+          <ul
+            className={`${isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"}`}
+          >
             {dynamicBrands.map((brand) => (
               <li key={brand.id}>
                 <Link
                   href={`/category/${brand.slug}`}
                   onClick={() => isMobile && onCloseMobile()}
                   className={`flex justify-between items-center w-full text-left ${linkClass} ${
-                      activeFilter.value === brand.slug ? "text-[#ef4628] font-extrabold" : "text-gray-600 hover:text-black"
+                    activeFilter.value === brand.slug
+                      ? "text-[#ef4628] font-extrabold"
+                      : "text-gray-600 hover:text-black"
                   }`}
                 >
                   <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4 decoration-1">
                     {brand.name}
                   </span>
-                  <span className="text-[10px] opacity-60">({brand.count})</span>
+                  <span className="text-[10px] opacity-60">
+                    ({brand.count})
+                  </span>
                 </Link>
               </li>
             ))}
@@ -212,49 +188,75 @@ const FilterSidebar = ({
 // --- CompanyLocation 組件 ---
 const CompanyLocation = () => {
   const ref = useRef(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.4, 0]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.15, 1, 1.15]);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const overlayOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [0, 0.4, 0],
+  );
+  const imageScale = useTransform(
+    scrollYProgress,
+    [0, 0.5, 1],
+    [1.15, 1, 1.15],
+  );
 
   return (
-    <section ref={ref} className="company-location relative border-t border-gray-400">
+    <section
+      ref={ref}
+      className="company-location relative border-t border-gray-400"
+    >
       <div className="flex flex-col md:flex-row min-h-[600px]">
         <div className="w-full md:w-1/2 relative overflow-hidden min-h-[400px] md:min-h-full">
-          <motion.div className="absolute inset-0 bg-black z-10 pointer-events-none" style={{ opacity: overlayOpacity }}></motion.div>
+          <motion.div
+            className="absolute inset-0 bg-black z-10 pointer-events-none"
+            style={{ opacity: overlayOpacity }}
+          ></motion.div>
           <motion.div
             className="absolute inset-0 w-full h-full bg-cover bg-center"
             style={{
-              backgroundImage: "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')",
+              backgroundImage:
+                "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')",
               scale: imageScale,
             }}
           ></motion.div>
         </div>
         <div className="w-full md:w-1/2 bg-white p-10 md:p-20 flex flex-col justify-center">
-          <h2 className="text-[32px] font-normal uppercase tracking-wide mb-10">STORE INFO</h2>
+          <h2 className="text-[32px] font-normal uppercase tracking-wide mb-10">
+            STORE INFO
+          </h2>
           <div className="space-y-8">
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Address</h4>
-              <p className="text-[15px] font-medium leading-relaxed">台灣省台中市北區中清路一段 428 號</p>
-              <a href="https://maps.google.com/?q=台灣省台中市北區中清路一段428號" target="_blank" rel="noopener noreferrer" className="text-[13px] underline decoration-gray-400 underline-offset-4 text-gray-600 hover:text-black mt-2 inline-block">View on Google Maps</a>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                Address
+              </h4>
+              <p className="text-[15px] font-medium leading-relaxed">
+                台灣省台中市北區中清路一段 428 號
+              </p>
             </div>
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Open Hours</h4>
-              <p className="text-[15px] font-medium leading-relaxed">13:00 – 20:00 (週一至週六)<br /><span className="text-gray-500 text-[13px]">[定休日: 週日]</span></p>
-            </div>
-            <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Contact</h4>
-              <p className="text-[15px] font-medium leading-relaxed">TEL: 0938-535-870</p>
+              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
+                Open Hours
+              </h4>
+              <p className="text-[15px] font-medium leading-relaxed">
+                13:00 – 20:00 (週一至週六)
+                <br />
+                <span className="text-gray-500 text-[13px]">
+                  [定休日: 週日]
+                </span>
+              </p>
             </div>
           </div>
           <div className="mt-12">
-               <Link
-            href="/contact"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
-          >
-            <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
-            <span className="relative">到店前請提前預約</span>
-          </Link>
-           
+            <Link
+              href="/contact"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
+            >
+              <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
+              <span className="relative">到店前請提前預約</span>
+            </Link>
           </div>
         </div>
       </div>
@@ -264,6 +266,7 @@ const CompanyLocation = () => {
 
 // --- 🔥 主要頁面 Component ---
 export default function Category({ products, brands, categories }) {
+  const { t } = useTranslation("common"); // 🔥 引入翻譯
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState({
     type: "all",
@@ -278,17 +281,14 @@ export default function Category({ products, brands, categories }) {
     }
   };
 
-  // 前端過濾邏輯：只針對 "Collections" (標籤)
-  // Brands 和 Categories 會直接跳轉新頁面，所以這裡不需要過濾它們
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (activeFilter.type === "all") return products;
-    
-    // 如果是 Collection，就用 Tags 篩選
     if (activeFilter.type === "collection") {
-      return products.filter(p => p.tags && p.tags.includes(activeFilter.value));
+      return products.filter(
+        (p) => p.tags && p.tags.includes(activeFilter.value),
+      );
     }
-    
     return products;
   }, [activeFilter, products]);
 
@@ -296,29 +296,34 @@ export default function Category({ products, brands, categories }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Online Store - KÉSH de¹ 凱仕國際精品",
-    "description": "嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證",
-    "url": "https://www.cieman.com.tw/shop",
-    "itemListElement": filteredProducts.slice(0, 20).map((product, index) => ({
+    name: "Online Store - KÉSH de¹ 凱仕國際精品",
+    description: "嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證",
+    url: "https://www.kesh-de1.com/category",
+    itemListElement: filteredProducts.slice(0, 20).map((product, index) => ({
       "@type": "Product",
-      "position": index + 1,
-      "name": product.title,
-      "image": product.image,
-      "offers": {
+      position: index + 1,
+      name: product.title,
+      image: product.image,
+      offers: {
         "@type": "Offer",
-        "priceCurrency": "TWD",
-        "price": product.rawPrice,
-        "availability": product.status === "RANK S" ? "https://schema.org/InStock" : "https://schema.org/SoldOut"
-      }
-    }))
+        priceCurrency: "TWD",
+        price: product.rawPrice,
+        availability:
+          product.status === "RANK S"
+            ? "https://schema.org/InStock"
+            : "https://schema.org/SoldOut",
+      },
+    })),
   };
 
   return (
     <>
       <Head>
-        <title>Online Store | KÉSH de¹ 凱仕國際精品 - 二手精品買賣</title>
-        <meta name="description" content="KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。" />
-        <link rel="canonical" href="https://www.cieman.com.tw/shop" />
+        <title>Online Store | KÉSH de¹</title>
+        <meta
+          name="description"
+          content="KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -326,16 +331,12 @@ export default function Category({ products, brands, categories }) {
       </Head>
 
       <main className="py-20 bg-white text-black font-sans min-h-screen">
-        {/* Title Section */}
         <section>
           <div className="title">
             <div className="py-6 px-6 md:px-10">
               <h1 className="text-[32px] md:text-[36px] font-normal tracking-wide uppercase">
                 ONLINE STORE
               </h1>
-              <p className="text-xs text-gray-500 mt-2 tracking-wide">
-                嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證
-              </p>
             </div>
             <div className="border-t border-gray-400 py-3 bg-stone-50">
               <Marquee gradient={false} speed={40}>
@@ -350,10 +351,6 @@ export default function Category({ products, brands, categories }) {
                       </span>
                       <p className="text-[13px] font-medium text-gray-800 tracking-wide">
                         凱仕國際精品保證所有商品皆經專業鑑定，僅販售 100% 正品。
-                      </p>
-                      <span className="text-gray-300">|</span>
-                      <p className="text-[13px] font-medium text-[#ef4628] tracking-wide">
-                        慶祝開幕，來電限時優惠特價，名額有限！
                       </p>
                     </div>
                   ))}
@@ -370,19 +367,12 @@ export default function Category({ products, brands, categories }) {
             className="w-full flex justify-between items-center py-4 px-6 bg-white active:bg-gray-50 transition-colors"
           >
             <span className="text-sm font-bold tracking-widest uppercase flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>
               FILTER & CATEGORIES
-              {activeFilter.type !== "all" && (
-                <span className="ml-2 text-[#ef4628] text-xs">
-                  ({activeFilter.value})
-                </span>
-              )}
-            </span>
-            <span className={`transform transition-transform duration-300 ${isMobileFilterOpen ? "rotate-180" : ""}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
             </span>
           </button>
-          <div className={`overflow-hidden transition-all duration-500 ease-in-out bg-[#fdfdfd] ${isMobileFilterOpen ? "max-h-[85vh] border-t border-gray-200" : "max-h-0"}`}>
+          <div
+            className={`overflow-hidden transition-all duration-500 ease-in-out bg-[#fdfdfd] ${isMobileFilterOpen ? "max-h-[85vh] border-t border-gray-200" : "max-h-0"}`}
+          >
             <div className="overflow-y-auto max-h-[85vh]">
               <FilterSidebar
                 activeFilter={activeFilter}
@@ -398,7 +388,6 @@ export default function Category({ products, brands, categories }) {
 
         {/* Main Content Area */}
         <section className="products-content border-t border-b border-gray-400 flex flex-col md:flex-row">
-          {/* Desktop Sidebar */}
           <div className="filter hidden md:flex w-full md:w-[25%] border-b md:border-b-0 md:border-r border-gray-400 relative bg-white">
             <div className="sticky top-20 h-auto overflow-y-auto max-h-[calc(100vh-100px)] w-full">
               <FilterSidebar
@@ -410,8 +399,7 @@ export default function Category({ products, brands, categories }) {
               />
             </div>
           </div>
-          
-          {/* Product Grid */}
+
           <div className="products w-full md:w-[75%] min-h-[50vh]">
             {filteredProducts.length > 0 ? (
               <div className="grid grid-cols-2 lg:grid-cols-3">
@@ -426,34 +414,21 @@ export default function Category({ products, brands, categories }) {
                   onClick={() => handleFilterChange("all", null)}
                   className="mt-4 underline hover:text-black"
                 >
-                看全部商品
+                  看全部商品
                 </button>
               </div>
             )}
-            
-            {/* SEO Text Block */}
+
             <div className="p-8 md:p-12 bg-stone-50 border-t border-gray-400">
               <h3 className="text-sm font-bold text-gray-900 mb-3">
-                KÉSH de¹ 凱仕國際精品｜台中二手精品買賣、寄賣、置換
+                KÉSH de¹ 凱仕國際精品
               </h3>
               <p className="text-xs text-gray-500 leading-relaxed max-w-4xl">
-                專營 Hermès、Chanel、LV、Dior、Gucci、Loewe
-                等國際精品品牌。我們提供透明公開的報價與優質售後服務，致力於打造台中最優質的二手精品交易平台。
+                專營 Hermès、Chanel、LV、Dior、Gucci、Loewe 等國際精品品牌。
               </p>
             </div>
           </div>
         </section>
-
-        <div className="flex justify-center py-8 md:py-12 border-b border-gray-400">
-          <Link
-            href="/all-items"
-            className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white"
-          >
-            <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
-            <span className="relative">VIEW MORE ITEMS</span>
-          </Link>
-        </div>
-
         <CompanyLocation />
       </main>
     </>
@@ -461,67 +436,85 @@ export default function Category({ products, brands, categories }) {
 }
 
 // --- 🔥 SSG 數據抓取 ---
-export async function getStaticProps() {
+// 這裡接收了 context 裡的 locale 參數，讓 Next.js 知道現在是哪國語言
+export async function getStaticProps({ locale }) {
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
+  // 🔥 轉換語系代碼給 WordPress
+  const currentLang = locale || "en";
+  const wpLang = currentLang === "zh-TW" ? "zh" : currentLang;
+
   if (!WC_URL || !CK || !CS) {
     console.error("❌ 環境變數缺失！");
-    return { props: { products: [], brands: [], categories: [] }, revalidate: 60 };
+    return {
+      props: { products: [], brands: [], categories: [] },
+      revalidate: 60,
+    };
   }
 
   const agent = new https.Agent({ rejectUnauthorized: false });
-  // 使用 Key 直接在 Query String 上的寫法 (Bluehost 兼容)
-  const queryStr = `consumer_key=${CK}&consumer_secret=${CS}`;
+  // 🔥 在 Query String 加上 lang 參數！
+  const queryStr = `consumer_key=${CK}&consumer_secret=${CS}&lang=${wpLang}`;
 
   try {
-    console.log("🔄 開始抓取資料...");
-    
     const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${WC_URL}/wp-json/wc/v3/products?${queryStr}&status=publish&per_page=100`, { agent }),
-      // 🔥 重點：加上 hide_empty=false 確保側邊欄抓得到空分類
-      fetch(`${WC_URL}/wp-json/wc/v3/products/categories?${queryStr}&per_page=100&hide_empty=false`, { agent })
+      fetch(
+        `${WC_URL}/wp-json/wc/v3/products?${queryStr}&status=publish&per_page=100`,
+        { agent },
+      ),
+      fetch(
+        `${WC_URL}/wp-json/wc/v3/products/categories?${queryStr}&per_page=100&hide_empty=false`,
+        { agent },
+      ),
     ]);
 
-    if (!productsRes.ok || !categoriesRes.ok) throw new Error("API Fetch Error");
+    if (!productsRes.ok || !categoriesRes.ok)
+      throw new Error("API Fetch Error");
 
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    console.log(`✅ 成功抓取: ${wcProducts.length} 商品, ${wcCategories.length} 分類`);
-
-    // 處理分類結構
-    const brandParent = wcCategories.find(c => c.slug === 'brand'); 
-    const typeParent = wcCategories.find(c => c.slug === 'categories');
+    // 處理分類結構 (注意：如果英文版的父分類 slug 變成 brand-en，這邊要用 includes 或其他方式判斷)
+    const brandParent = wcCategories.find(
+      (c) => c.slug.includes("brand") || c.slug.includes("브랜드"),
+    );
+    const typeParent = wcCategories.find(
+      (c) => c.slug.includes("categories") || c.slug.includes("카테고리"),
+    );
 
     const brandParentId = brandParent ? brandParent.id : null;
     const typeParentId = typeParent ? typeParent.id : null;
 
     const brandsList = wcCategories
-      .filter(c => c.parent === brandParentId) 
-      .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+      .filter((c) => c.parent === brandParentId)
+      .map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
 
     const categoriesList = wcCategories
-      .filter(c => c.parent === typeParentId)
-      .map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
-    
+      .filter((c) => c.parent === typeParentId)
+      .map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+
     // 格式化商品
     const formattedProducts = wcProducts.map((p) => {
-      const pCatIds = p.categories.map(c => c.id);
-      const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
-      const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
+      const pCatIds = p.categories.map((c) => c.id);
+      const matchedBrand = brandsList.find((b) => pCatIds.includes(b.id));
+      const matchedCategory = categoriesList.find((c) =>
+        pCatIds.includes(c.id),
+      );
       const uiBrandName = matchedBrand ? matchedBrand.name : "KÉSH de¹ Select";
       const uiBrandSlug = matchedBrand ? matchedBrand.slug : "select";
-      const uiCategoryName = matchedCategory ? matchedCategory.name : "Accessories";
+      const uiCategoryName = matchedCategory
+        ? matchedCategory.name
+        : "Accessories";
       const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
       const rawPrice = p.price ? parseInt(p.price) : 0;
 
       let imageUrl = null;
       if (p.images && p.images.length > 0) {
-          let src = p.images[0].src;
-          if (src.startsWith('http://')) src = src.replace('http://', 'https://');
-          imageUrl = src;
+        let src = p.images[0].src;
+        if (src.startsWith("http://")) src = src.replace("http://", "https://");
+        imageUrl = src;
       }
 
       return {
@@ -542,6 +535,8 @@ export async function getStaticProps() {
 
     return {
       props: {
+        // 🔥 最關鍵的一行：把翻譯檔載入給畫面用
+        ...(await serverSideTranslations(currentLang, ["common"])),
         products: formattedProducts,
         brands: brandsList,
         categories: categoriesList,
@@ -551,7 +546,12 @@ export async function getStaticProps() {
   } catch (error) {
     console.error("❌ [Server Error]:", error);
     return {
-      props: { products: [], brands: [], categories: [] },
+      props: {
+        ...(await serverSideTranslations(currentLang, ["common"])),
+        products: [],
+        brands: [],
+        categories: [],
+      },
       revalidate: 10,
     };
   }

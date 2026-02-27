@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
 const path = require("path");
-
+const { i18n } = require('./next-i18next.config');
 const nextConfig = {
   reactStrictMode: true,
-  
+ 
+  i18n, // 👉 加入這一行啟用內建多語系路由
+  // ... 你原本的其他設定 (images 等)
   // 1. Fix Image Loading
   images: {
     remotePatterns: [
