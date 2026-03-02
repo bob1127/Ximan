@@ -289,25 +289,52 @@ export default function Home({ featuredProducts }) {
 }
 
 // --- SSG: 服務端抓取資料 ---
-// 🔥 修改 1：接收 locale 參數
+// --- SSG: 服務端抓取資料 ---
 export async function getStaticProps({ locale }) {
+  const currentLang = locale || "zh-TW";
+
+  // ==========================================
+  // 🛠️ 1. Vercel Build 階段多語系除錯區塊
+  // ==========================================
+  console.log(
+    `\n=== 🔍 [Build Debug] 準備處理首頁，當前語系: ${currentLang} ===`,
+  );
+
+  const fs = require("fs");
+  const path = require("path");
+  const localeDir = path.resolve("./public/locales", currentLang);
+
+  console.log(`📂 預期的翻譯檔路徑: ${localeDir}`);
+
+  try {
+    if (fs.existsSync(localeDir)) {
+      const files = fs.readdirSync(localeDir);
+      console.log(`✅ 成功找到資料夾！裡面的檔案包含:`, files);
+    } else {
+      console.error(
+        `❌ 嚴重錯誤：找不到 ${currentLang} 語系的資料夾！(Vercel 沒有正確打包)`,
+      );
+    }
+  } catch (error) {
+    console.error(`❌ 讀取資料夾時發生例外錯誤:`, error);
+  }
+  // ==========================================
+
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
-  // 🔥 修改 2：設定當前語系
-  const currentLang = locale || "zh-TW";
-
   if (!WC_URL || !CK || !CS) {
-    console.error("❌ 環境變數缺失！");
+    console.error("❌ 環境變數缺失！請檢查 Vercel 後台設定。");
     return {
       props: {
         featuredProducts: [],
-        ...(await serverSideTranslations(currentLang, ["common"])), // 即使錯誤也要載入翻譯
+        ...(await serverSideTranslations(currentLang, ["common"])),
       },
     };
   }
 
+  const https = require("https"); // 確保 https 在伺服器端被正確載入
   const agent = new https.Agent({ rejectUnauthorized: false });
   const auth = Buffer.from(`${CK}:${CS}`).toString("base64");
   const headers = {
@@ -316,6 +343,7 @@ export async function getStaticProps({ locale }) {
   };
 
   try {
+    console.log(`🌐 正在向 WooCommerce 請求商品資料...`);
     const res = await fetch(
       `${WC_URL}/wp-json/wc/v3/products?status=publish&per_page=10`,
       { agent, headers },
@@ -327,7 +355,7 @@ export async function getStaticProps({ locale }) {
     console.log(`✅ 成功抓取到 ${products.length} 筆商品`);
 
     const formattedSlides = products.map((p) => {
-      let imageUrl = "/images/placeholder.jpg";
+      let imageUrl = "/images/placeholder.jpg"; // ⚠️ 記得確保 public/images/ 裡面有這張圖
       if (p.images && p.images.length > 0) {
         let src = p.images[0].src;
         if (src.startsWith("http://")) {
@@ -352,20 +380,21 @@ export async function getStaticProps({ locale }) {
       };
     });
 
+    console.log(`🎉 [Build Debug] ${currentLang} 語系處理完成！\n`);
+
     return {
       props: {
-        // 🔥 修改 3：把翻譯檔載入給畫面用
         ...(await serverSideTranslations(currentLang, ["common"])),
         featuredProducts: formattedSlides,
       },
       revalidate: 60,
     };
   } catch (error) {
-    console.error("❌ Carousel Fetch Error:", error);
+    console.error("❌ WooCommerce API 抓取失敗:", error.message);
     return {
       props: {
         featuredProducts: [],
-        ...(await serverSideTranslations(currentLang, ["common"])), // 即使錯誤也要載入翻譯
+        ...(await serverSideTranslations(currentLang, ["common"])),
       },
       revalidate: 60,
     };
