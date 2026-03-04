@@ -181,5 +181,503 @@
     "have_account": "已經有帳號了嗎?",
     "login": "登入",
     "success_alert": "註冊成功！請使用您的帳號密碼登入。"
+  },
+  "shipping": {
+    "seo_title": "全球配送 | Worldwide Shipping",
+    "seo_desc": "提供全球配送服務，並依目的地國家規定辦理相關清關流程。我們致力於確保配送安全與效率。We provide international shipping. Documentation is prepared in accordance with destination regulations. Delivery is handled securely and efficiently.",
+    "title": "Worldwide Shipping",
+    "subtitle": "全球配送政策",
+    "commitment_title": "配送承諾",
+    "commitment_desc": "KÉSH de¹ 提供全球配送服務。無論您身在何處，我們都致力於確保每一件精品能安全、高效地送達您手中。我們與國際頂尖物流夥伴（DHL / FedEx）合作，並依目的地國家規定協助辦理相關清關流程。",
+    "intl_policy_title": "International Policy",
+    "intl_policy_desc": "We provide international shipping services. Documentation is prepared strictly in accordance with destination country regulations. Delivery is handled securely and efficiently through our premium logistics partners.",
+    "delivery_time_title": "Delivery Time 配送時效",
+    "domestic_label": "Domestic",
+    "domestic_title": "台灣本島配送",
+    "domestic_desc": "約 1 - 3 個工作天 (黑貓宅急便/專人配送)",
+    "intl_label": "International",
+    "intl_title": "國際配送",
+    "intl_desc": "亞洲約 3-5 天 / 歐美約 5-10 天 (DHL/FedEx)",
+    "insurance_title": "全額保險運送",
+    "insurance_desc": "為確保高單價商品安全，所有寄出包裹皆投保全額運輸保險。若在運送過程中有任何遺失或損壞，將由保險公司與我們全權負責，保障您的資產安全。",
+    "duties_title": "關稅說明 (Duties & Taxes)",
+    "duties_desc": "國際運送產生之進口關稅與當地稅費，需由收件人（買家）自行負擔。我們會依據法規如實申報，若您有特殊報關需求，請於下單前與客服聯繫確認。"
+  },
+  "services": {
+    "seo": {
+      "title": "收購・寄售・置換・專屬尋款 | Services",
+      "desc": "申請上述服務者須提供有效之雙重身分證明文件（身分證及第二證件，如健保卡、駕照或護照）以完成實名驗證。資料僅作身份驗證及法規遵循之用途，不另作他用。",
+      "keywords": "精品收購, 二手包寄賣, 精品代購, 愛馬仕代購, 香奈兒收購, LV寄賣, 精品置換, KESH de1"
+    },
+    "ui": {
+      "header_title": "Our Services",
+      "header_subtitle": "為確保交易安全與合規，申請服務前請詳閱身分驗證需求。",
+      "sourcing_suitable_title": "適合哪些貴賓？",
+      "sourcing_form_title": "代購需求表單資訊",
+      "sourcing_form_subtitle": "請準備以下資料，我們將於 24 小時內聯繫：",
+      "legal_shipping_title": "法規與交期",
+      "legal_tag": "法律",
+      "shipping_tag": "交期",
+      "faq_title": "FAQ 常見問答",
+      "our_promise_title": "我們的承諾",
+      "our_promise_desc": "KÉSH de¹ 僅協助代購來源透明、可驗證之正規商品，所有商品皆經專業鑑定師檢查，並建立完整商品履歷。我們不只是幫您買到一個包，而是替您完成一個重要的收藏決定。",
+      "online_submission_title": "線上提交須知",
+      "online_estimation_title": "線上初估與鑑價",
+      "required_docs_title": "需提供資料：",
+      "pricing_method_title": "價格評估方式：",
+      "conclusion_title": "收購與合作銷售服務：",
+      "conclusion_desc1": "為確保評估結果準確並使流程順利進行，<br class=\"hidden md:block\" />請提供清晰、完整且能如實反映商品實際狀態之資訊與照片。",
+      "conclusion_desc2": "如有任何流程或細節需要進一步說明，<br class=\"hidden md:block\" />歡迎隨時與我們聯繫，我們將樂意協助。",
+      "contact_team_btn": "聯繫客服團隊",
+      "cta_subtitle": "準備好開始了嗎？",
+      "cta_subtitle_sourcing": "尋找夢幻逸品？立即聯繫我們",
+      "btn_line_estimate": "LINE 線上估價",
+      "btn_line_sourcing": "LINE 線上諮詢代購",
+      "btn_contact_store": "預約門市鑑賞",
+      "btn_contact_sourcing": "提交代購需求"
+    },
+    "common_requirements": {
+      "inStore": [
+        "本人雙證件（身分證 + 健保卡／駕照）",
+        "商品完整配件（盒、塵袋、購證、卡片、肩帶等）"
+      ],
+      "online": [
+        "商品清晰照片（正面／背面／底部／四角／五金／內裡／瑕疵處）",
+        "聯絡方式（手機號碼 + LINE ID）"
+      ],
+      "privacyNote": "提醒：所有證件資料僅用於身分確認並依隱私政策妥善保護。"
+    },
+    "data": {
+      "buy-in": {
+        "tab_main": "收購",
+        "tab_sub": "Buy-in",
+        "title": "收購流程 Buy-in",
+        "desc": "最快速的變現方式。我們提供具競爭力的市場報價，現場確認無誤即刻撥款。",
+        "steps": [
+          { "step": "01", "title": "初步估價", "desc": "透過 LINE 線上傳送照片，或直接攜帶商品至門市。" },
+          { "step": "02", "title": "實品鑑定", "desc": "專業鑑定師現場確認包況、配件與真偽。" },
+          { "step": "03", "title": "簽署合約", "desc": "雙方確認價格與物品狀況，簽署買賣讓渡書。" },
+          { "step": "04", "title": "現金撥款", "desc": "完成手續，立即現金支付或匯款轉帳。" }
+        ],
+        "pricing": "依據品牌、款式熱門度、當前二手市場行情及商品實際保存狀況（年份、磨損、配件完整度）進行綜合鑑價。",
+        "faq": [
+          { "q": "什麼是收購 (Buy-in)？", "a": "收購是指由本公司直接買斷商品，經雙方確認價格後，即不再屬於合作銷售或上架代售模式，商品所有權將轉移予本公司。" },
+          { "q": "收購價格是如何評估的？", "a": "收購價格將依商品品牌、款式市場需求、當前市場行情，以及商品實際保存狀況（包含年份、使用痕跡與配件完整度）進行綜合評估後提出報價。" },
+          { "q": "確認收購後，流程與撥款方式為何？", "a": "雙方確認價格並達成共識後，將以線上方式完成收購確認文件並請您將商品寄送至本公司指定地址。\n\n商品收件後，本公司將依實際商品狀態進行檢視；若實際狀態與事前提供之照片或資訊存在明顯差異，將第一時間與賣方聯繫說明並於雙方達成共識後，視情況調整收購價格或終止收購流程。\n\n商品狀態確認無誤後，將於 7 個工作天內完成款項撥付。" },
+          { "q": "商品狀態與描述不符，會發生什麼情況？", "a": "若實際商品狀態與提交資料有明顯落差，我們將即時與您聯繫說明，並重新確認是否調整價格或終止收購流程。" },
+          { "q": "商品完成收購後，是否還能反悔或取回？", "a": "收購完成並確認付款後，商品即完成所有權轉移，恕不再提供取回或取消收購之服務。" }
+        ]
+      },
+      "consignment": {
+        "tab_main": "寄賣",
+        "tab_sub": "Consignment",
+        "title": "寄賣流程 Consignment",
+        "desc": "協助您為閒置精品包款進行合理定價並上架寄賣。從合約簽訂、銷售到成交收款，流程透明清楚，讓精品在安心與信任中找到下一位收藏者。",
+        "highlight": "手續費為最終成交金額的 20%（含稅金）",
+        "steps": [
+          { "step": "01", "title": "制定售價", "desc": "雙方討論並協議合理的上架販售金額。" },
+          { "step": "02", "title": "簽署合約", "desc": "確認寄賣期間（通常為 3-6 個月）與保管條款。" },
+          { "step": "03", "title": "專業上架", "desc": "商品清潔整理、專業攝影、官網與社群曝光。" },
+          { "step": "04", "title": "售出撥款", "desc": "商品售出後，扣除 20% 手續費，於約定時間內匯款給您。" }
+        ],
+        "pricing": "我們會提供專業建議售價，但最終定價權在於您。若定價過高導致長期滯銷，我們會與您討論適度調整價格。",
+        "faq": [
+          { "q": "寄賣期間可以取回商品嗎？", "a": "可以。若在合約期內取回，可能需支付少許整新保管費；合約期滿未售出則可免費取回。" },
+          { "q": "商品售出後，款項多久可以收到？", "a": "商品完成交易並確認無退貨情形後，預計7-14天內撥款，售出後我們會主動告知您，並告知預計撥款時間，流程透明可查。" },
+          { "q": "平台服務費包含哪些內容？", "a": "平台服務費已包含商品價格評估、拍攝、上架曝光、銷售處理寄送服務與售後協助等必要成本，無額外隱藏費用。" },
+          { "q": "我想寄賣的商品是否一定能被上架銷售？", "a": "不一定。本平台僅接受保存狀況良好且來源正當之商品。所有商品皆須經本公司專業團隊進行審核，評估市場適配度。未通過審核之商品，將不會進入上架銷售流程。" },
+          { "q": "商品價格是誰決定？會被隨意降價嗎？", "a": "商品上架價格將於合作前經雙方確認後設定，未經同意不會自行調整售價，任何價格建議或市場調整，皆會事前與商品提供方溝通。" },
+          { "q": "商品在合作期間如何保存？會不會刮傷或變形？", "a": "所有商品皆依精品保存標準妥善管理，包含防塵、防壓與環境控管措施，並避免不必要的移動與堆疊，確保商品維持原有保存狀態。" },
+          { "q": "為什麼需要提供身分驗證資料？", "a": "身分驗證僅用於確認合作對象與交易安全，符合相關法規與平台合規需求，不作為其他用途。" }
+        ]
+      },
+      "trade-in": {
+        "tab_main": "置換",
+        "tab_sub": "Trade-in",
+        "title": "置換流程 Trade-in",
+        "desc": "以舊換新，讓收藏流動。用您手邊的閒置精品，折抵換購店內的心儀款式。",
+        "steps": [
+          { "step": "01", "title": "挑選商品", "desc": "在 KÉSH de¹ 挑選您想換購的目標商品。" },
+          { "step": "02", "title": "舊包鑑價", "desc": "我們評估您帶來的舊包價值（通常高於直接收購價）。" },
+          { "step": "03", "title": "補足差額", "desc": "計算「新包價格」減去「舊包抵價」，您僅需支付差額。" },
+          { "step": "04", "title": "完成交換", "desc": "一次完成出清與入手，享受升級樂趣。" }
+        ],
+        "pricing": "置換服務通常能為您的舊包爭取到比「直接收購」更優惠的折抵價格，作為我們鼓勵循環時尚的回饋。",
+        "faq": [
+          { "q": "可以多個包換一個包嗎？", "a": "可以。您可以使用多個閒置商品累計金額，來換購一個高單價商品。" },
+          { "q": "什麼是置換 (Trade-in)？", "a": "置換是指以您現有之精品商品，折抵本平台商品之部分金額，以完成換購流程。折抵金額將依商品評估結果計算，並套用於指定商品或訂單。" },
+          { "q": "是否所有商品都適合進行置換？", "a": "不一定。僅限保存狀況良好、具市場流通性之精品進行評估。實際是否適用，仍需經本團隊鑑定團隊審核。" },
+          { "q": "如果舊包價值高於新包怎麼辦？", "a": "若舊包評估價值高於換購商品金額，多出的金額將保留為平台折抵額度，可彈性使用於未來換購或消費。" }
+        ]
+      },
+      "sourcing": {
+        "tab_main": "代購",
+        "tab_sub": "Sourcing",
+        "title": "代購服務 Sourcing",
+        "desc": "提供專業精品代購與尋款服務，依照您的需求協助尋找合適款式，價格與等待時間清楚說明，確保每一次代購都安心無虞。",
+        "highlight": "全球專櫃與合法通路採購｜100% 正品保證",
+        "intro": [
+          "如果您在 KÉSH de¹ 找不到想要的款式，我們提供全球精品專櫃與國際通路新品代購服務。",
+          "所有商品皆由 KÉSH 專業團隊向國際專櫃或合法精品通路採購，到貨後皆經專業鑑定、建檔與拍攝存證，完成後方安排出貨。",
+          "專注品牌：Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine、Prada (其他品牌亦可協助)。"
+        ],
+        "suitableFor": [
+          "官網找不到想要的款式",
+          "專櫃缺貨、排不到配貨",
+          "尋找當季新品或限量款",
+          "指定顏色、尺寸或材質",
+          "收藏級全新商品需求",
+          "希望省去跨國購買與通關麻煩"
+        ],
+        "steps": [
+          { "step": "01", "title": "需求確認", "desc": "填寫代購表單，專人聯繫確認款式與細節。" },
+          { "step": "02", "title": "報價與付款", "desc": "提供正式報價與交期，確認後需支付 100% 全額款項。" },
+          { "step": "03", "title": "全球採購", "desc": "啟動國際專櫃與通路採購，全程回報進度。" },
+          { "step": "04", "title": "鑑定出貨", "desc": "到貨後經專業鑑定建檔，安排配送給您。" }
+        ],
+        "formInfo": [
+          "姓名 / 電話 / Email",
+          "欲代購品牌 / 型號 / 顏色 / 尺寸",
+          "商品狀態需求 (全新 / 近全新 / 9成新 / 可接受小瑕疵)"
+        ],
+        "paymentPolicy": {
+          "title": "付款制度 (全額預付制)",
+          "content": "訂單成立後需一次性支付商品總金額 100%。KÉSH 所有代購訂單皆由第三方支付平台 Unipay 代為收款與管理金流，確保交易流程透明安全。"
+        },
+        "refundPolicy": {
+          "title": "缺貨退款保障 (信任機制)",
+          "content": "若因專櫃缺貨、停產、官方下架等因素導致無法完成採購，KÉSH 將透過 Unipay 於 3-5 個工作天內全額退款 (含原支付金額)，不收取任何手續費。"
+        },
+        "legalNote": "代購屬於「依消費者指定需求進行採購之客製化商品」，依《消費者保護法》第19條規定，不適用七日鑑賞期，訂單成立並付款後除缺貨外恕無法取消或退換貨。",
+        "shipping": "國際專櫃現貨約 7-14 工作天；歐洲通路約 14-21 工作天；特殊款依實際回覆為準。",
+        "faq": [
+          { "q": "你們的代購商品來源是哪裡？", "a": "所有代購商品皆透過合法且可信的國際採購取得，包含品牌專櫃、及授權之零售商，確保來源正當且可追溯。" },
+          { "q": "為什麼代購需要先付款？", "a": "代購屬於依需求專屬採購服務，商品需依客戶指定條件進行尋找與下單，因此需於確認報價後完成付款，以確保採購流程順利進行。" },
+          { "q": "代購商品是否接受退換？", "a": "代購服務屬於依客戶需求進行之專屬採購，恕不提供取消或退換服務。建議於確認款式、尺寸與細節後再委託代購。" },
+          { "q": "你們會提供購證或相關文件嗎？", "a": "代購確認後，本店將提供相應之代購確認文件，以保障雙方權益。如品牌通路有提供相關文件，將一併隨貨附上；實際附屬文件內容，將依各品牌與採購通路之規範為準。" },
+          { "q": "大約需要多久可以收到商品？", "a": "實際到貨時間將依商品來源地與採購進度而有所不同。於確認代購後，我們將提供預估時程，並持續回報進度。" },
+          { "q": "如果找不到指定商品，會怎麼處理？", "a": "若商品缺貨、停產或其他不可控因素導致無法完成採購，將主動通知並依約定方式處理後續安排退款。" }
+        ]
+      }
+    }
+  },
+  "news": {
+    "seo_title": "最新消息 | KÉSH de¹ 凱仕國際精品",
+    "seo_desc": "KÉSH de¹ 最新消息、時尚趨勢與品牌公告。",
+    "page_title": "Journal",
+    "page_subtitle": "最新消息與活動 / 時尚趨勢",
+    "updated": "更新時間 :",
+    "no_posts": "目前沒有最新消息。",
+    "footer_official": "KÉSH de¹ Official",
+    "footer_store": "前往線上商店",
+    "badge_latest": "最新消息",
+    "badge_news": "新聞",
+    "read_more": "閱讀更多",
+    "view_details": "查看詳情"
+  },
+  "faq": {
+    "seo": {
+      "title": "FAQ 常見問題｜KÉSH de¹ 凱仕國際精品 - 正品鑑定與寄賣服務",
+      "description": "彙整 KÉSH de¹ 常見問題。提供二手精品買賣、正品鑑定流程（S/A/B級）、寄賣手續費（20%）、國際運送與退換貨政策完整說明。安心選購 Hermès, Chanel, LV 等頂級精品。"
+    },
+    "ui": {
+      "title": "FAQ",
+      "subtitle": "KÉSH de¹ Support",
+      "intro1": "感謝您來到 KÉSH de¹ 凱仕國際精品。",
+      "intro2": "無論您是首次接觸精品，或是長期收藏者，我們都希望以最清楚、透明、專業的方式陪伴您完成每一次選擇。",
+      "intro3": "KÉSH 彙整了貴賓最關心的重點問題，協助您快速找到答案，讓您的購物體驗更加安心。",
+      "footer_title": "KÉSH de¹",
+      "footer_desc1": "感謝您閱讀 KÉSH de¹ 凱仕國際精品 FAQ 專區。",
+      "footer_desc2": "我們相信，真正的精品體驗源自透明、細緻與信任。",
+      "footer_desc3": "KÉSH de¹ 將持續以最高標準陪伴每位藏家，",
+      "footer_desc4": "願您在這裡找到值得收藏的精品與值得信賴的服務。",
+      "footer_desc5": "若上述 FAQ 未能完全解答您的需求，",
+      "footer_desc6": "歡迎隨時透過 WhatsApp、Email 或官網表單與我們聯繫。",
+      "btn_contact": "聯繫我們",
+      "btn_shop": "繼續購物",
+      "slogan": "A Value of Priority. A Beginning of Dreams.",
+      "brand_name": "KÉSH de¹ 凱仕國際精品"
+    },
+    "schema": [
+      { "q": "你們的商品都是正品嗎？", "a": "是的。KÉSH 僅販售來源嚴格良好的精品，並由專業鑑定師結合國際級鑑定設備進行多重驗證，100% 正品保障。所有商品於上架前皆完成完整鑑定流程，包含：皮革紋路、五金刻印、車縫線距與結構、標籤字體與年份編碼。" },
+      { "q": "購買後可以退換貨嗎？", "a": "二手精品具唯一性，售出後恕不退換。我們會於上架時完整揭露商品品況，並於出貨前再次拍照與錄影存檔，確保雙方權益。" },
+      { "q": "寄賣手續費是多少？", "a": "所有寄賣商品一律收取「成交金額之 20% 手續費」。費用包含：開立發票、營業稅、服務費、物流收寄運費。不另收上架費、物流費，拍攝費、曝光費或倉儲費。" },
+      { "q": "哪些品牌可以寄賣？", "a": "主要受理品牌包含：Hermès、Chanel、Louis Vuitton、Dior、Gucci、Loewe、Celine、YSL、Goyard、Prada 等精品品牌。" },
+      { "q": "商品品況等級如何定義？", "a": "採用國際通用分級標準：S級（近全新）、A級（輕微痕跡）、AB級（一般使用痕跡）、B級（明顯使用痕跡）。所有品況皆以照片與說明完整揭露。" },
+      { "q": "是否提供國際寄送？", "a": "是的。KÉSH de¹ 提供全球配送服務，包含：日本、韓國、新加坡、香港、澳門、歐美等地區。關稅依各國法規由收件人負擔。" }
+    ],
+    "sections": [
+      {
+        "category": "一、購買與訂單相關（Shopping & Orders）",
+        "items": [
+          { "q": "Q1：你們的商品都是正品嗎？", "a": "<div class=\"space-y-3\"><p>是的。KÉSH 僅販售來源嚴格良好的精品，並由專業鑑定師結合國際級鑑定設備進行多重驗證，為您把關每一件商品的真實與品質，100% 正品保障。</p><p>所有商品於上架前皆完成完整鑑定流程，包含：</p><ul class=\"list-disc pl-5 space-y-1 text-gray-600 bg-gray-50 p-4 rounded-lg text-sm\"><li>皮革紋路與老化狀況</li><li>五金刻印與材質檢查</li><li>車縫線距與結構檢視</li><li>標籤字體、刻印與年份編碼</li></ul><p>我們並搭配實拍照片與影片完整呈現。</p></div>" },
+          { "q": "Q2：購買後可以退換貨嗎？", "a": "二手精品具唯一性，售出後恕不退換。我們會於上架時完整揭露商品品況，並於出貨前再次拍照與錄影存檔，確保雙方權益。" },
+          { "q": "Q3：下單後可以取消訂單嗎？", "a": "<div><p>如需取消訂單，請於下單後 12 小時內聯繫客服申請。為避免衝動消費，建議貴賓下單前再次確認購買意願。</p><a href=\"/contact\" class=\"inline-flex items-center gap-1 mt-3 text-[#ef4628] font-bold border-b border-[#ef4628] pb-0.5 hover:opacity-80 transition-opacity\">聯繫客服申請 <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z\"/></svg></a></div>" },
+          { "q": "Q4：購買會提供發票或收據嗎？", "a": "會的。所有交易皆依法開立二聯式紙本或雲端發票，可於結帳時自由選擇載具方式。" },
+          { "q": "Q5：若收到商品與網站描述不符怎麼辦？", "a": "KÉSH 於上架時會完整呈現商品所有細節，並於出貨前再次檢查、拍照、錄影留存。請開箱前請全程錄影確保您的權益，若您收到商品與描述有明顯落差，請立即聯繫客服，我們將全程協助處理。" }
+        ]
+      },
+      {
+        "category": "二、寄賣服務（Consignment）",
+        "description": "KÉSH 提供精品寄賣服務，協助藏家將精品安全上架銷售，並透過國際電商平台曝光給全球藏家。",
+        "items": [
+          { "q": "Q6：寄賣服務是否仍有提供？", "a": "是的，KÉSH 提供精品寄賣服務。目前僅受理保存狀況良好、結構完整之精品商品。" },
+          { "q": "Q7：哪些品牌可以寄賣？", "a": "<div><p>主要受理品牌包含：Hermès、Chanel、Louis Vuitton、Dior、Gucci、Loewe、Celine、YSL、Goyard、Prada 等精品品牌。</p><p class=\"mt-2 text-gray-500 text-sm\">其他品牌可先透過客服諮詢評估。</p><a href=\"/contact\" class=\"inline-flex items-center gap-1 mt-3 text-[#ef4628] font-bold border-b border-[#ef4628] pb-0.5 hover:opacity-80 transition-opacity\">點我聯繫客服諮詢 <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></div>" },
+          { "q": "Q8：寄賣手續費是多少？", "a": "<div><p>所有寄賣商品一律收取：</p><p class=\"text-lg font-bold text-gray-900 my-2\">👉 成交金額之 20% 手續費</p><p class=\"text-sm text-gray-500\">費用包含：開立發票、營業稅、服務費、物流收寄運費。</p><p class=\"mt-1 font-medium text-gray-700\">不另收上架費、物流費，拍攝費、曝光費或倉儲費。</p></div>" },
+          { "q": "Q9：寄賣流程如何進行？", "a": "<ol class=\"list-decimal pl-5 space-y-2 text-gray-700\"><li>線上諮詢提交商品照片（需製作寄賣表單）</li><li>專員提供建議售價</li><li>完成寄賣合約</li><li>KÉSH 物流至府上收貨</li><li>KÉSH 拍攝、上架、國際曝光</li><li>商品售出後通知領款</li></ol>" },
+          { "q": "Q10：寄賣期間可以提前取回嗎？", "a": "可以。寄賣期間最短 1 個月，最長 6 個月。如需提前取回，請提前 3–7 天通知客服。" }
+        ]
+      },
+      {
+        "category": "三、付款方式與金流（Payment Options）",
+        "items": [
+          { "q": "Q11：支援哪些付款方式？", "a": "<div><p class=\"mb-2\">目前支援以下付款方式：</p><ul class=\"grid grid-cols-2 gap-2 text-sm text-gray-700\"><li>• VISA / MasterCard / JCB</li><li>• Apple Pay / Google Pay</li><li>• PayPal（國際用戶）</li><li>• 銀行轉帳</li></ul><p class=\"mt-2 text-xs text-gray-400\">實際可用方式依結帳頁面顯示為準。</p></div>" },
+          { "q": "Q12：刷卡會有額外手續費嗎？", "a": "不會。KÉSH de¹ 不加收任何刷卡手續費。" }
+        ]
+      },
+      {
+        "category": "四、寄送與國際配送（Shipping）",
+        "items": [
+          { "q": "Q13：是否提供國際寄送？", "a": "是的。KÉSH de¹ 提供全球配送服務，包含：日本、韓國、新加坡、香港、澳門、歐美等地區。關稅依各國法規由收件人負擔。" },
+          { "q": "Q14：商品多久可以寄出？", "a": "<ul class=\"space-y-2\"><li><span class=\"font-bold text-gray-900\">現貨商品：</span>24 小時內出貨（不含假日）</li><li><span class=\"font-bold text-gray-900\">預購商品：</span>依頁面標示時間出貨</li><li class=\"text-sm text-gray-500 pt-1\">※ 出貨後將提供物流追蹤資訊。</li></ul>" }
+        ]
+      },
+      {
+        "category": "五、鑑定與品況（Authentication & Condition）",
+        "items": [
+          { "q": "Q15：商品鑑定流程包含哪些項目？", "a": "<div class=\"space-y-2\"><p>由合格鑑定師依以下流程檢查：</p><ul class=\"list-disc pl-5 space-y-1 text-gray-600\"><li>五金刻印與重量</li><li>皮革紋路與手感</li><li>車縫線距與結構</li><li>標籤字體與年份編碼</li><li>資料庫與市場比對</li></ul></div>" },
+          { "q": "Q16：品況等級如何定義？", "a": "<div class=\"space-y-3\"><p>採用國際通用分級標準，所有品況皆以照片與說明完整揭露：</p><div class=\"grid grid-cols-1 md:grid-cols-2 gap-3 text-sm\"><div class=\"bg-gray-50 p-3 rounded border border-gray-100\"><span class=\"font-bold text-[#ef4628] block mb-1\">S 級</span><span class=\"text-gray-600\">近全新，幾乎無使用痕跡</span></div><div class=\"bg-gray-50 p-3 rounded border border-gray-100\"><span class=\"font-bold text-[#ef4628] block mb-1\">A 級</span><span class=\"text-gray-600\">輕微痕跡，整體非常良好</span></div><div class=\"bg-gray-50 p-3 rounded border border-gray-100\"><span class=\"font-bold text-[#ef4628] block mb-1\">AB 級</span><span class=\"text-gray-600\">一般使用痕跡，外觀良好</span></div><div class=\"bg-gray-50 p-3 rounded border border-gray-100\"><span class=\"font-bold text-[#ef4628] block mb-1\">B 級</span><span class=\"text-gray-600\">明顯使用痕跡，適合重視實用者</span></div></div></div>" },
+          { "q": "Q17：瑕疵會如實呈現嗎？", "a": "<div><p>是的。KÉSH de¹ 承諾：</p><p class=\"font-bold text-gray-900 mt-2 tracking-widest\">零隱瞞｜零美化｜零模糊呈現</p></div>" }
+        ]
+      },
+      {
+        "category": "六、會員制度（Membership）",
+        "items": [
+          { "q": "Q18：是否需要註冊會員才能購買？", "a": "<div><p>建議註冊會員，以便享有以下服務：</p><ul class=\"list-disc pl-5 mt-2 space-y-1 text-gray-600\"><li>查詢訂單進度</li><li>追蹤物流狀態</li><li>下載鑑定證書</li><li>管理帳戶資料</li></ul></div>" },
+          { "q": "Q19：是否有會員分級制度？", "a": "KÉSH de¹ 採用透明定價，不以消費金額區分等級。每一位會員皆為尊榮貴賓。" }
+        ]
+      },
+      {
+        "category": "七、資訊安全與隱私（Legal & Privacy）",
+        "items": [
+          { "q": "Q20：會員資料是否安全？", "a": "是的。KÉSH de¹ 嚴格遵守個資法規範，所有資料僅用於訂單與服務用途，絕不外流。" }
+        ]
+      },
+      {
+        "category": "八、其他常見問題（General）",
+        "items": [
+          { "q": "Q21：為什麼不同平台售價不同？", "a": "因平台抽成、物流、稅務與服務內容不同而調整售價。" },
+          { "q": "Q22：為什麼部分商品售價高於專櫃？", "a": "因專櫃配貨制度、年度調價、稀有度與市場需求影響。" }
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "seo": {
+      "title": "聯絡我們 | Contact",
+      "description": "全新商品尋款、二手精品販售與閒置精品寄售。售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。",
+      "schema_name": "聯絡 KÉSH de¹"
+    },
+    "left": {
+      "title": "Contact Us",
+      "desc1": "全新商品尋款、二手精品販售與閒置精品寄售。",
+      "desc2": "售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。",
+      "email_label": "Email",
+      "social_label": "Social Media",
+      "line_hint": "想獲得最即時的回覆？",
+      "line_btn": "LINE 線上諮詢"
+    },
+    "form": {
+      "title": "Send a Message",
+      "name_label": "Name",
+      "name_placeholder": "您的稱呼",
+      "email_label": "Email",
+      "subject_label": "Subject",
+      "msg_label": "Message",
+      "msg_placeholder": "請簡述您的需求內容，如欲詢問特定包款，請提供品牌與型號...",
+      "btn_submit": "Submit Request",
+      "btn_sending": "Sending..."
+    },
+    "options": {
+      "product": "商品諮詢 Product Inquiry",
+      "sourcing": "精品代購 Sourcing Request",
+      "consignment": "寄賣服務 Consignment",
+      "trade_in": "置換服務 Trade-in",
+      "after_sales": "售後服務 After-sales",
+      "other": "其他 Other"
+    },
+    "status": {
+      "success": "您的訊息已發送，專員將盡快與您聯繫！",
+      "error": "發送失敗，請稍後再試或透過 LINE 聯繫我們。"
+    }
+  },
+  "about": {
+    "seo": {
+      "title": "關於我們 About Us | KÉSH de¹ 凱仕國際精品",
+      "description": "KÉSH de¹ 凱仕國際精品，專營 Hermès、Chanel 等國際頂級精品。每一件商品皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，提供最高級別的正品保障。",
+      "schema_name": "關於我們 - KÉSH de¹",
+      "schema_desc": "每一件商品，皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，通過層層把關，才會正式出貨。"
+    },
+    "ui": {
+      "hero_subtitle": "About KÉSH de¹",
+      "hero_title": "感受專屬於KÉSH de¹的<br />優雅與誠意",
+      "story_title": "KÉSH de¹ 凱仕國際精品",
+      "story_p1": "成立於台中市，政府立案營運， KÉSH de¹ 凱仕國際精品致力打造值得信賴的國際精品交易平台。",
+      "story_p2": "專營 Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine 等國際知名品牌，<span class=\"text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5\">服務涵蓋全新精品與嚴選二手精品販售、顧客寄賣及指定款式代購服務，並提供全球配送服務，讓無論身處何地的貴賓，也能輕鬆擁有。</span>",
+      "story_p3": "KÉSH 團隊具備國際精品鑑定師合格證照， 所有商品皆由專業鑑定團隊親自把關， 並搭配先進鑑定設備進行多重交叉驗證， 每件商品皆附上專屬鑑定證明，提供最高級別的正品保障。",
+      "story_quote": "凡於 KÉSH 選購之商品， 皆享有國際認可單位之正品認證保障， 讓每一次交易皆安心、透明、值得信賴。",
+      "btn_contact": "CONTACT",
+      "btn_more": "MORE"
+    },
+    "corporate": {
+      "title": "公司登記資訊 | Corporate Information",
+      "p1": "凱仕國際精品有限公司為 <span class=\"font-bold text-white\">依法設立之有限公司</span> ， 依據台灣相關商業及電子商務法規辦理營運， 並依法開立 <span class=\"font-bold text-white\">政府核准之統一發票</span> 。",
+      "p2": "本公司秉持 <span class=\"font-bold text-white\">合法經營</span>、<span class=\"font-bold text-white\">交易透明與專業標準</span> ， 致力提供值得信賴之精品服務。",
+      "info_title": "公司基本資料 |",
+      "name_label": "公司名稱：",
+      "name_val": "凱仕國際精品有限公司",
+      "en_name_label": "英文名稱：",
+      "en_name_val": "KESH LUXURY CO. LTD.",
+      "vat_label": "統一編號：",
+      "vat_val": "60329329",
+      "reg_label": "登記管轄：",
+      "reg_val": "台中市政府核准設立"
+    },
+    "legal": {
+      "notice_title": "Legal Notice",
+      "notice_p1": "KESH LUXURY CO. LTD. is a <span class=\"font-bold text-gray-200\">duly incorporated and legally registered limited company in Taiwan</span>, operating in full compliance with applicable Taiwanese commercial and e-commerce regulations.",
+      "notice_p2": "Business Registration No.:",
+      "notice_p2_val": "60329329",
+      "notice_p3": "Registered in:",
+      "notice_p3_val": "Taichung, Taiwan",
+      "notice_p4": "The company is committed to <span class=\"font-bold text-gray-200\">lawful operations, transparent transactions, and professional standards</span> in all aspects of its business.",
+      "auth_title": "Authenticity Guarantee",
+      "auth_p1": "KESH operates as an <span class=\"font-bold text-gray-200\">independent luxury boutique</span>.",
+      "auth_p2": "All items offered for sale are <span class=\"font-bold text-gray-200\">guaranteed 100% authentic</span>.",
+      "auth_p3": "Prior to official listing, each item undergoes a <span class=\"font-bold text-gray-200\">rigorous multi-stage authentication process</span> and comprehensive condition assessment conducted by qualified professionals to ensure accuracy, integrity, and quality representation.",
+      "nonaff_title": "Non-Affiliation Statement",
+      "nonaff_p1": "KESH LUXURY CO. LTD. is an independent entity and is <span class=\"font-bold text-gray-200\">not affiliated with, endorsed by, or an authorized retailer</span> of the brands featured on this website.",
+      "nonaff_p2": "All trademarks, brand names, and intellectual property rights remain the property of their respective owners."
+    },
+    "sections": {
+      "sourcing_en": "Specific Style Sourcing",
+      "sourcing_ch": "指定款式代購｜",
+      "sourcing_desc": "夢幻清單不再遙不可及。KÉSH de¹ 啟動全球頂級買手網絡，無論是專櫃缺貨爆款或稀有限量聯名，我們都能跨越國界精準代尋。您只需許下心願，我們便將那份獨一無二的驚喜帶到您手中。",
+      "auth_en": "Professional Authentication",
+      "auth_ch": "專業鑑定｜",
+      "auth_desc": "每一件商品，皆經兩位合格鑑定師人工鑑定，<br class=\"hidden lg:block\" />搭配 Entrupy 專業系統雙重驗證，<br class=\"hidden lg:block\" />通過層層把關，才會正式出貨。",
+      "vision_title": "成為連結精品收藏、<br class=\"hidden sm:block\" />品味生活與長期價值的橋樑。",
+      "vision_desc": "我們專注於 Hermès、Chanel、Dior、Louis Vuitton 等頂級品牌。 從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。 每一處細節的堅持，都是為了讓這份美好能夠延續。",
+      "spirit_en": "Service Spirit",
+      "spirit_ch": "服務精神",
+      "guarantee_en": "Our Guarantee",
+      "guarantee_ch": "三大保證"
+    },
+    "spirit_items": [
+      { "en": "Honesty", "ch": "誠實透明", "desc": "資訊公開，無隱藏細節" },
+      { "en": "Respect", "ch": "尊重每一位貴賓", "desc": "以禮相待，重視您的需求" },
+      { "en": "Professional", "ch": "專業精準", "desc": "嚴格鑑定，精確分級" },
+      { "en": "Efficiency", "ch": "安靜且高效率", "desc": "不打擾的溫柔，最迅速的服務" }
+    ],
+    "guarantee_items": [
+      { "title": "正品保證", "sub": "Authenticity", "desc": "兩位鑑定師人工審核 + Entrupy 科技驗證，杜絕任何仿冒疑慮。" },
+      { "title": "透明定價", "sub": "Transparent", "desc": "拒絕模糊地帶，所有品況、配件與售價皆清楚公開。" },
+      { "title": "快速服務", "sub": "Fast Service", "desc": "線上初估 24 小時內回覆、現場成交當日撥款，不浪費您的寶貴時間。" }
+    ]
+  },
+  "checkout": {
+    "empty_cart": "購物車是空的",
+    "title": "Checkout",
+    "subtitle": "KÉSH de¹ Secure Payment (PayUni)",
+    "contact_info": "Contact Information",
+    "email_placeholder": "Email",
+    "shipping_method": "Shipping Method",
+    "home_delivery": "宅配（運費 NT$80）",
+    "cvs_delivery": "7-11 店到店（運費 NT$1）",
+    "cvs_store": "7-11 門市",
+    "btn_select_store": "選擇門市",
+    "store_label": "門市：",
+    "address_label": "地址：",
+    "btn_clear_store": "清除門市",
+    "no_store_selected": "尚未選擇門市，請點「選擇門市」",
+    "shipping_address": "Shipping Address",
+    "name_placeholder": "收件人姓名",
+    "phone_placeholder": "手機號碼",
+    "cities": {
+      "taipei": "台北市",
+      "new_taipei": "新北市",
+      "taichung": "台中市",
+      "kaohsiung": "高雄市"
+    },
+    "address_home_req": "詳細地址（宅配必填）",
+    "address_cvs_opt": "宅配地址（選填）",
+    "postal_code": "郵遞區號",
+    "btn_processing": "Processing...",
+    "btn_pay": "Pay Now",
+    "order_summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping_fee": "Shipping",
+    "total": "Total",
+    "note_final_amount": "* 最終金額以建立 Woo 訂單後的計算結果為準",
+    "alerts": {
+      "missing_fields": "請填寫所有必填欄位",
+      "missing_home_address": "宅配請填寫詳細地址",
+      "missing_cvs_store": "請先選擇 7-11 門市",
+      "order_failed": "建立訂單失敗：",
+      "payuni_missing": "PayUni 缺少欄位：",
+      "system_error": "發生錯誤，請稍後再試"
+    }
+  },
+  "login": {
+    "title": "會員登入",
+    "subtitle": "歡迎回到 KÉSH de¹",
+    "google": "使用 Google 登入",
+    "facebook": "使用 Facebook 登入",
+    "or_email": "或使用電子郵件登入",
+    "email_label": "電子郵件",
+    "email_placeholder": "請輸入您的電子郵件",
+    "password_label": "密碼",
+    "forgot_password": "忘記密碼？",
+    "password_placeholder": "請輸入您的密碼",
+    "sign_in": "登入",
+    "no_account": "還沒有帳號？",
+    "register": "立即註冊",
+    "back_to_login": "返回登入",
+    "reset_title": "重設密碼",
+    "reset_subtitle": "請輸入您註冊時使用的電子郵件，我們將發送重設密碼的連結給您。",
+    "reset_btn": "發送重設連結",
+    "sent_title": "信件已發送",
+    "sent_desc_1": "重設密碼連結已發送至",
+    "sent_desc_2": "請檢查您的信箱，並依照信件內容完成密碼重設。",
+    "error_invalid": "帳號或密碼錯誤",
+    "reset_error": "發送重設密碼信件失敗，請稍後再試"
+  },
+  "register": {
+    "title": "註冊",
+    "title_step1": "建立帳號",
+    "title_step2": "驗證電子郵件",
+    "subtitle_step1": "加入 KÉSH de¹ 專屬會員",
+    "subtitle_step2": "請輸入寄送至",
+    "google": "使用 Google 註冊",
+    "facebook": "使用 Facebook 註冊",
+    "or_email": "或使用電子郵件註冊",
+    "username_label": "姓名",
+    "username_placeholder": "請輸入您的姓名",
+    "email_label": "電子郵件",
+    "email_placeholder": "請輸入您的電子郵件",
+    "password_label": "設定密碼",
+    "password_placeholder": "請設定 6 位數以上密碼",
+    "send_otp": "發送驗證碼",
+    "otp_label": "6 位數驗證碼",
+    "otp_placeholder": "輸入驗證碼",
+    "complete_register": "完成註冊",
+    "back_to_edit": "返回修改信箱",
+    "have_account": "已經有帳號？",
+    "login": "立即登入",
+    "success_alert": "註冊成功！請登入。",
+    "error_server_conn": "伺服器連線異常，請稍後再試。",
+    "error_send_failed": "發送失敗",
+    "error_server_format": "伺服器回應格式錯誤",
+    "error_register_failed": "註冊失敗"
   }
 }

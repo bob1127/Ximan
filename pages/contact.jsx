@@ -2,29 +2,32 @@ import React, { useState } from "react";
 import Head from "next/head";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 export default function Contact() {
+  const { t } = useTranslation("common");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    service: "商品諮詢",
+    service: "商品諮詢", // 這裡的預設值可以維持中文，因為傳給後端的通常是固定 value
     message: "",
   });
 
   const [status, setStatus] = useState({ type: "", msg: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- SEO 設定 (完全依照截圖更新) ---
+  // --- SEO 設定 ---
   const siteUrl = "https://www.kesh-de1.com";
-  const pageTitle = "聯絡我們 | Contact";
-  const pageDesc =
-    "全新商品尋款、二手精品販售與閒置精品寄售。售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。contact@kesh-de1.com";
+  const pageTitle = t("contact.seo.title");
+  const pageDesc = t("contact.seo.description");
 
   // --- 結構化資料 (Schema.org) ---
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    name: "聯絡 KÉSH de¹",
+    name: t("contact.seo.schema_name"),
     description: pageDesc,
     url: `${siteUrl}/contact`,
     mainEntity: {
@@ -38,7 +41,7 @@ export default function Contact() {
           contactType: "customer service",
           email: "contact@kesh-de1.com",
           areaServed: "TW",
-          availableLanguage: ["Chinese", "English"],
+          availableLanguage: ["Chinese", "English", "Korean"],
         },
       ],
     },
@@ -57,15 +60,18 @@ export default function Contact() {
     try {
       // 範例： const res = await fetch("/api/contact", { ... });
       await new Promise((resolve) => setTimeout(resolve, 1500)); // 模擬延遲
+
+      // 🔥 成功訊息使用翻譯變數
       setStatus({
         type: "success",
-        msg: "您的訊息已發送，專員將盡快與您聯繫！",
+        msg: t("contact.status.success"),
       });
       setFormData({ name: "", email: "", service: "商品諮詢", message: "" });
     } catch (error) {
+      // 🔥 失敗訊息使用翻譯變數
       setStatus({
         type: "error",
-        msg: "發送失敗，請稍後再試或透過 LINE 聯繫我們。",
+        msg: t("contact.status.error"),
       });
     }
     setIsSubmitting(false);
@@ -83,19 +89,20 @@ export default function Contact() {
         <title>{pageTitle}</title>
         <meta name="description" content={pageDesc} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+
         {/* Open Graph (Facebook, LINE) */}
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDesc} />
         <meta property="og:url" content={`${siteUrl}/contact`} />
         <meta property="og:type" content="website" />
-        {/* 建議：補上 OG 圖片，分享時才會漂亮 */}
         <meta property="og:image" content={`${siteUrl}/images/og-image.jpg`} />
-        {/* Twitter Card (X) - 這裡就是要補的部分 */}
+
+        {/* Twitter Card (X) */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
-        <meta name="twitter:description" content={pageDesc} />{" "}
-        {/* 👈 這裡要跟 description 一樣 */}
+        <meta name="twitter:description" content={pageDesc} />
         <meta name="twitter:image" content={`${siteUrl}/images/og-image.jpg`} />
+
         {/* JSON-LD Script */}
         <script
           type="application/ld+json"
@@ -117,18 +124,18 @@ export default function Contact() {
 
             <div className="relative z-10">
               <h1 className="text-3xl md:text-4xl font-serif mb-6 tracking-wide">
-                Contact Us
+                {t("contact.left.title")}
               </h1>
               <p className="text-gray-400 font-light leading-loose mb-10 text-sm md:text-base">
-                全新商品尋款、二手精品販售與閒置精品寄售。
+                {t("contact.left.desc1")}
                 <br />
-                售前與售後服務，歡迎透過官方線上表單或電子郵件與我們聯繫。
+                {t("contact.left.desc2")}
               </p>
 
               <div className="space-y-8 mt-12">
                 <div>
                   <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                    Email
+                    {t("contact.left.email_label")}
                   </h3>
                   <a
                     href="mailto:contact@kesh-de1.com"
@@ -140,7 +147,7 @@ export default function Contact() {
 
                 <div>
                   <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                    Social Media
+                    {t("contact.left.social_label")}
                   </h3>
                   <div className="flex gap-6">
                     <a
@@ -163,14 +170,16 @@ export default function Contact() {
             </div>
 
             <div className="relative z-10 mt-16 pt-8 border-t border-gray-800">
-              <p className="text-gray-500 text-xs mb-4">想獲得最即時的回覆？</p>
+              <p className="text-gray-500 text-xs mb-4">
+                {t("contact.left.line_hint")}
+              </p>
               <a
                 href="https://line.me/ti/p/@yourid"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center bg-[#06c755] hover:bg-[#05b34c] text-white px-8 py-3 text-sm font-bold tracking-wider rounded-sm transition-colors w-full md:w-auto"
               >
-                LINE 線上諮詢
+                {t("contact.left.line_btn")}
               </a>
             </div>
           </motion.div>
@@ -184,7 +193,7 @@ export default function Contact() {
             className="bg-white p-10 md:p-16 flex flex-col justify-center"
           >
             <h2 className="text-2xl font-serif text-gray-900 mb-8">
-              Send a Message
+              {t("contact.form.title")}
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -194,7 +203,7 @@ export default function Contact() {
                     htmlFor="name"
                     className="text-xs font-bold text-gray-500 uppercase tracking-wider"
                   >
-                    Name
+                    {t("contact.form.name_label")}
                   </label>
                   <input
                     type="text"
@@ -203,7 +212,7 @@ export default function Contact() {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="您的稱呼"
+                    placeholder={t("contact.form.name_placeholder")}
                     className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none transition-colors text-sm"
                   />
                 </div>
@@ -212,7 +221,7 @@ export default function Contact() {
                     htmlFor="email"
                     className="text-xs font-bold text-gray-500 uppercase tracking-wider"
                   >
-                    Email
+                    {t("contact.form.email_label")}
                   </label>
                   <input
                     type="email"
@@ -232,7 +241,7 @@ export default function Contact() {
                   htmlFor="service"
                   className="text-xs font-bold text-gray-500 uppercase tracking-wider"
                 >
-                  Subject
+                  {t("contact.form.subject_label")}
                 </label>
                 <div className="relative">
                   <select
@@ -242,12 +251,25 @@ export default function Contact() {
                     onChange={handleChange}
                     className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none appearance-none cursor-pointer transition-colors text-sm"
                   >
-                    <option value="商品諮詢">商品諮詢 Product Inquiry</option>
-                    <option value="精品代購">精品代購 Sourcing Request</option>
-                    <option value="寄賣服務">寄賣服務 Consignment</option>
-                    <option value="置換服務">置換服務 Trade-in</option>
-                    <option value="售後服務">售後服務 After-sales</option>
-                    <option value="其他合作">其他 Other</option>
+                    {/* 表單傳送的值(value)保持中文方便後端辨識，但顯示文字(children)隨語系切換 */}
+                    <option value="商品諮詢">
+                      {t("contact.options.product")}
+                    </option>
+                    <option value="精品代購">
+                      {t("contact.options.sourcing")}
+                    </option>
+                    <option value="寄賣服務">
+                      {t("contact.options.consignment")}
+                    </option>
+                    <option value="置換服務">
+                      {t("contact.options.trade_in")}
+                    </option>
+                    <option value="售後服務">
+                      {t("contact.options.after_sales")}
+                    </option>
+                    <option value="其他合作">
+                      {t("contact.options.other")}
+                    </option>
                   </select>
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                     <svg
@@ -274,7 +296,7 @@ export default function Contact() {
                   htmlFor="message"
                   className="text-xs font-bold text-gray-500 uppercase tracking-wider"
                 >
-                  Message
+                  {t("contact.form.msg_label")}
                 </label>
                 <textarea
                   id="message"
@@ -283,7 +305,7 @@ export default function Contact() {
                   required
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="請簡述您的需求內容，如欲詢問特定包款，請提供品牌與型號..."
+                  placeholder={t("contact.form.msg_placeholder")}
                   className="w-full bg-gray-50 border-b border-gray-200 focus:border-black px-4 py-3 outline-none resize-none transition-colors text-sm"
                 ></textarea>
               </div>
@@ -293,7 +315,9 @@ export default function Contact() {
                 disabled={isSubmitting}
                 className={`w-full bg-black text-white py-4 text-sm font-bold tracking-widest uppercase hover:bg-gray-800 transition-all ${isSubmitting ? "opacity-70 cursor-wait" : ""}`}
               >
-                {isSubmitting ? "Sending..." : "Submit Request"}
+                {isSubmitting
+                  ? t("contact.form.btn_sending")
+                  : t("contact.form.btn_submit")}
               </button>
 
               {status.msg && (
@@ -311,4 +335,13 @@ export default function Contact() {
       </div>
     </ReactLenis>
   );
+}
+
+// --- SSG: 服務端注入翻譯 ---
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "zh-TW", ["common"])),
+    },
+  };
 }

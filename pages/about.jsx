@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
 import ParallaxImage from "../components/ParallaxImage";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // --- 子元件：文字區塊動畫設定 ---
 const FadeInSection = ({ children, delay = 0, className = "" }) => (
@@ -21,11 +23,18 @@ const FadeInSection = ({ children, delay = 0, className = "" }) => (
 );
 
 export default function About() {
-  // --- SEO 設定 ---
+  const { t } = useTranslation("common");
+
+  // 從多語系檔案取得資料
+  const seo = t("about.seo", { returnObjects: true });
+  const ui = t("about.ui", { returnObjects: true });
+  const corp = t("about.corporate", { returnObjects: true });
+  const legal = t("about.legal", { returnObjects: true });
+  const sections = t("about.sections", { returnObjects: true });
+  const spiritItems = t("about.spirit_items", { returnObjects: true });
+  const guaranteeItems = t("about.guarantee_items", { returnObjects: true });
+
   const siteUrl = "https://www.kesh-de1.com";
-  const pageTitle = "關於我們 About Us | KÉSH de¹ 凱仕國際精品";
-  const pageDesc =
-    "KÉSH de¹ 凱仕國際精品，專營 Hermès、Chanel 等國際頂級精品。每一件商品皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，提供最高級別的正品保障。";
 
   // --- 結構化資料 (JSON-LD) ---
   const jsonLd = {
@@ -34,11 +43,10 @@ export default function About() {
       {
         "@type": "Organization",
         "@id": `${siteUrl}#organization`,
-        name: "KÉSH de¹ 凱仕國際精品",
+        name: corp.name_val,
         url: siteUrl,
         logo: `${siteUrl}/images/logo.png`,
-        description:
-          "每一件商品，皆經兩位合格鑑定師人工鑑定，搭配 Entrupy 專業系統雙重驗證，通過層層把關，才會正式出貨。",
+        description: seo.schema_desc,
         foundingLocation: {
           "@type": "Place",
           name: "Taichung, Taiwan",
@@ -48,8 +56,8 @@ export default function About() {
         "@type": "AboutPage",
         "@id": `${siteUrl}/about#webpage`,
         url: `${siteUrl}/about`,
-        name: "關於我們 - KÉSH de¹",
-        description: pageDesc,
+        name: seo.schema_name,
+        description: seo.description,
         mainEntity: {
           "@id": `${siteUrl}#organization`,
         },
@@ -57,7 +65,7 @@ export default function About() {
     ],
   };
 
-  // 1. Slider 資料
+  // 1. Slider 資料 (圖片輪播通常不需多語系，維持靜態)
   const sliderData = [
     {
       id: 1,
@@ -88,10 +96,10 @@ export default function About() {
   return (
     <ReactLenis root>
       <Head>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDesc} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDesc} />
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        <meta property="og:title" content={seo.title} />
+        <meta property="og:description" content={seo.description} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`${siteUrl}/about`} />
         <meta
@@ -105,10 +113,8 @@ export default function About() {
       </Head>
 
       <div className="bg-white min-h-screen">
-        {/* --- 1. Hero Slider --- */}
         <Slider slides={sliderData} />
 
-        {/* --- 2. 關於我們 內容區塊 --- */}
         <main className="relative z-10 bg-[#1A1A1A]">
           {/* Section A: 品牌故事 */}
           <section className="px-6 py-20 md:py-32 max-w-7xl mx-auto">
@@ -117,14 +123,12 @@ export default function About() {
               <div className="lg:col-span-5 flex flex-col gap-8 lg:sticky lg:top-32">
                 <FadeInSection>
                   <h2 className="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase mb-4">
-                    About KÉSH de¹
+                    {ui.hero_subtitle}
                   </h2>
-                  <h1 className="text-2xl md:text-3xl lg:text-3xl font-serif font-medium leading-tight text-gray-900 mb-8">
-                    感受專屬於KÉSH de¹的
-                    <br />
-                    優雅與誠意
-                  </h1>
-
+                  <h1
+                    className="text-2xl md:text-3xl lg:text-3xl font-serif font-medium leading-tight text-gray-900 mb-8"
+                    dangerouslySetInnerHTML={{ __html: ui.hero_title }}
+                  />
                   <div className="relative w-full aspect-[4/5] overflow-hidden rounded-sm bg-gray-100">
                     <Image
                       src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_7.jpg"
@@ -142,30 +146,17 @@ export default function About() {
               <div className="lg:col-span-7 flex flex-col gap-10 lg:pt-20 text-gray-600 font-light leading-loose text-justify">
                 <FadeInSection delay={0.2}>
                   <p className="text-xl text-[#F6F1EB] font-medium mb-4">
-                    KÉSH de¹ 凱仕國際精品
+                    {ui.story_title}
                   </p>
-                  <p className="mb-4 text-[#F6F1EB]">
-                    成立於台中市，政府立案營運， KÉSH de¹
-                    凱仕國際精品致力打造值得信賴的國際精品交易平台。
-                  </p>
+                  <p className="mb-4 text-[#F6F1EB]">{ui.story_p1}</p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.3}>
-                  <p className="text-[#F6F1EB]">
-                    專營 Hermès、Chanel、Louis Vuitton、Dior、Loewe、Celine
-                    等國際知名品牌，
-                    <span className="text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5">
-                      服務涵蓋全新精品與嚴選二手精品販售、顧客寄賣及指定款式代購服務，
-                      並提供全球配送服務，讓無論身處何地的貴賓，也能輕鬆擁有。
-                    </span>{" "}
-                    等頂級品牌。
-                  </p>
-                  <p className="mt-4 text-[#F6F1EB]">
-                    KÉSH 團隊具備國際精品鑑定師合格證照，
-                    所有商品皆由專業鑑定團隊親自把關，
-                    並搭配先進鑑定設備進行多重交叉驗證，
-                    每件商品皆附上專屬鑑定證明，提供最高級別的正品保障。
-                  </p>
+                  <p
+                    className="text-[#F6F1EB]"
+                    dangerouslySetInnerHTML={{ __html: ui.story_p2 }}
+                  />
+                  <p className="mt-4 text-[#F6F1EB]">{ui.story_p3}</p>
                 </FadeInSection>
 
                 <FadeInSection delay={0.4}>
@@ -173,183 +164,114 @@ export default function About() {
                     <span className="absolute -top-4 left-4 text-4xl text-[#F6F1EB] font-serif">
                       “
                     </span>
-                    凡於 KÉSH 選購之商品， 皆享有國際認可單位之正品認證保障，
-                    讓每一次交易皆安心、透明、值得信賴。
+                    {ui.story_quote}
                   </blockquote>
                 </FadeInSection>
 
-                {/* --- 新增區塊：公司登記資訊 (對應圖片內容) --- */}
+                {/* 公司登記資訊 */}
                 <FadeInSection
                   delay={0.45}
                   className="py-6 border-t border-gray-700/50"
                 >
                   <h3 className="text-lg font-bold text-white mb-4">
-                    公司登記資訊 | Corporate Information
+                    {corp.title}
                   </h3>
 
                   <div className="text-[16px] text-[#F6F1EB] space-y-4 leading-relaxed">
-                    <p>
-                      凱仕國際精品有限公司為
-                      <span className="font-bold text-white">
-                        依法設立之有限公司
-                      </span>
-                      ， 依據台灣相關商業及電子商務法規辦理營運， 並依法開立
-                      <span className="font-bold text-white">
-                        政府核准之統一發票
-                      </span>
-                      。
-                    </p>
-                    <p>
-                      本公司秉持
-                      <span className="font-bold text-white">合法經營</span>、
-                      <span className="font-bold text-white">
-                        交易透明與專業標準
-                      </span>
-                      ， 致力提供值得信賴之精品服務。
-                    </p>
+                    <p dangerouslySetInnerHTML={{ __html: corp.p1 }} />
+                    <p dangerouslySetInnerHTML={{ __html: corp.p2 }} />
                   </div>
 
                   <div className="mt-6 text-[16px] text-[#F6F1EB] space-y-1">
                     <h4 className="font-bold text-white mb-2 text-base">
-                      公司基本資料 |
+                      {corp.info_title}
                     </h4>
                     <p>
-                      公司名稱：
+                      {corp.name_label}{" "}
                       <span className="font-bold text-white">
-                        凱仕國際精品有限公司
+                        {corp.name_val}
                       </span>
                     </p>
                     <p>
-                      英文名稱：
+                      {corp.en_name_label}{" "}
                       <span className="font-bold text-white">
-                        KESH LUXURY CO. LTD.
+                        {corp.en_name_val}
                       </span>
                     </p>
                     <p>
-                      統一編號：
-                      <span className="font-bold text-white">60329329</span>
+                      {corp.vat_label}{" "}
+                      <span className="font-bold text-white">
+                        {corp.vat_val}
+                      </span>
                     </p>
                     <p>
-                      登記管轄：
+                      {corp.reg_label}{" "}
                       <span className="font-bold text-white">
-                        台中市政府核准設立
+                        {corp.reg_val}
                       </span>
                     </p>
                   </div>
 
-                  {/* Legal Notice & Statements (英文區塊) */}
+                  {/* Legal Notice */}
                   <div className="mt-8 pt-6 border-t border-gray-700/50 text-xs text-gray-400 space-y-6 leading-relaxed">
                     <div>
                       <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
-                        Legal Notice
+                        {legal.notice_title}
                       </h4>
-                      <p className="mb-2">
-                        KESH LUXURY CO. LTD. is a{" "}
-                        <span className="font-bold text-gray-200">
-                          duly incorporated and legally registered limited
-                          company in Taiwan
-                        </span>
-                        , operating in full compliance with applicable Taiwanese
-                        commercial and e-commerce regulations.
-                      </p>
+                      <p
+                        className="mb-2"
+                        dangerouslySetInnerHTML={{ __html: legal.notice_p1 }}
+                      />
                       <p>
-                        Business Registration No.:{" "}
+                        {legal.notice_p2}{" "}
                         <span className="font-bold text-gray-200">
-                          60329329
+                          {legal.notice_p2_val}
                         </span>
                       </p>
                       <p>
-                        Registered in:{" "}
+                        {legal.notice_p3}{" "}
                         <span className="font-bold text-gray-200">
-                          Taichung, Taiwan
+                          {legal.notice_p3_val}
                         </span>
                       </p>
-                      <p className="mt-2">
-                        The company is committed to{" "}
-                        <span className="font-bold text-gray-200">
-                          lawful operations, transparent transactions, and
-                          professional standards
-                        </span>{" "}
-                        in all aspects of its business.
-                      </p>
+                      <p
+                        className="mt-2"
+                        dangerouslySetInnerHTML={{ __html: legal.notice_p4 }}
+                      />
                     </div>
 
                     <div>
                       <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
-                        Authenticity Guarantee
+                        {legal.auth_title}
                       </h4>
-                      <p>
-                        KESH operates as an{" "}
-                        <span className="font-bold text-gray-200">
-                          independent luxury boutique
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1">
-                        All items offered for sale are{" "}
-                        <span className="font-bold text-gray-200">
-                          guaranteed 100% authentic
-                        </span>
-                        .
-                      </p>
-                      <p className="mt-1">
-                        Prior to official listing, each item undergoes a{" "}
-                        <span className="font-bold text-gray-200">
-                          rigorous multi-stage authentication process
-                        </span>{" "}
-                        and comprehensive condition assessment conducted by
-                        qualified professionals to ensure accuracy, integrity,
-                        and quality representation.
-                      </p>
+                      <p dangerouslySetInnerHTML={{ __html: legal.auth_p1 }} />
+                      <p
+                        className="mt-1"
+                        dangerouslySetInnerHTML={{ __html: legal.auth_p2 }}
+                      />
+                      <p
+                        className="mt-1"
+                        dangerouslySetInnerHTML={{ __html: legal.auth_p3 }}
+                      />
                     </div>
 
                     <div>
                       <h4 className="font-bold text-[#F6F1EB] text-[16px] mb-2">
-                        Non-Affiliation Statement
+                        {legal.nonaff_title}
                       </h4>
-                      <p>
-                        KESH LUXURY CO. LTD. is an independent entity and is{" "}
-                        <span className="font-bold text-gray-200">
-                          not affiliated with, endorsed by, or an authorized
-                          retailer
-                        </span>{" "}
-                        of the brands featured on this website.
-                      </p>
-                      <p className="mt-1">
-                        All trademarks, brand names, and intellectual property
-                        rights remain the property of their respective owners.
-                      </p>
+                      <p
+                        dangerouslySetInnerHTML={{ __html: legal.nonaff_p1 }}
+                      />
+                      <p className="mt-1">{legal.nonaff_p2}</p>
                     </div>
                   </div>
                 </FadeInSection>
-                {/* --- 公司登記資訊結束 --- */}
 
                 <Link
                   href="/contact"
-                  className="
-                    group relative inline-flex items-center justify-center mt-4
-                    h-14 w-[14rem] border-white border-1 [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    text-[16px] tracking-widest
-                  "
+                  className="group relative text-stone-400 inline-flex hover:bg-white hover:text-stone-800 duration-500 items-center justify-center mt-4 h-14 w-[14rem] border-white border-1 text-[16px] tracking-widest"
                 >
-                  <span
-                    className="
-                      absolute inset-0 border border-[#f6f1eb]
-                      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    "
-                  />
-                  <span
-                    className="
-                      relative z-10 w-full h-full
-                      inline-flex items-center justify-center
-                      bg-[#f6f1eb] text-[#1a1a1a]
-                      transition-colors duration-300
-                      group-hover:bg-[#1a1a1a] group-hover:text-[#f6f1eb]
-                      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    "
-                  >
-                    CONTACT
-                  </span>
+                  {ui.btn_contact}
                 </Link>
                 <FadeInSection delay={0.5}>
                   <div className="h-[1px] w-20 bg-gray-200 mt-8 mb-4"></div>
@@ -361,8 +283,7 @@ export default function About() {
             </div>
           </section>
 
-          {/* ... (其餘下方程式碼保持不變) ... */}
-
+          {/* 過渡大圖 */}
           <div className="w-full h-screen relative">
             <div className="txt absolute w-[400px] z-50 left-[13%] top-1/2 -translate-y-1/2">
               <img
@@ -380,25 +301,22 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2">
-            {/* LEFT */}
+            {/* 代購區塊 */}
             <div className="relative w-full min-h-[70vh] lg:h-screen">
               <div className="absolute bg-black/50 w-full h-full z-20 left-0 top-0"></div>
               <div className="relative lg:sticky z-50 pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[200px]">
                 <div className="mt-5 text-right w-2/3 lg:w-1/2">
                   <h3 className="text-white text-[32px] lg:text-[42px]">
-                    Specific Style Sourcing
+                    {sections.sourcing_en}
                   </h3>
                   <h3 className="text-white text-[20px] lg:text-[28px]">
-                    指定款式代購｜
+                    {sections.sourcing_ch}
                   </h3>
                   <p className="text-white text-[14px] leading-relaxed mt-2">
-                    夢幻清單不再遙不可及。KÉSH de¹
-                    啟動全球頂級買手網絡，無論是專櫃缺貨爆款或稀有限量聯名，我們都能跨越國界精準代尋。您只需許下心願，我們便將那份獨一無二的驚喜帶到您手中。
+                    {sections.sourcing_desc}
                   </p>
                 </div>
               </div>
-
-              {/* IMAGE */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
                 <ParallaxImage
                   src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg"
@@ -407,29 +325,23 @@ export default function About() {
               </div>
             </div>
 
-            {/* RIGHT - 專業鑑定區塊 */}
+            {/* 鑑定區塊 */}
             <div className="relative w-full min-h-[70vh] lg:h-screen">
               <div className="absolute bg-black/50 w-full h-full z-20 left-0 top-0"></div>
-              {/* TEXT */}
               <div className="relative z-50 lg:sticky pr-4 lg:pr-8 w-full flex justify-end top-[200px] h-auto lg:h-[250px]">
                 <div className="mt-5 text-right w-2/3 lg:w-1/2">
                   <h3 className="text-white text-[32px] lg:text-[42px]">
-                    Professional Authentication
+                    {sections.auth_en}
                   </h3>
                   <h3 className="text-white text-[20px] lg:text-[28px]">
-                    專業鑑定｜
+                    {sections.auth_ch}
                   </h3>
-                  <p className="text-white text-[14px] leading-relaxed mt-2">
-                    每一件商品，皆經兩位合格鑑定師人工鑑定，
-                    <br className="hidden lg:block" />
-                    搭配 Entrupy 專業系統雙重驗證，
-                    <br className="hidden lg:block" />
-                    通過層層把關，才會正式出貨。
-                  </p>
+                  <p
+                    className="text-white text-[14px] leading-relaxed mt-2"
+                    dangerouslySetInnerHTML={{ __html: sections.auth_desc }}
+                  />
                 </div>
               </div>
-
-              {/* IMAGE */}
               <div className="absolute top-0 left-0 w-full h-full overflow-hidden will-change-transform">
                 <ParallaxImage
                   src="/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_3.jpg"
@@ -440,7 +352,7 @@ export default function About() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 mt-12 lg:mt-20 gap-10 lg:gap-0">
-            {/* Left: Images */}
+            {/* 左側圖片群 */}
             <div className="space-y-10">
               <div className="relative w-full overflow-hidden rounded-2xl">
                 <div className="relative h-[60vh] min-h-[420px] lg:h-screen">
@@ -454,7 +366,6 @@ export default function About() {
                   </div>
                 </div>
               </div>
-
               <div className="space-y-10">
                 <div className="relative w-full">
                   <div className="relative h-[420px] sm:h-[480px] lg:h-[520px]">
@@ -468,7 +379,6 @@ export default function About() {
                     </div>
                   </div>
                 </div>
-
                 <div className="relative w-full">
                   <div className="relative h-[420px] sm:h-[480px] lg:h-[520px]">
                     <div className="absolute inset-0 flex justify-center">
@@ -484,60 +394,22 @@ export default function About() {
               </div>
             </div>
 
-            {/* Right: Text */}
+            {/* 右側文字 */}
             <div className="relative">
-              <div
-                className="
-                  flex flex-col justify-end
-                  px-4 sm:px-6 lg:pl-10 lg:pr-8
-                  lg:sticky lg:top-[200px]
-                  h-auto lg:h-[300px]
-                "
-              >
-                <h2 className="text-[28px] sm:text-[36px] lg:text-[42px] font-light text-[#F6F1EB] leading-snug">
-                  成為連結精品收藏、
-                  <br className="hidden sm:block" />
-                  品味生活與長期價值的橋樑。
-                </h2>
-
-                <p
-                  className="
-                    text-[#F6F1EB] mb-5 font-light leading-loose tracking-wider
-                    text-[14px] sm:text-[16px]
-                    mt-4 sm:mt-5
-                    w-full max-w-prose
-                  "
-                >
-                  我們專注於 Hermès、Chanel、Dior、Louis Vuitton 等頂級品牌。
-                  從來源確認、細節檢查、品況分級到配件整理，每件商品皆以嚴謹標準呈現，讓每一位貴賓能安心收藏精品之美。
-                  每一處細節的堅持，都是為了讓這份美好能夠延續。
+              <div className="flex flex-col justify-end px-4 sm:px-6 lg:pl-10 lg:pr-8 lg:sticky lg:top-[200px] h-auto lg:h-[300px]">
+                <h2
+                  className="text-[28px] sm:text-[36px] lg:text-[42px] font-light text-[#F6F1EB] leading-snug"
+                  dangerouslySetInnerHTML={{ __html: sections.vision_title }}
+                />
+                <p className="text-[#F6F1EB] mb-5 font-light leading-loose tracking-wider text-[14px] sm:text-[16px] mt-4 sm:mt-5 w-full max-w-prose">
+                  {sections.vision_desc}
                 </p>
+
                 <Link
-                  href="/category"
-                  className="
-                    group relative inline-flex items-center justify-center
-                    h-14 w-[14rem] border-white border-1 [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    text-[16px] tracking-widest
-                  "
+                  href="/contact"
+                  className="group relative py-5 text-stone-400 inline-flex hover:bg-white hover:text-stone-800 duration-500 items-center justify-center mt-4 h-14 w-[14rem] border-white border-1 text-[16px] tracking-widest"
                 >
-                  <span
-                    className=" 
-                      absolute inset-0 border border-[#f6f1eb]
-                      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    "
-                  />
-                  <span
-                    className="
-                      relative z-10 w-full h-full
-                      inline-flex items-center justify-center
-                      bg-[#f6f1eb] text-[#1a1a1a]
-                      transition-colors duration-300
-                      group-hover:bg-[#1a1a1a] group-hover:text-[#f6f1eb]
-                      [clip-path:polygon(0.8rem_0,calc(100%-0.8rem)_0,100%_0.8rem,100%_calc(100%-0.8rem),calc(100%-0.8rem)_100%,0.8rem_100%,0_calc(100%-0.8rem),0_0.8rem)]
-                    "
-                  >
-                    MORE
-                  </span>
+                  {ui.btn_more}
                 </Link>
               </div>
             </div>
@@ -550,40 +422,19 @@ export default function About() {
               <div>
                 <FadeInSection>
                   <h4 className="text-2xl font-serif mb-10 border-b border-gray-200 pb-4">
-                    Service Spirit{" "}
+                    {sections.spirit_en}{" "}
                     <span className="text-[16px] font-sans text-gray-400 ml-2">
-                      服務精神
+                      {sections.spirit_ch}
                     </span>
                   </h4>
                   <ul className="space-y-6">
-                    {[
-                      {
-                        en: "Honesty",
-                        ch: "誠實透明",
-                        desc: "資訊公開，無隱藏細節",
-                      },
-                      {
-                        en: "Respect",
-                        ch: "尊重每一位貴賓",
-                        desc: "以禮相待，重視您的需求",
-                      },
-                      {
-                        en: "Professional",
-                        ch: "專業精準",
-                        desc: "嚴格鑑定，精確分級",
-                      },
-                      {
-                        en: "Efficiency",
-                        ch: "安靜且高效率",
-                        desc: "不打擾的溫柔，最迅速的服務",
-                      },
-                    ].map((item, idx) => (
+                    {spiritItems.map((item, idx) => (
                       <li
                         key={idx}
                         className="group flex items-baseline justify-between hover:bg-gray-50 px-4 py-3 -mx-4 rounded transition-colors"
                       >
                         <div>
-                          <span className="font-serif text-lg text-gray-900 mr-3">
+                          <span className="font-serif text-lg text-[#ef4628] mr-3">
                             {item.en}
                           </span>
                           <span className="text-[16px] text-gray-500">
@@ -603,29 +454,13 @@ export default function About() {
               <div>
                 <FadeInSection delay={0.2}>
                   <h4 className="text-2xl font-serif mb-10 border-b border-gray-200 pb-4">
-                    Our Guarantee{" "}
+                    {sections.guarantee_en}{" "}
                     <span className="text-[16px] font-sans text-gray-400 ml-2">
-                      三大保證
+                      {sections.guarantee_ch}
                     </span>
                   </h4>
                   <div className="grid gap-6">
-                    {[
-                      {
-                        title: "正品保證",
-                        sub: "Authenticity",
-                        desc: "兩位鑑定師人工審核 + Entrupy 科技驗證，杜絕任何仿冒疑慮。",
-                      },
-                      {
-                        title: "透明定價",
-                        sub: "Transparent",
-                        desc: "拒絕模糊地帶，所有品況、配件與售價皆清楚公開。",
-                      },
-                      {
-                        title: "快速服務",
-                        sub: "Fast Service",
-                        desc: "線上初估 24 小時內回覆、現場成交當日撥款，不浪費您的寶貴時間。",
-                      },
-                    ].map((item, idx) => (
+                    {guaranteeItems.map((item, idx) => (
                       <div
                         key={idx}
                         className="bg-gray-50 p-6 rounded-sm border border-gray-100 hover:shadow-md transition-shadow"
@@ -652,4 +487,13 @@ export default function About() {
       </div>
     </ReactLenis>
   );
+}
+
+// --- SSG: 服務端注入翻譯 ---
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "zh-TW", ["common"])),
+    },
+  };
 }

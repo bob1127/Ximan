@@ -1,13 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-// 🔥 修正：Pages Router 必須使用 next/router
+import Head from "next/head"; // 🔥 補上 Head 以支援 SEO / 網頁標題
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, ArrowLeft, MailCheck } from "lucide-react";
-
-// 🔥 引入多語系套件
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -47,7 +45,7 @@ const Spinner = ({ colorClass = "border-gray-400" }) => (
 
 export default function Login() {
   const router = useRouter();
-  const { t } = useTranslation("common"); // 🔥 啟用翻譯
+  const { t } = useTranslation("common");
 
   const [view, setView] = useState("login");
   const [loading, setLoading] = useState(false);
@@ -84,7 +82,7 @@ export default function Login() {
         password: formData.password,
       });
 
-      if (result?.error) throw new Error(t("login.error_invalid")); // 🔥 動態錯誤訊息
+      if (result?.error) throw new Error(t("login.error_invalid"));
       router.push("/");
     } catch (error) {
       setErrorMsg(error.message);
@@ -106,7 +104,7 @@ export default function Login() {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || t("login.reset_error")); // 🔥 動態錯誤訊息
+        throw new Error(errData.message || t("login.reset_error"));
       }
 
       setView("email-sent");
@@ -118,246 +116,260 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen bg-white flex flex-col justify-center items-center pt-24 pb-24 px-6 overflow-hidden">
-      <div className="w-full max-w-[480px] relative">
-        <AnimatePresence mode="wait">
-          {/* ================= 登入畫面 ================= */}
-          {view === "login" && (
-            <motion.div
-              key="login"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
-                  {t("login.title")}
-                </h1>
-                <p className="text-gray-500 text-sm">{t("login.subtitle")}</p>
-              </div>
+    <>
+      <Head>
+        <title>{t("login.title")} | KÉSH de¹</title>
+      </Head>
 
-              {/* 社交登入 */}
-              <div className="flex flex-col gap-3 mb-8">
-                <button
-                  onClick={() => handleSocialLogin("google")}
-                  className="flex items-center justify-center py-3.5 border border-gray-300 hover:border-black hover:bg-gray-50 transition-all rounded-sm group relative"
-                >
-                  <div className="absolute left-6">
-                    <GoogleIcon />
-                  </div>
-                  <span className="text-sm font-bold text-gray-700 group-hover:text-black uppercase tracking-wide">
-                    {t("login.google")}
-                  </span>
-                </button>
-                <button
-                  onClick={() => handleSocialLogin("facebook")}
-                  className="flex items-center justify-center py-3.5 border border-gray-300 hover:border-[#1877F2] hover:text-[#1877F2] transition-all rounded-sm group relative"
-                >
-                  <div className="absolute left-6">
-                    <FacebookIcon />
-                  </div>
-                  <span className="text-sm font-bold text-gray-700 group-hover:text-[#1877F2] uppercase tracking-wide">
-                    {t("login.facebook")}
-                  </span>
-                </button>
-              </div>
-
-              <div className="relative mb-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase tracking-widest">
-                  <span className="bg-white px-4 text-gray-400">
-                    {t("login.or_email")}
-                  </span>
-                </div>
-              </div>
-
-              {/* 表單登入 */}
-              <form onSubmit={handleCredentialsLogin} className="space-y-5">
-                {errorMsg && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs text-center rounded">
-                    {errorMsg}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                    {t("login.email_label")}
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
-                    placeholder={t("login.email_placeholder")}
-                  />
+      <main className="min-h-screen bg-white flex flex-col justify-center items-center pt-24 pb-24 px-6 overflow-hidden">
+        <div className="w-full max-w-[480px] relative">
+          <AnimatePresence mode="wait">
+            {/* ================= 登入畫面 ================= */}
+            {view === "login" && (
+              <motion.div
+                key="login"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
+                    {t("login.title")}
+                  </h1>
+                  <p className="text-gray-500 text-sm">{t("login.subtitle")}</p>
                 </div>
 
-                <div>
-                  <div className="flex justify-between mb-1.5">
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
-                      {t("login.password_label")}
+                {/* 社交登入 */}
+                <div className="flex flex-col gap-3 mb-8">
+                  <button
+                    onClick={() => handleSocialLogin("google")}
+                    className="flex items-center justify-center py-3.5 border border-gray-300 hover:border-black hover:bg-gray-50 transition-all rounded-sm group relative"
+                  >
+                    <div className="absolute left-6">
+                      <GoogleIcon />
+                    </div>
+                    <span className="text-sm font-bold text-gray-700 group-hover:text-black uppercase tracking-wide">
+                      {t("login.google")}
+                    </span>
+                  </button>
+                  <button
+                    onClick={() => handleSocialLogin("facebook")}
+                    className="flex items-center justify-center py-3.5 border border-gray-300 hover:border-[#1877F2] hover:text-[#1877F2] transition-all rounded-sm group relative"
+                  >
+                    <div className="absolute left-6">
+                      <FacebookIcon />
+                    </div>
+                    <span className="text-sm font-bold text-gray-700 group-hover:text-[#1877F2] uppercase tracking-wide">
+                      {t("login.facebook")}
+                    </span>
+                  </button>
+                </div>
+
+                <div className="relative mb-8">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-200"></div>
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase tracking-widest">
+                    <span className="bg-white px-4 text-gray-400">
+                      {t("login.or_email")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 表單登入 */}
+                <form onSubmit={handleCredentialsLogin} className="space-y-5">
+                  {errorMsg && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs text-center rounded">
+                      {errorMsg}
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                      {t("login.email_label")}
                     </label>
-                    <button
-                      type="button"
-                      onClick={() => setView("forgot-password")}
-                      className="text-[10px] text-gray-400 hover:text-black underline"
-                    >
-                      {t("login.forgot_password")}
-                    </button>
-                  </div>
-                  <div className="relative">
                     <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
+                      type="email"
+                      name="email"
                       required
-                      value={formData.password}
+                      value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm pr-12"
-                      placeholder={t("login.password_placeholder")}
+                      className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
+                      placeholder={t("login.email_placeholder")}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black p-1"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
                   </div>
+
+                  <div>
+                    <div className="flex justify-between mb-1.5">
+                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">
+                        {t("login.password_label")}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setView("forgot-password")}
+                        className="text-[10px] text-gray-400 hover:text-black underline"
+                      >
+                        {t("login.forgot_password")}
+                      </button>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        required
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm pr-12"
+                        placeholder={t("login.password_placeholder")}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black p-1"
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-[#ef4628] text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black transition-colors flex justify-center items-center"
+                  >
+                    {loading ? (
+                      <Spinner colorClass="border-white" />
+                    ) : (
+                      t("login.sign_in")
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-8 text-center text-sm text-gray-600">
+                  {t("login.no_account")}{" "}
+                  <Link
+                    href="/register"
+                    className="text-black font-bold underline underline-offset-4 hover:text-[#ef4628] transition-colors"
+                  >
+                    {t("login.register")}
+                  </Link>
                 </div>
+              </motion.div>
+            )}
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#ef4628] text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black transition-colors flex justify-center items-center"
-                >
-                  {loading ? (
-                    <Spinner colorClass="border-white" />
-                  ) : (
-                    t("login.sign_in")
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-8 text-center text-sm text-gray-600">
-                {t("login.no_account")}{" "}
-                <Link
-                  href="/register"
-                  className="text-black font-bold underline underline-offset-4 hover:text-[#ef4628] transition-colors"
-                >
-                  {t("login.register")}
-                </Link>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ================= 忘記密碼畫面 ================= */}
-          {view === "forgot-password" && (
-            <motion.div
-              key="forgot-password"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.3 }}
-            >
-              <button
-                onClick={() => setView("login")}
-                className="flex items-center text-sm text-gray-500 hover:text-black transition-colors mb-6 group"
+            {/* ================= 忘記密碼畫面 ================= */}
+            {view === "forgot-password" && (
+              <motion.div
+                key="forgot-password"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
               >
-                <ArrowLeft
-                  size={16}
-                  className="mr-2 group-hover:-translate-x-1 transition-transform"
-                />
-                {t("login.back_to_login")}
-              </button>
-
-              <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
-                  {t("login.reset_title")}
-                </h1>
-                <p className="text-gray-500 text-sm leading-relaxed">
-                  {t("login.reset_subtitle")}
-                </p>
-              </div>
-
-              <form onSubmit={handleForgotPasswordSubmit} className="space-y-6">
-                {resetErrorMsg && (
-                  <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs text-center rounded">
-                    {resetErrorMsg}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
-                    {t("login.email_label")}
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={resetEmail}
-                    onChange={(e) => setResetEmail(e.target.value)}
-                    className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
-                    placeholder={t("login.email_placeholder")}
+                <button
+                  onClick={() => setView("login")}
+                  className="flex items-center text-sm text-gray-500 hover:text-black transition-colors mb-6 group"
+                >
+                  <ArrowLeft
+                    size={16}
+                    className="mr-2 group-hover:-translate-x-1 transition-transform"
                   />
+                  {t("login.back_to_login")}
+                </button>
+
+                <div className="mb-8">
+                  <h1 className="text-3xl font-bold tracking-widest uppercase mb-3">
+                    {t("login.reset_title")}
+                  </h1>
+                  <p className="text-gray-500 text-sm leading-relaxed">
+                    {t("login.reset_subtitle")}
+                  </p>
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={resetLoading}
-                  className="w-full bg-black text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-[#ef4628] transition-colors flex justify-center items-center"
+                <form
+                  onSubmit={handleForgotPasswordSubmit}
+                  className="space-y-6"
                 >
-                  {resetLoading ? (
-                    <Spinner colorClass="border-white" />
-                  ) : (
-                    t("login.reset_btn")
+                  {resetErrorMsg && (
+                    <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs text-center rounded">
+                      {resetErrorMsg}
+                    </div>
                   )}
-                </button>
-              </form>
-            </motion.div>
-          )}
 
-          {/* ================= 信件已發送畫面 ================= */}
-          {view === "email-sent" && (
-            <motion.div
-              key="email-sent"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              className="text-center py-8"
-            >
-              <div className="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <MailCheck size={32} />
-              </div>
-              <h1 className="text-2xl font-bold tracking-widest uppercase mb-4">
-                {t("login.sent_title")}
-              </h1>
-              <p className="text-gray-500 text-sm leading-relaxed mb-8">
-                {t("login.sent_desc_1")} <br />
-                <span className="font-bold text-black">{resetEmail}</span>{" "}
-                <br />
-                {t("login.sent_desc_2")}
-              </p>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                      {t("login.email_label")}
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      className="w-full border border-gray-300 px-4 py-3 text-sm outline-none focus:border-black transition-colors rounded-sm"
+                      placeholder={t("login.email_placeholder")}
+                    />
+                  </div>
 
-              <button
-                onClick={() => setView("login")}
-                className="w-full border border-black text-black font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black hover:text-white transition-colors flex justify-center items-center"
+                  <button
+                    type="submit"
+                    disabled={resetLoading}
+                    className="w-full bg-black text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-[#ef4628] transition-colors flex justify-center items-center"
+                  >
+                    {resetLoading ? (
+                      <Spinner colorClass="border-white" />
+                    ) : (
+                      t("login.reset_btn")
+                    )}
+                  </button>
+                </form>
+              </motion.div>
+            )}
+
+            {/* ================= 信件已發送畫面 ================= */}
+            {view === "email-sent" && (
+              <motion.div
+                key="email-sent"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="text-center py-8"
               >
-                {t("login.back_to_login")}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </main>
+                <div className="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <MailCheck size={32} />
+                </div>
+                <h1 className="text-2xl font-bold tracking-widest uppercase mb-4">
+                  {t("login.sent_title")}
+                </h1>
+                <p className="text-gray-500 text-sm leading-relaxed mb-8">
+                  {t("login.sent_desc_1")} <br />
+                  <span className="font-bold text-black">
+                    {resetEmail}
+                  </span>{" "}
+                  <br />
+                  {t("login.sent_desc_2")}
+                </p>
+
+                <button
+                  onClick={() => setView("login")}
+                  className="w-full border border-black text-black font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-black hover:text-white transition-colors flex justify-center items-center"
+                >
+                  {t("login.back_to_login")}
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </main>
+    </>
   );
 }
 
-// 🔥 加上這段，Navbar 就會有正確翻譯了！
 export async function getStaticProps({ locale }) {
   return {
     props: {

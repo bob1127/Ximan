@@ -193,16 +193,16 @@ export const SlideTabsExample = () => {
           <div className="max-w-[1920px] mx-auto flex justify-between items-center px-4">
             <div className="flex gap-4">
               <a
-                href="tel:+886912345678"
+                href="tel:+886901055624"
                 className="flex items-center gap-2 hover:opacity-80"
               >
                 <Phone size={14} /> +886 912-345-678
               </a>
               <a
-                href="mailto:service@kesh.com"
+                href="mailto:contact@kesh-de1.com"
                 className="hidden sm:flex items-center gap-2 hover:opacity-80"
               >
-                <Mail size={14} /> service@kesh.com
+                <Mail size={14} /> contact@kesh-de1.com
               </a>
             </div>
             <div className="flex gap-4 divide-x divide-white/30">

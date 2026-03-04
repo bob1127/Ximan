@@ -2,6 +2,8 @@ import React from "react";
 import Head from "next/head";
 import { ReactLenis } from "@studio-freight/react-lenis";
 import { motion } from "framer-motion";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -9,11 +11,10 @@ const fadeInUp = {
 };
 
 export default function Shipping() {
-  // --- 依照截圖設定 SEO ---
-  const pageTitle = "全球配送 | Worldwide Shipping";
-  // 注意：這裡包含了英文描述，這對 Google 抓取非常重要
-  const pageDesc =
-    "提供全球配送服務，並依目的地國家規定辦理相關清關流程。我們致力於確保配送安全與效率。We provide international shipping. Documentation is prepared in accordance with destination regulations. Delivery is handled securely and efficiently.";
+  const { t } = useTranslation("common"); // 🔥 載入 common 翻譯命名空間
+
+  const pageTitle = t("shipping.seo_title");
+  const pageDesc = t("shipping.seo_desc");
 
   return (
     <ReactLenis root>
@@ -35,14 +36,14 @@ export default function Shipping() {
             className="text-center mb-16"
           >
             <h1 className="text-3xl md:text-4xl font-serif font-medium mb-6 text-gray-900">
-              Worldwide Shipping
+              {t("shipping.title")}
             </h1>
             <p className="text-gray-500 font-light tracking-wider">
-              全球配送政策
+              {t("shipping.subtitle")}
             </p>
           </motion.div>
 
-          {/* 2. 中英文對照區塊 (呼應 SEO Description) */}
+          {/* 2. 中英文對照區塊 (排版風格保留) */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -50,25 +51,22 @@ export default function Shipping() {
             variants={fadeInUp}
             className="grid md:grid-cols-2 gap-10 mb-20 items-start"
           >
-            {/* 中文 */}
+            {/* 左側說明 */}
             <div>
-              <h3 className="text-lg font-medium mb-4">配送承諾</h3>
+              <h3 className="text-lg font-medium mb-4">
+                {t("shipping.commitment_title")}
+              </h3>
               <p className="text-gray-600 leading-loose text-justify">
-                KÉSH de¹
-                提供全球配送服務。無論您身在何處，我們都致力於確保每一件精品能安全、高效地送達您手中。我們與國際頂尖物流夥伴（DHL
-                / FedEx）合作，並依目的地國家規定協助辦理相關清關流程。
+                {t("shipping.commitment_desc")}
               </p>
             </div>
-            {/* 英文 (對應截圖中的英文描述) */}
+            {/* 右側說明 (原本的英文設計區塊) */}
             <div className="bg-gray-50 p-6 rounded-sm">
               <h3 className="text-lg font-medium mb-4 font-serif">
-                International Policy
+                {t("shipping.intl_policy_title")}
               </h3>
               <p className="text-gray-500 leading-loose text-sm font-light">
-                We provide international shipping services. Documentation is
-                prepared strictly in accordance with destination country
-                regulations. Delivery is handled securely and efficiently
-                through our premium logistics partners.
+                {t("shipping.intl_policy_desc")}
               </p>
             </div>
           </motion.div>
@@ -83,25 +81,29 @@ export default function Shipping() {
               variants={fadeInUp}
             >
               <h4 className="text-xl font-serif mb-4 text-black">
-                Delivery Time 配送時效
+                {t("shipping.delivery_time_title")}
               </h4>
               <ul className="grid md:grid-cols-2 gap-6">
                 <li className="flex flex-col p-4 border border-gray-100">
                   <span className="text-xs text-gray-400 uppercase tracking-wider mb-2">
-                    Domestic
+                    {t("shipping.domestic_label")}
                   </span>
-                  <span className="font-bold text-gray-900">台灣本島配送</span>
+                  <span className="font-bold text-gray-900">
+                    {t("shipping.domestic_title")}
+                  </span>
                   <span className="text-sm text-gray-500 mt-2">
-                    約 1 - 3 個工作天 (黑貓宅急便/專人配送)
+                    {t("shipping.domestic_desc")}
                   </span>
                 </li>
                 <li className="flex flex-col p-4 border border-gray-100">
                   <span className="text-xs text-gray-400 uppercase tracking-wider mb-2">
-                    International
+                    {t("shipping.intl_label")}
                   </span>
-                  <span className="font-bold text-gray-900">國際配送</span>
+                  <span className="font-bold text-gray-900">
+                    {t("shipping.intl_title")}
+                  </span>
                   <span className="text-sm text-gray-500 mt-2">
-                    亞洲約 3-5 天 / 歐美約 5-10 天 (DHL/FedEx)
+                    {t("shipping.intl_desc")}
                   </span>
                 </li>
               </ul>
@@ -117,17 +119,19 @@ export default function Shipping() {
             >
               <div className="grid md:grid-cols-2 gap-10">
                 <div>
-                  <h4 className="text-lg font-medium mb-3">全額保險運送</h4>
+                  <h4 className="text-lg font-medium mb-3">
+                    {t("shipping.insurance_title")}
+                  </h4>
                   <p className="text-sm font-light opacity-80 leading-relaxed">
-                    為確保高單價商品安全，所有寄出包裹皆投保全額運輸保險。若在運送過程中有任何遺失或損壞，將由保險公司與我們全權負責，保障您的資產安全。
+                    {t("shipping.insurance_desc")}
                   </p>
                 </div>
                 <div>
                   <h4 className="text-lg font-medium mb-3">
-                    關稅說明 (Duties & Taxes)
+                    {t("shipping.duties_title")}
                   </h4>
                   <p className="text-sm font-light opacity-80 leading-relaxed">
-                    國際運送產生之進口關稅與當地稅費，需由收件人（買家）自行負擔。我們會依據法規如實申報，若您有特殊報關需求，請於下單前與客服聯繫確認。
+                    {t("shipping.duties_desc")}
                   </p>
                 </div>
               </div>
@@ -137,4 +141,13 @@ export default function Shipping() {
       </div>
     </ReactLenis>
   );
+}
+
+// --- SSG: 服務端注入翻譯 ---
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "zh-TW", ["common"])),
+    },
+  };
 }
