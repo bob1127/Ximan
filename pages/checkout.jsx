@@ -214,16 +214,14 @@ export default function CheckoutPage() {
   if (cartItems.length === 0)
     return <div className="p-20 text-center">{t("checkout.empty_cart")}</div>;
 
-  // 🔥 確保金鑰存在，如果真的沒有就用 test 替代，避免崩潰
-  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "test";
+  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "sb"; // 如果抓不到給預設 sandbox 以免崩潰
 
   return (
-    /* 🔥 1. 將 Provider 移到最外層，確保腳本能在一進網頁時就安全載入 */
+    /* 🔥 1. 將 Provider 移到最外層，這是正式版最標準的 options 設定 */
     <PayPalScriptProvider
       options={{
-        clientId: paypalClientId,
-        "client-id": paypalClientId, // 雙重保險，避免套件版本衝突
-        currency: "TWD", // 🌟 統一改為新台幣 TWD 結帳
+        clientId: paypalClientId, // 使用標準駝峰命名
+        currency: "TWD", // 統一使用新台幣結帳
         intent: "capture",
       }}
     >
@@ -412,6 +410,21 @@ export default function CheckoutPage() {
                   />
                   <span className="font-bold flex items-center gap-2">
                     PayPal / 國際信用卡
+                    <svg
+                      className="h-4 w-auto shrink-0"
+                      viewBox="0 0 124 33"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M46.211 32.545H39.22c-1.12 0-2.062-.81-2.227-1.916L32.188 1.916C32.023.81 32.868 0 33.987 0h12.564c2.613 0 4.887.892 6.554 2.58 1.637 1.657 2.457 4.025 2.373 6.848-.198 6.438-4.223 9.65-10.428 9.65h-2.31c-.56 0-1.031.405-1.114.958l-1.39 8.647c-.126.79-1.077 1.432-1.921 1.432h-.826zm-3.666-30.01l-4.184 26.046h5.811l2.452-15.263c.126-.79 1.077-1.432 1.92-1.432h1.666c4.674 0 7.828-2.39 7.978-7.306.06-2.033-.564-3.766-1.782-4.996-1.258-1.272-3.053-1.92-5.184-1.92H42.545zM83.473 32.545h-6.992c-1.12 0-2.062-.81-2.227-1.916L69.45 1.916C69.285.81 70.13 0 71.25 0h12.564c2.613 0 4.887.892 6.554 2.58 1.637 1.657 2.457 4.025 2.373 6.848-.198 6.438-4.223 9.65-10.428 9.65h-2.31c-.56 0-1.031.405-1.114.958l-1.39 8.647c-.125.79-1.076 1.432-1.92 1.432h-.826zm-3.665-30.01L75.624 28.58h5.811l2.451-15.263c.126-.79 1.077-1.432 1.921-1.432h1.666c4.674 0 7.828-2.39 7.978-7.306.06-2.033-.564-3.766-1.782-4.996-1.258-1.272-3.053-1.92-5.184-1.92H79.808z"
+                        fill="#003087"
+                      />
+                      <path
+                        d="M123.957 0v2.535h-3.633v9.068h-2.738V2.535h-3.63V0h10.001z"
+                        fill="#003087"
+                      />
+                    </svg>
                   </span>
                 </label>
               </div>
@@ -500,7 +513,7 @@ export default function CheckoutPage() {
                       }
                     }}
                     onError={(err) => {
-                      console.log("PayPal 載入或付款被取消:", err);
+                      console.log("PayPal 載入或付款發生錯誤或被取消:", err);
                     }}
                   />
                 </div>
