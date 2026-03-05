@@ -585,6 +585,7 @@
   },
   "checkout": {
     "empty_cart": "Your cart is empty",
+    "paypal_success": "PayPal payment successful! Order created.",
     "title": "Checkout",
     "subtitle": "KÉSH de¹ Secure Payment (PayUni)",
     "contact_info": "Contact Information",

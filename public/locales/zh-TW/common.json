@@ -603,6 +603,7 @@
     "shipping_address": "Shipping Address",
     "name_placeholder": "收件人姓名",
     "phone_placeholder": "手機號碼",
+    "paypal_success": "PayPal 付款成功！訂單已建立。",
     "cities": {
       "taipei": "台北市",
       "new_taipei": "新北市",
@@ -845,4 +846,5 @@
       "btn_understand": "I Understand"
     }
   }
+  
 }

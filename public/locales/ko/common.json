@@ -587,6 +587,7 @@
   },
   "checkout": {
     "empty_cart": "장바구니가 비어 있습니다",
+    "paypal_success": "PayPal 결제가 완료되었습니다! 주문이 생성되었습니다.",
     "title": "Checkout",
     "subtitle": "KÉSH de¹ 안전 결제 (PayUni)",
     "contact_info": "Contact Information",
