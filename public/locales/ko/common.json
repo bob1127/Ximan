@@ -679,6 +679,170 @@
     "error_send_failed": "발송 실패",
     "error_server_format": "서버 응답 형식 오류",
     "error_register_failed": "회원가입 실패"
+  },
+  "order_lookup": {
+    "title": "주문 조회",
+    "subtitle": "회원가입 없이도 주문 상태를 조회할 수 있습니다 (주문 번호와 이메일을 입력해주세요)",
+    "form_order_id_label": "주문 번호",
+    "form_order_id_placeholder": "예: 124",
+    "form_email_label": "주문 이메일",
+    "form_email_placeholder": "예: name@gmail.com",
+    "form_btn_loading": "조회 중...",
+    "form_btn_submit": "주문 조회",
+    "form_privacy_note": "개인정보 보호를 위해 '주문 번호'와 '주문 이메일'을 모두 입력해야 조회할 수 있습니다.",
+    "err_empty": "주문 번호와 주문 이메일을 모두 입력해주세요.",
+    "err_fetch": "조회에 실패했습니다. 나중에 다시 시도해주세요.",
+    "err_system": "시스템 오류입니다. 나중에 다시 시도해주세요.",
+    "result_title": "주문 상세 정보",
+    "result_status": "주문 상태",
+    "result_payment": "결제 방법",
+    "result_total": "총 결제 금액",
+    "result_items_title": "상품 상세",
+    "result_qty": "수량: ",
+    "result_subtotal": "소계",
+    "result_shipping_title": "배송 정보",
+    "result_recipient": "수령인",
+    "result_city": "도시",
+    "result_shipping_privacy": "(개인정보 보호를 위해 전체 주소는 여기에 표시되지 않습니다.)"
+  },
+  "shopping_guide": {
+    "page": {
+      "seo_title": "쇼핑 안내 | KÉSH de¹",
+      "title": "Shopping Guide",
+      "subtitle_desktop": "Please read before buying",
+      "subtitle_mobile": "쇼핑 안내 및 이용 약관",
+      "footer_note": "KÉSH de¹를 선택해 주셔서 감사합니다"
+    },
+    "sections": [
+      {
+        "id": "shopping-notes",
+        "title": "쇼핑 안내",
+        "enTitle": "Shopping Notes",
+        "content_html": "<div class=\"space-y-4\"><p>KÉSH de¹ Luxury에 오신 것을 환영합니다. 양측의 권리를 보호하기 위해 구매 전 다음 안내 사항을 주의 깊게 읽어 주시기 바랍니다. 결제 시 본 사이트의 모든 약관에 동의한 것으로 간주됩니다.</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>KÉSH de¹의 모든 상품은 실물 촬영됩니다. 모니터 설정에 따라 약간의 색상 차이가 있을 수 있으므로 실제 상품 색상을 기준으로 합니다.</li><li>사이즈는 수동으로 측정되며 1-2cm의 오차가 있을 수 있으며 이는 정상 범위입니다.</li><li>주문 완료 후 <strong>24시간 이내</strong>에 결제를 완료해 주세요. 시간 초과 시 주문이 자동으로 취소됩니다.</li><li>국내 택배 및 매장 수령 서비스를 제공합니다. 결제 확인 후 영업일 기준 1-3일 이내에 발송됩니다.</li></ul></div>"
+      },
+      {
+        "id": "authenticity",
+        "title": "정품 보장",
+        "enTitle": "Authenticity",
+        "content_html": "<div class=\"space-y-4\"><p class=\"font-medium text-black\">KÉSH de¹는 100% 정품만을 판매할 것을 약속합니다.</p><p>전문 감정팀을 보유하고 있으며 제3자 권위 기관(예: Entrupy)을 통해 이중 검증을 진행합니다. 구매하신 상품이 공신력 있는 2개 이상의 제3자 감정 기관에서 가품으로 판명될 경우(서면 보고서 제출 필요), <strong>관련 검사 비용을 포함하여 전액 환불해 드릴 것을 약속합니다.</strong></p><p class=\"text-sm text-gray-500 mt-2\">* 권리를 보호하기 위해 모든 구매 증빙 자료와 상품 부속품을 보관해 주십시오.</p></div>"
+      },
+      {
+        "id": "grading",
+        "title": "상품 상태 등급",
+        "enTitle": "Condition Standards",
+        "intro": "중고 명품의 특성상 상품 상태를 정확하게 파악하실 수 있도록 엄격한 상태 등급 기준을 마련했습니다:",
+        "grades": [
+          { "rank": "S", "label": "미사용 새 제품 / Unused", "desc": "완전한 포장 및 부속품이 포함된 미사용 새 제품입니다. 선물용으로 적합합니다." },
+          { "rank": "A", "label": "최상급 / Mint", "desc": "사용 흔적을 거의 찾아볼 수 없으며 약간의 보관 흔적만 있는 전반적으로 매우 훌륭한 상태입니다." },
+          { "rank": "AB", "label": "우수함 / Excellent", "desc": "가벼운 사용감(예: 하드웨어의 미세한 스크래치, 모서리의 아주 가벼운 마모)이 있으나 전체적인 외관은 여전히 아름답습니다." },
+          { "rank": "B", "label": "사용감 있음 / Good", "desc": "눈에 띄는 사용 흔적, 긁힘 또는 변색이 있으나 정상적인 사용에는 지장이 없으며 가격적인 이점이 큽니다." }
+        ]
+      },
+      {
+        "id": "return-policy",
+        "title": "교환 및 반품 정책",
+        "enTitle": "Return Policy",
+        "content_html": "<div class=\"space-y-4\"><p>대만 소비자 보호법에 따라 중고 상품(기업이 대량 생산하여 판매하는 새 제품 제외)은 <strong>7일 무조건 반품 기간이 적용되지 않습니다</strong>.</p><p>단, 다음의 경우 무조건 반품을 허용합니다:</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>제3자 감정 결과 가품으로 판명된 경우(정품 보장 조항 참조).</li><li>수령한 상품이 웹사이트의 설명이나 사진과 중대한 차이가 있는 경우(예: S등급으로 표기되었으나 눈에 띄는 파손이 있는 경우).</li></ul><p class=\"mt-4 text-gray-500 text-sm\">* 개인적인 사유(예: 단순 변심, 사이즈 불일치, 색상 차이)로 반품을 원하실 경우 상품 수령 후 24시간 이내에 고객 센터로 문의해 주시면 '위탁 판매' 형식으로 전환하여 처리해 드립니다.</p></div>"
+      },
+      {
+        "id": "privacy",
+        "title": "개인정보 처리방침",
+        "enTitle": "Privacy Policy",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>KÉSH de¹는 고객님의 개인정보를 매우 중요하게 생각합니다. 당사가 수집하는 개인정보(이름, 전화번호, 주소, 이메일 등)는 주문 처리, 배송 및 회원 서비스에만 사용되며 관련 없는 제3자에게 유출, 판매 또는 제공되지 않습니다.</p><p>본 웹사이트는 SSL 암호화 기술을 적용하여 거래의 안전을 보호하고 있으므로 안심하고 KÉSH de¹에서 쇼핑하실 수 있습니다.</p></div>"
+      },
+      {
+        "id": "terms",
+        "title": "이용 약관",
+        "enTitle": "Terms of Service",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>본 웹사이트 서비스를 이용함으로써 귀하는 본 약관에 동의하는 것으로 간주됩니다. KÉSH de¹는 언제든지 본 약관을 수정할 권리를 보유하며, 수정된 약관은 개별 통지 없이 웹사이트에 공지됩니다.</p><p>만 20세 미만인 경우, 법정 대리인과 함께 본 약관을 읽은 후에만 웹사이트 서비스를 이용할 수 있습니다.</p></div>"
+      }
+    ]
+  },
+  "privacy": {
+    "page": {
+      "seo_title": "개인정보 처리방침 | KÉSH de¹",
+      "seo_desc": "KÉSH de¹ Luxury 개인정보 처리방침.",
+      "title": "개인정보 처리방침",
+      "last_updated": "최근 업데이트: "
+    },
+    "sections": [
+      {
+        "title": "1. 소개",
+        "content_html": "<p class=\"mb-2\">KESH LUXURY CO., LTD(이하 \"당사\")가 운영하는 KÉSH de¹(이하 \"본 웹사이트\")에 오신 것을 환영합니다. 당사는 귀하의 개인정보를 매우 중요하게 생각하며 이를 보호하기 위해 최선을 다하고 있습니다. 본 개인정보 처리방침은 당사가 귀하의 정보를 수집, 사용, 공개 및 보호하는 방법을 설명합니다.</p><p>본 웹사이트의 서비스(상품 탐색, 회원 가입, 구매 대행 또는 위탁 서비스 등을 포함하되 이에 국한되지 않음)를 이용함은 본 방침에 동의함을 의미합니다.</p>"
+      },
+      {
+        "title": "2. 수집하는 개인정보",
+        "content_html": "<p class=\"mb-2\">완벽한 명품 거래 및 감정 서비스를 제공하기 위해 다음 유형의 데이터를 수집할 수 있습니다:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>개인 식별 정보:</strong> 이름, 이메일 주소, 전화번호, 생년월일(회원 혜택용).</li><li><strong>거래 및 배송 정보:</strong> 배송지 주소, 청구지 주소, 신용카드 정보(암호화된 결제 게이트웨이를 통해서만 처리되며 당사는 카드 번호를 저장하지 않음), 구매 내역.</li><li><strong>위탁 및 감정 정보:</strong> 위탁 서비스를 이용할 경우 규정 준수 및 대금 지급을 위해 신분증 사본이나 은행 계좌 정보가 필요할 수 있습니다.</li><li><strong>디지털 발자국:</strong> IP 주소, 브라우저 유형, 기기 정보, 쿠키 및 사용 행동 데이터.</li></ul>"
+      },
+      {
+        "title": "3. 정보 이용 목적",
+        "content_html": "<p class=\"mb-2\">수집된 정보는 다음 목적으로 사용됩니다:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>주문, 구매 대행 요청 및 반품 처리.</li><li>상품 감정 절차의 기록 및 문서화.</li><li>고객 서비스 제공 및 문의에 대한 답변.</li><li>회원 전용 혜택, 신상품 알림 또는 뉴스레터 발송(언제든지 구독 취소 가능).</li><li>웹사이트 경험 최적화 및 사기 방지.</li></ul>"
+      },
+      {
+        "title": "4. 정보 공유 및 제3자 제공",
+        "content_html": "<p class=\"mb-2\">당사는 법률에서 요구하는 경우를 제외하고 귀하의 개인정보를 제3자에게 판매하지 않습니다. 단, 다음과 같은 필수적인 상황에서는 신뢰할 수 있는 파트너와 귀하의 정보 일부를 공유할 수 있습니다:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>물류 파트너:</strong> 상품 배송을 위해 택배사에 이름, 전화번호, 주소가 제공됩니다.</li><li><strong>결제 서비스 제공자:</strong> 신용카드 또는 모바일 결제 거래 처리.</li><li><strong>시스템 유지보수 업체:</strong> 웹사이트 운영 및 기술 지원을 돕는 서비스 제공자(모두 기밀 유지 협약 체결).</li></ul>"
+      },
+      {
+        "title": "5. 쿠키(Cookies)",
+        "content_html": "<p>본 웹사이트는 브라우징 경험을 최적화하기 위해 쿠키를 사용합니다(예: 장바구니 기억, 로그인 상태 유지). 브라우저 설정을 통해 쿠키를 거부할 수 있으나, 이 경우 사이트의 일부 기능이 제대로 작동하지 않을 수 있습니다.</p>"
+      },
+      {
+        "title": "6. 데이터 보안",
+        "content_html": "<p>당사는 업계 표준 SSL 암호화 기술을 사용하여 민감한 데이터를 전송합니다. 인터넷 전송이 100% 안전하다고 보장할 수는 없지만 귀하의 정보를 보호하기 위해 합리적인 모든 조치를 취하고 있습니다.</p>"
+      },
+      {
+        "title": "7. 귀하의 권리",
+        "content_html": "<p class=\"mb-2\">개인정보 보호법에 따라 귀하는 다음과 같은 권리를 가집니다:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>개인정보 조회 또는 열람 요청.</li><li>개인정보 보완 또는 정정 요청.</li><li>개인정보 수집, 처리, 이용 중단 및 삭제 요청.</li></ul><p class=\"mt-2 text-sm text-gray-600\">위 권리를 행사하려면 아래 연락처를 통해 당사에 문의하시기 바라며, 법정 기한 내에 처리해 드립니다.</p>"
+      }
+    ],
+    "contact_section": {
+      "title": "8. 연락처",
+      "desc": "본 개인정보 처리방침에 대해 궁금한 점이 있거나 귀하의 권리를 행사하고자 하는 경우 언제든지 저희에게 연락해 주십시오:",
+      "company_label": "회사명: ",
+      "email_label": "이메일: ",
+      "phone_label": "전화번호: "
+    }
+  },"search_page": {
+    "title": "검색 결과",
+    "showing_results_for": "다음 키워드에 대한 결과:",
+    "no_results": "검색 결과가 없습니다:",
+    "try_again": "다른 키워드나 영문 브랜드명으로 다시 검색해 주세요."
   }
-  
+  ,
+  "product_detail": {
+    "ui": {
+      "toast_success": "장바구니에 추가되었습니다",
+      "breadcrumb_home": "HOME",
+      "breadcrumb_store": "ONLINE STORE",
+      "urgency_msg": "단일 상품, 품절 시 판매 종료",
+      "btn_buy": "지금 구매하기",
+      "btn_line": "LINE 빠른 문의",
+      "btn_favorite": "위시리스트에 추가",
+      "btn_favorited": "저장된 상품",
+      "btn_read_more": "더 보기",
+      "btn_read_less": "접기",
+      "specs_title": "상품 상태 세부 정보",
+      "instore_yes": "● 매장 방문 확인 가능",
+      "instore_no": "○ 온라인 문의만 가능",
+      "tab_details": "상세 정보",
+      "tab_shipping": "쇼핑 및 반품 안내",
+      "about_product": "상품 소개:",
+      "material_desc": "부드러운 촉감과 내구성을 갖춘 최고급 소재입니다.",
+      "hardware_desc": "클래식한 하드웨어로 고급스러운 광택을 더합니다.",
+      "tab_notes_title": "구매 전 유의사항",
+      "tab_notes_li1": "모든 상품은 중고 또는 미사용 명품입니다. 구매 전 상태를 반드시 확인해 주세요.",
+      "tab_notes_li2": "모든 사진은 실물 촬영본이며 모니터 설정에 따라 약간의 색상 차이가 있을 수 있습니다.",
+      "tab_notes_li3": "100% 정품을 보장하며, 가품으로 판명 시 전액 환불해 드립니다.",
+      "tab_returns_title": "교환 및 반품 정책",
+      "tab_returns_desc": "명품 거래의 특성상 <strong>정품 여부 문제를 제외하고는 어떠한 이유로도 교환 및 반품이 불가합니다.</strong>",
+      "recommend_title": "추천 상품"
+    },
+    "modal": {
+      "title": "쇼핑 안내",
+      "note_title": "구매 전 유의사항",
+      "note_li1": "모든 상품은 중고 또는 미사용 명품입니다. 구매 전 상태를 반드시 확인해 주세요.",
+      "note_li2": "모든 사진은 실물 촬영본이며 모니터 설정에 따라 약간의 색상 차이가 있을 수 있습니다.",
+      "btn_understand": "확인했습니다"
+    }
+  }
 }

@@ -678,6 +678,171 @@
     "error_send_failed": "Failed to send",
     "error_server_format": "Invalid server response format",
     "error_register_failed": "Registration failed"
+  },
+  "order_lookup": {
+    "title": "Order Lookup",
+    "subtitle": "Check your order status without an account (Please enter Order ID and Email)",
+    "form_order_id_label": "Order ID",
+    "form_order_id_placeholder": "e.g., 124",
+    "form_email_label": "Order Email",
+    "form_email_placeholder": "e.g., name@gmail.com",
+    "form_btn_loading": "Searching...",
+    "form_btn_submit": "Lookup Order",
+    "form_privacy_note": "To protect your privacy, both 'Order ID' and 'Order Email' are required to view order details.",
+    "err_empty": "Please enter both Order ID and Order Email",
+    "err_fetch": "Lookup failed, please try again later",
+    "err_system": "System error, please try again later",
+    "result_title": "Order Details",
+    "result_status": "Status",
+    "result_payment": "Payment Method",
+    "result_total": "Total Amount",
+    "result_items_title": "Items",
+    "result_qty": "Qty: ",
+    "result_subtotal": "Subtotal",
+    "result_shipping_title": "Shipping Info",
+    "result_recipient": "Recipient",
+    "result_city": "City",
+    "result_shipping_privacy": "(For privacy reasons, the full address is not displayed here.)"
+  },
+  "shopping_guide": {
+    "page": {
+      "seo_title": "Shopping Guide | KÉSH de¹",
+      "title": "Shopping Guide",
+      "subtitle_desktop": "Please read before buying",
+      "subtitle_mobile": "Shopping Guide & Terms",
+      "footer_note": "Thank you for choosing KÉSH de¹"
+    },
+    "sections": [
+      {
+        "id": "shopping-notes",
+        "title": "Shopping Notes",
+        "enTitle": "Notes",
+        "content_html": "<div class=\"space-y-4\"><p>Welcome to KÉSH de¹ Luxury. To protect the rights of both parties, please read the following guidelines carefully before purchasing. By checking out or making a payment, you agree to all terms and conditions of this site.</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>All items are photographed from actual products. Slight color differences may occur due to monitor settings; please refer to the actual item.</li><li>Dimensions are measured manually and a 1-2cm variance is considered normal.</li><li>Please complete your payment within <strong>24 hours</strong> of placing an order. Unpaid orders will be automatically cancelled.</li><li>We offer domestic shipping and in-store pickup. Items will be shipped within 1-3 business days after payment confirmation.</li></ul></div>"
+      },
+      {
+        "id": "authenticity",
+        "title": "Authenticity Guarantee",
+        "enTitle": "Authenticity",
+        "content_html": "<div class=\"space-y-4\"><p class=\"font-medium text-black\">KÉSH de¹ commits to selling only 100% authentic goods.</p><p>We have a professional appraisal team and utilize third-party authorities (such as Entrupy) for double verification. If an item you purchased is proven to be unauthentic by two or more credible third-party appraisal institutions (written report required), <strong>we promise a full refund and will cover the related inspection fees.</strong></p><p class=\"text-sm text-gray-500 mt-2\">* To protect your rights, please retain all original proof of purchase and accessories.</p></div>"
+      },
+      {
+        "id": "grading",
+        "title": "Condition Standards",
+        "enTitle": "Condition",
+        "intro": "Due to the unique nature of pre-owned luxury goods, we have established a strict grading system to help you accurately understand the item's condition:",
+        "grades": [
+          { "rank": "S", "label": "Unused / Brand New", "desc": "Brand new and unused, including complete packaging and accessories. Ideal for gifting." },
+          { "rank": "A", "label": "Mint Condition", "desc": "Barely any signs of use. Excellent overall condition with only very minor storage traces." },
+          { "rank": "AB", "label": "Excellent Condition", "desc": "Minor signs of use (e.g., hairline scratches on hardware, very slight corner wear), but overall appearance remains beautiful." },
+          { "rank": "B", "label": "Good Condition", "desc": "Noticeable signs of use, scratches, or discoloration, but does not affect normal use. Offers a greater price advantage." }
+        ]
+      },
+      {
+        "id": "return-policy",
+        "title": "Return Policy",
+        "enTitle": "Returns",
+        "content_html": "<div class=\"space-y-4\"><p>According to Taiwan's Consumer Protection Act, second-hand goods (not brand new items mass-produced and sold by business operators) <strong>are not subject to the 7-day unconditional return period</strong>.</p><p>However, we will accept unconditional returns in the following situations:</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>The item is proven to be unauthentic by third-party appraisal (see Authenticity Guarantee).</li><li>The received item differs significantly from the website description or photos (e.g., listed as Grade S but has obvious damage).</li></ul><p class=\"mt-4 text-gray-500 text-sm\">* If you wish to return an item for personal reasons (e.g., dislike, wrong size, color difference), please contact customer service within 24 hours of receiving the item. We can assist you in converting it to a \"consignment\" arrangement.</p></div>"
+      },
+      {
+        "id": "privacy",
+        "title": "Privacy Policy",
+        "enTitle": "Privacy",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>KÉSH de¹ highly values your privacy. The personal data we collect (such as name, phone number, address, Email) is strictly used for order processing, shipping, and member services. We will never leak, sell, or provide your data to unrelated third parties.</p><p>This website uses SSL encryption technology to protect your transaction security, allowing you to shop at KÉSH de¹ with peace of mind.</p></div>"
+      },
+      {
+        "id": "terms",
+        "title": "Terms of Service",
+        "enTitle": "Terms",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>By using this website's services, you agree to these terms. KÉSH de¹ reserves the right to modify these terms at any time. The modified terms will be published on the website without separate individual notice.</p><p>If you are under 20 years of age, you must read these terms accompanied by a legal representative before using this website's services.</p></div>"
+      }
+    ]
+  },
+  "privacy": {
+    "page": {
+      "seo_title": "Privacy Policy | KÉSH de¹",
+      "seo_desc": "Privacy Policy for KÉSH de¹ Luxury.",
+      "title": "Privacy Policy",
+      "last_updated": "Last Updated: "
+    },
+    "sections": [
+      {
+        "title": "1. Introduction",
+        "content_html": "<p class=\"mb-2\">Welcome to KÉSH de¹ Luxury (hereinafter referred to as \"the Website\"), operated by KESH LUXURY CO., LTD (hereinafter referred to as \"the Company\"). We highly value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.</p><p>By using the Website's services (including but not limited to browsing products, registering an account, or using our sourcing/consignment services), you agree to the terms described in this policy.</p>"
+      },
+      {
+        "title": "2. Data We Collect",
+        "content_html": "<p class=\"mb-2\">To provide complete luxury trading and authentication services, we may collect the following types of data:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>Personal Identification:</strong> Name, email address, phone number, date of birth (for membership benefits).</li><li><strong>Transaction & Shipping Data:</strong> Shipping address, billing address, credit card info (processed only through encrypted payment gateways; we do not store card numbers), purchase history.</li><li><strong>Consignment & Authentication Data:</strong> If using consignment, we may need a copy of your ID or bank account info to comply with regulations and process payouts.</li><li><strong>Digital Footprint:</strong> IP address, browser type, device information, Cookies, and usage behavior data.</li></ul>"
+      },
+      {
+        "title": "3. Purpose of Data Usage",
+        "content_html": "<p class=\"mb-2\">We use the collected data for the following purposes:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>Processing orders, sourcing requests, and returns.</li><li>Recording and filing product authentication processes.</li><li>Providing customer service and responding to inquiries.</li><li>Sending exclusive member offers, new arrival notices, or newsletters (you may unsubscribe at any time).</li><li>Optimizing website experience and preventing fraud.</li></ul>"
+      },
+      {
+        "title": "4. Data Sharing & Third Parties",
+        "content_html": "<p class=\"mb-2\">We will never sell your personal data to third parties, except as required by law. However, we may share some of your information with trusted partners in the following necessary situations:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>Logistics Partners:</strong> Name, phone, and address are provided to couriers to deliver products.</li><li><strong>Payment Gateways:</strong> To process credit card or mobile payment transactions.</li><li><strong>System Providers:</strong> Service providers assisting with website operations and tech support (all under NDA).</li></ul>"
+      },
+      {
+        "title": "5. Cookies",
+        "content_html": "<p>The Website uses Cookies to optimize your browsing experience (e.g., remembering your cart, keeping you logged in). You can reject Cookies via your browser settings, but this may cause some features of the site to function improperly.</p>"
+      },
+      {
+        "title": "6. Data Security",
+        "content_html": "<p>We use industry-standard SSL encryption technology to transmit your sensitive data. While internet transmission cannot be guaranteed 100% secure, we are committed to taking all reasonable measures to protect your information.</p>"
+      },
+      {
+        "title": "7. Your Rights",
+        "content_html": "<p class=\"mb-2\">Under the Personal Data Protection Act, you have the following rights:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>Inquire or request to review your personal data.</li><li>Request to supplement or correct your personal data.</li><li>Request to stop collection, processing, or usage, and request deletion of your personal data.</li></ul><p class=\"mt-2 text-sm text-gray-600\">To exercise these rights, please contact us using the info below, and we will process it within the statutory period.</p>"
+      }
+    ],
+    "contact_section": {
+      "title": "8. Contact Us",
+      "desc": "If you have any questions about this Privacy Policy or wish to exercise your rights, please feel free to contact us:",
+      "company_label": "Company: ",
+      "email_label": "Email: ",
+      "phone_label": "Phone: "
+    }
+  },"search_page": {
+    "title": "Search Results",
+    "showing_results_for": "Showing results for",
+    "no_results": "No products found for",
+    "try_again": "Please try checking your spelling or use different keywords."
+  },
+  "product_detail": {
+    "ui": {
+      "toast_success": "Successfully added to cart",
+      "breadcrumb_home": "HOME",
+      "breadcrumb_store": "ONLINE STORE",
+      "urgency_msg": "Unique piece, gone once sold out",
+      "btn_buy": "BUY NOW",
+      "btn_line": "Quick Inquiry via LINE",
+      "btn_favorite": "Add to Wishlist",
+      "btn_favorited": "Saved in Wishlist",
+      "btn_read_more": "READ MORE",
+      "btn_read_less": "READ LESS",
+      "specs_title": "Condition Details",
+      "instore_yes": "● Available for In-Store Viewing",
+      "instore_no": "○ Online Inquiry Only",
+      "tab_details": "Details Info",
+      "tab_shipping": "Shopping & Returns",
+      "about_product": "About",
+      "material_desc": "Premium material, soft touch and durable.",
+      "hardware_desc": "Classic hardware, adding a noble luster.",
+      "tab_notes_title": "Purchase Notes",
+      "tab_notes_li1": "All items are pre-owned or unused luxury goods. Please confirm the condition before purchasing.",
+      "tab_notes_li2": "All product photos are taken from the actual item. Slight color differences may occur due to display settings.",
+      "tab_notes_li3": "We provide a 100% authenticity guarantee. Full refund if proven counterfeit.",
+      "tab_returns_title": "Return Policy",
+      "tab_returns_desc": "Due to the nature of luxury trading, <strong>all sales are final except for authenticity issues.</strong>",
+      "recommend_title": "Recommend Items"
+    },
+    "modal": {
+      "title": "Shopping Guide",
+      "note_title": "Purchase Notes",
+      "note_li1": "All items are pre-owned or unused luxury goods. Please confirm the condition before purchasing.",
+      "note_li2": "All product photos are taken from the actual item. Slight color differences may occur due to display settings.",
+      "btn_understand": "I Understand"
+    }
   }
+
 
 }

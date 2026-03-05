@@ -62,14 +62,17 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // 🔥 修改：動態產生第三方登入的跳轉網址，確保回得去原本的語系
   const handleSocialLogin = async (provider) => {
     try {
-      await signIn(provider, { callbackUrl: "/" });
+      const callbackUrl = router.locale === "zh-TW" ? "/" : `/${router.locale}`;
+      await signIn(provider, { callbackUrl });
     } catch (error) {
       console.error(error);
     }
   };
 
+  // 🔥 修改：表單登入成功後，帶著原本的語系 (locale) 回到首頁
   const handleCredentialsLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -83,7 +86,9 @@ export default function Login() {
       });
 
       if (result?.error) throw new Error(t("login.error_invalid"));
-      router.push("/");
+
+      // router.push(跳轉目標, 顯示的網址, 額外參數)
+      router.push("/", "/", { locale: router.locale });
     } catch (error) {
       setErrorMsg(error.message);
       setLoading(false);

@@ -679,5 +679,170 @@
     "error_send_failed": "發送失敗",
     "error_server_format": "伺服器回應格式錯誤",
     "error_register_failed": "註冊失敗"
+  },
+  "order_lookup": {
+    "title": "訂單查詢",
+    "subtitle": "不需會員也可查詢訂單狀態（請輸入訂單編號與下單 Email）",
+    "form_order_id_label": "訂單編號",
+    "form_order_id_placeholder": "例如：124",
+    "form_email_label": "下單 Email",
+    "form_email_placeholder": "例如：name@gmail.com",
+    "form_btn_loading": "查詢中...",
+    "form_btn_submit": "查詢訂單",
+    "form_privacy_note": "為了保護您的隱私，需同時輸入「訂單編號」與「下單 Email」才可查詢。",
+    "err_empty": "請輸入訂單編號與下單 Email",
+    "err_fetch": "查詢失敗，請稍後再試",
+    "err_system": "系統錯誤，請稍後再試",
+    "result_title": "訂單明細",
+    "result_status": "訂單狀態",
+    "result_payment": "付款方式",
+    "result_total": "總金額",
+    "result_items_title": "商品明細",
+    "result_qty": "數量：",
+    "result_subtotal": "小計",
+    "result_shipping_title": "收件資訊",
+    "result_recipient": "收件人",
+    "result_city": "城市",
+    "result_shipping_privacy": "（為保護隱私，此處不顯示完整地址。）"
+  },
+  "shopping_guide": {
+    "page": {
+      "seo_title": "購物須知 | KÉSH de¹",
+      "title": "Shopping Guide",
+      "subtitle_desktop": "Please read before buying",
+      "subtitle_mobile": "購物須知與服務條款",
+      "footer_note": "Thank you for choosing kesh-de1"
+    },
+    "sections": [
+      {
+        "id": "shopping-notes",
+        "title": "購物須知",
+        "enTitle": "Shopping Notes",
+        "content_html": "<div class=\"space-y-4\"><p>歡迎您來到 KÉSH de¹ 凱仕國際精品。為了確保雙方的權益，請您在購買前詳細閱讀以下須知。當您進行結帳或付款時，即視為您已同意本站之所有條款。</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>KÉSH de¹ 所有商品均為實品拍攝，因顯示器不同可能產生些微色差，請以實品顏色為準。</li><li>商品尺寸皆為人工測量，可能存在 1-2cm 之誤差，屬正常範圍。</li><li>訂單成立後，請於 <strong>24 小時內</strong> 完成付款，逾時系統將自動取消訂單。</li><li>我們提供國內宅配與店面自取服務，確認款項後將於 1-3 個工作天內出貨。</li></ul></div>"
+      },
+      {
+        "id": "authenticity",
+        "title": "正品保證條款",
+        "enTitle": "Authenticity",
+        "content_html": "<div class=\"space-y-4\"><p class=\"font-medium text-black\">KÉSH de¹ 承諾僅販售 100% 正品。</p><p>我們擁有專業的鑑定團隊，並配合第三方權威機構（如 Entrupy）進行雙重驗證。若您購買的商品經由兩家以上具公信力之第三方鑑定機構（需提供書面報告）證實為非正品，<strong>我們承諾全額退款，並負擔相關檢驗費用。</strong></p><p class=\"text-sm text-gray-500 mt-2\">* 為了保障您的權益，請保留完整購買憑證與商品配件。</p></div>"
+      },
+      {
+        "id": "grading",
+        "title": "商品品況分級",
+        "enTitle": "Condition Standards",
+        "intro": "由於二手精品的特殊性，我們制定了嚴格的品況分級標準，讓您能更精準地掌握商品狀態：",
+        "grades": [
+          { "rank": "S", "label": "未使用新品 / Unused", "desc": "全新未使用，包含完整包裝與配件，適合作為禮物。" },
+          { "rank": "A", "label": "極新品 / Mint", "desc": "幾乎看不出使用痕跡，整體狀態極佳，僅有些微存放痕跡。" },
+          { "rank": "AB", "label": "保存良好 / Excellent", "desc": "有輕微使用感（如五金細紋、邊角極輕微磨損），但整體外觀仍相當漂亮。" },
+          { "rank": "B", "label": "有使用感 / Good", "desc": "有明顯的使用痕跡、刮傷或變色，但不影響正常使用，反映在價格上更具優勢。" }
+        ]
+      },
+      {
+        "id": "return-policy",
+        "title": "退換貨政策",
+        "enTitle": "Return Policy",
+        "content_html": "<div class=\"space-y-4\"><p>根據台灣消費者保護法規定，二手商品（非企業經營者大量製造販售之全新品）<strong>不適用於七天鑑賞期無條件退貨</strong>。</p><p>但若發生以下情況，我們將無條件接受退貨：</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>商品經第三方鑑定證實為非正品（參見正品保證條款）。</li><li>收到的商品與網站描述、照片有重大出入（如：標示為 S 級卻有明顯破損）。</li></ul><p class=\"mt-4 text-gray-500 text-sm\">* 若因個人因素（如：不喜歡、尺寸不合、色差）欲退換貨，請於收到商品 24 小時內聯繫客服，我們將協助您改為「寄賣」形式處理。</p></div>"
+      },
+      {
+        "id": "privacy",
+        "title": "隱私權政策",
+        "enTitle": "Privacy Policy",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>KÉSH de¹ 非常重視您的隱私權。我們所收集的個人資料（如姓名、電話、地址、Email）僅用於訂單處理、物流配送與會員服務，絕不會將您的資料洩漏、販售或提供給無關之第三方。</p><p>本網站採用 SSL 加密技術保護您的交易安全，您可以安心在 KÉSH de¹ 進行購物。</p></div>"
+      },
+      {
+        "id": "terms",
+        "title": "服務條款",
+        "enTitle": "Terms of Service",
+        "content_html": "<div class=\"space-y-4 text-sm text-gray-500\"><p>使用本網站服務即表示您同意本條款。KÉSH de¹ 保留隨時修改本條款之權利，修改後的條款將公佈於網站上，不另行個別通知。</p><p>若您未滿 20 歲，請由法定代理人陪同閱讀本條款，方可使用本網站服務。</p></div>"
+      }
+    ]
+  },
+  "privacy": {
+    "page": {
+      "seo_title": "隱私權政策 | KÉSH de¹ 凱仕國際精品",
+      "seo_desc": "KÉSH de¹ 凱仕國際精品 的隱私權政策說明。",
+      "title": "隱私權政策",
+      "last_updated": "最後更新日期："
+    },
+    "sections": [
+      {
+        "title": "1. 前言",
+        "content_html": "<p class=\"mb-2\">歡迎蒞臨 KÉSH de¹ 凱仕國際精品（以下簡稱「本網站」），本網站由 KESH LUXURY CO., LTD（以下簡稱「本公司」）經營。我們非常重視您的隱私權，並致力於保護您的個人資料。本隱私權政策將說明我們如何收集、使用、揭露及保護您的資訊。</p><p>當您使用本網站的服務（包括但不限於瀏覽商品、註冊會員、委託代購或寄賣服務）時，即表示您同意本政策所述之內容。</p>"
+      },
+      {
+        "title": "2. 我們收集的資料",
+        "content_html": "<p class=\"mb-2\">為了提供完整的精品交易與鑑定服務，我們可能會收集以下類型的資料：</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>個人識別資料：</strong> 姓名、電子郵件地址、聯絡電話、出生日期（用於會員權益）。</li><li><strong>交易與物流資料：</strong> 配送地址、帳單地址、信用卡資訊（僅透過加密金流服務處理，本網站不直接儲存卡號）、購買紀錄。</li><li><strong>寄賣與鑑定資料：</strong> 若您使用寄賣服務，我們可能需要收集您的身分證件影本或匯款帳號，以符合法規與撥款需求。</li><li><strong>數位足跡：</strong> IP 位址、瀏覽器類型、裝置資訊、Cookie 及使用行為數據。</li></ul>"
+      },
+      {
+        "title": "3. 資料使用目的",
+        "content_html": "<p class=\"mb-2\">我們收集的資料將用於以下用途：</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>處理您的訂單、代購需求與退換貨事宜。</li><li>進行商品真偽鑑定流程的紀錄與建檔。</li><li>提供客戶服務，回覆您的詢問（如：Line 官方帳號或 Email 諮詢）。</li><li>發送會員專屬優惠、新品通知或電子報（您可隨時取消訂閱）。</li><li>優化網站體驗與防範詐欺行為。</li></ul>"
+      },
+      {
+        "title": "4. 資料分享與第三方揭露",
+        "content_html": "<p class=\"mb-2\">除法律規定或司法單位要求外，我們絕不會將您的個人資料販售給第三方。但在以下必要情況下，我們可能會與合作夥伴分享您的部分資訊：</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>物流合作夥伴：</strong> 為了將商品送達，需提供姓名、電話與地址給物流公司。</li><li><strong>金流服務商：</strong> 處理信用卡或行動支付交易。</li><li><strong>系統維護商：</strong> 協助網站營運與技術支援的服務提供者（均簽署保密協議）。</li></ul>"
+      },
+      {
+        "title": "5. Cookie 技術",
+        "content_html": "<p>本網站使用 Cookie 以優化您的瀏覽體驗（例如：記住您的購物車內容、保持登入狀態）。您可以透過瀏覽器設定拒絕 Cookie，但這可能會導致網站部分功能無法正常運作。</p>"
+      },
+      {
+        "title": "6. 資料安全",
+        "content_html": "<p>我們採用符合業界標準的 SSL 加密技術來傳輸您的敏感資料。儘管網際網路傳輸無法保證 100% 安全，但我們致力於採取所有合理措施來保護您的資訊安全。</p>"
+      },
+      {
+        "title": "7. 您的權利",
+        "content_html": "<p class=\"mb-2\">根據個人資料保護法，您擁有以下權利：</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li>查詢或請求閱覽您的個人資料。</li><li>請求補充或更正您的個人資料。</li><li>請求停止蒐集、處理或利用，以及請求刪除您的個人資料。</li></ul><p class=\"mt-2 text-sm text-gray-600\">若欲行使上述權利，請透過下方聯絡方式與我們聯繫，我們將於法定期間內處理。</p>"
+      }
+    ],
+    "contact_section": {
+      "title": "8. 聯絡我們",
+      "desc": "若您對本隱私權政策有任何疑問，或希望行使您的權利，歡迎隨時聯繫我們：",
+      "company_label": "公司名稱：",
+      "email_label": "客服信箱：",
+      "phone_label": "客服專線："
+    }
+  },
+  "search_page": {
+    "title": "搜尋結果",
+    "showing_results_for": "以下是您搜尋的關鍵字：",
+    "no_results": "找不到符合的商品：",
+    "try_again": "請嘗試使用其他關鍵字或英文品牌名稱進行搜尋。"
+  },
+  "product_detail": {
+    "ui": {
+      "toast_success": "已成功加入購物袋",
+      "breadcrumb_home": "HOME",
+      "breadcrumb_store": "ONLINE STORE",
+      "urgency_msg": "單件商品，售出即下架",
+      "btn_buy": "立即購買",
+      "btn_line": "LINE 快速詢問",
+      "btn_favorite": "收藏商品",
+      "btn_favorited": "已收藏商品",
+      "btn_read_more": "READ MORE",
+      "btn_read_less": "READ LESS",
+      "specs_title": "商品狀況",
+      "instore_yes": "● 可預約現場鑑賞",
+      "instore_no": "○ 僅限線上諮詢",
+      "tab_details": "Details Info",
+      "tab_shipping": "Shopping & Returns",
+      "about_product": "關於",
+      "material_desc": "頂級材質，觸感柔軟且耐磨。",
+      "hardware_desc": "經典五金配件，增添高貴光澤。",
+      "tab_notes_title": "購買須知",
+      "tab_notes_li1": "所有商品皆為二手或全新閒置精品，請務必確認品況後再行購買。",
+      "tab_notes_li2": "商品照片皆為實物拍攝，因螢幕顯示可能有些微色差，以實品為主。",
+      "tab_notes_li3": "我們提供 100% 正品保證，若驗出贗品將全額退款。",
+      "tab_returns_title": "退換貨政策",
+      "tab_returns_desc": "由於精品買賣的特殊性，<strong>售出後除真偽問題外，恕不接受任何理由退換貨。</strong>",
+      "recommend_title": "Recommend Items"
+    },
+    "modal": {
+      "title": "Shopping Guide",
+      "note_title": "購買須知",
+      "note_li1": "所有商品皆為二手或全新閒置精品，請務必確認品況後再行購買。",
+      "note_li2": "商品照片皆為實物拍攝，因螢幕顯示可能有些微色差，以實品為主。",
+      "btn_understand": "I Understand"
+    }
   }
 }

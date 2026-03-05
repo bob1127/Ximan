@@ -5,18 +5,18 @@ import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import https from "https"; // 用於後端抓取資料
+import https from "https";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// --- Swiper ---
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
-// 假設路徑
 import { useCart } from "@/components/context/CartContext";
 
 // --- Toast Component ---
-const SuccessToast = ({ show }) => (
+const SuccessToast = ({ show, msg }) => (
   <AnimatePresence>
     {show && (
       <motion.div
@@ -40,19 +40,20 @@ const SuccessToast = ({ show }) => (
             />
           </svg>
         </div>
-        <span className="text-sm font-medium tracking-wide">
-          已成功加入購物袋
-        </span>
+        <span className="text-sm font-medium tracking-wide">{msg}</span>
       </motion.div>
     )}
   </AnimatePresence>
 );
 
-// --- 🔥 Main Component ---
 export default function ProductDetail({ product, relatedProducts }) {
   const router = useRouter();
+  const { t } = useTranslation("common"); // 🔥 啟用多語系
 
-  // State
+  // 取得 UI 翻譯
+  const ui = t("product_detail.ui", { returnObjects: true });
+  const modal = t("product_detail.modal", { returnObjects: true });
+
   const [quantity, setQuantity] = useState(1);
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [isSpecsOpen, setIsSpecsOpen] = useState(true);
@@ -60,11 +61,8 @@ export default function ProductDetail({ product, relatedProducts }) {
   const [activeTab, setActiveTab] = useState("details");
   const [showToast, setShowToast] = useState(false);
   const [mounted, setMounted] = useState(false);
-
-  // 🔥 新增：收藏商品狀態
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Cart Hook
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -79,7 +77,6 @@ export default function ProductDetail({ product, relatedProducts }) {
     };
   }, [isPolicyModalOpen]);
 
-  // Loading State for Fallback
   if (router.isFallback) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white">
@@ -93,18 +90,14 @@ export default function ProductDetail({ product, relatedProducts }) {
 
   if (!product) return null;
 
-  // --- 🌟 SEO & Structured Data Logic ---
-
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://www.cieman.com.tw";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";
   const currentUrl = `${siteUrl}/product/${product.slug}`;
-  // 圖片處理：如果沒有圖片，使用預設圖
   const mainImage =
     product.images && product.images.length > 0
       ? product.images[0]
       : `${siteUrl}/images/placeholder.jpg`;
 
-  // 1. Product Schema (商品結構化資料)
   const productJsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -113,10 +106,7 @@ export default function ProductDetail({ product, relatedProducts }) {
     description: product.shortDesc,
     sku: product.id,
     mpn: product.id,
-    brand: {
-      "@type": "Brand",
-      name: product.brand,
-    },
+    brand: { "@type": "Brand", name: product.brand },
     offers: {
       "@type": "Offer",
       url: currentUrl,
@@ -127,24 +117,15 @@ export default function ProductDetail({ product, relatedProducts }) {
       availability: product.specs.inStoreView
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      seller: {
-        "@type": "Organization",
-        name: "KÉSH de¹",
-      },
+      seller: { "@type": "Organization", name: "KÉSH de¹" },
     },
   };
 
-  // 2. BreadcrumbList Schema (麵包屑結構化資料)
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: siteUrl,
-      },
+      { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
       {
         "@type": "ListItem",
         position: 2,
@@ -160,7 +141,6 @@ export default function ProductDetail({ product, relatedProducts }) {
     ],
   };
 
-  // Handler
   const handleQtyChange = (type) => {
     if (type === "minus" && quantity > 1) setQuantity(quantity - 1);
     if (type === "plus") setQuantity(quantity + 1);
@@ -180,8 +160,6 @@ export default function ProductDetail({ product, relatedProducts }) {
         <title>{`${product.title} | KÉSH de¹`}</title>
         <meta name="description" content={product.shortDesc} />
         <link rel="canonical" href={currentUrl} />
-
-        {/* Open Graph */}
         <meta property="og:type" content="product" />
         <meta property="og:title" content={`${product.title} | KÉSH de¹`} />
         <meta property="og:description" content={product.shortDesc} />
@@ -193,14 +171,10 @@ export default function ProductDetail({ product, relatedProducts }) {
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content={product.title} />
-
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={product.title} />
         <meta name="twitter:description" content={product.shortDesc} />
         <meta name="twitter:image" content={mainImage} />
-
-        {/* JSON-LD Scripts */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -211,21 +185,20 @@ export default function ProductDetail({ product, relatedProducts }) {
         />
       </Head>
 
-      <SuccessToast show={showToast} />
+      <SuccessToast show={showToast} msg={ui.toast_success} />
 
       <main className="bg-white text-black font-sans min-h-screen pb-20 pt-24 md:pt-32 relative">
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 mb-20">
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs md:text-sm text-gray-500 mb-6 md:mb-10 font-medium tracking-wide">
             <Link href="/" className="hover:text-black transition-colors">
-              HOME
+              {ui.breadcrumb_home}
             </Link>
             <span>/</span>
             <Link
               href="/category"
               className="hover:text-black transition-colors"
             >
-              ONLINE STORE
+              {ui.breadcrumb_store}
             </Link>
             <span>/</span>
             <span className="text-black border-b border-black cursor-default">
@@ -234,12 +207,10 @@ export default function ProductDetail({ product, relatedProducts }) {
           </nav>
 
           <div className="flex flex-col md:flex-row gap-10 lg:gap-20">
-            {/* Left: Images */}
             <div className="w-full md:w-[60%] lg:w-[65%] flex flex-col gap-1 md:gap-4">
               {product.images && product.images.length > 0 ? (
                 product.images.map((imgUrl, index) => (
                   <div key={index} className="w-full relative">
-                    {/* 使用 unoptimized 避免 Next.js 對外部圖片權限的限制，方便除錯 */}
                     <Image
                       src={imgUrl}
                       alt={`${product.title} - view ${index + 1}`}
@@ -258,7 +229,6 @@ export default function ProductDetail({ product, relatedProducts }) {
               )}
             </div>
 
-            {/* Right: Info */}
             <div className="w-full md:w-[40%] lg:w-[35%]">
               <div className="sticky top-32">
                 <div className="mb-6 border-b border-gray-200 pb-6">
@@ -278,16 +248,13 @@ export default function ProductDetail({ product, relatedProducts }) {
                   </p>
                 </div>
 
-                {/* 🔥 CTA Buttons Section 修改區域 */}
                 <div className="mb-8">
-                  {/* 新增：急迫性提示文字 */}
                   <p className="text-[13px] text-[#ef4628] font-bold tracking-wider mb-3 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 bg-[#ef4628] rounded-full inline-block animate-pulse"></span>
-                    單件商品，售出即下架
+                    {ui.urgency_msg}
                   </p>
 
                   <div className="flex gap-4 mb-4 h-[50px]">
-                    {/* 數量 */}
                     <div className="flex w-[120px] border border-gray-300 items-center justify-between px-3">
                       <button
                         onClick={() => handleQtyChange("minus")}
@@ -309,16 +276,14 @@ export default function ProductDetail({ product, relatedProducts }) {
                         +
                       </button>
                     </div>
-                    {/* 立即購買 */}
                     <button
                       onClick={handleBuy}
                       className="flex-1 bg-[#ef4628] text-white text-sm font-bold uppercase tracking-widest hover:bg-[#d63a1f] transition-all duration-300 shadow-md active:scale-95"
                     >
-                      立即購買
+                      {ui.btn_buy}
                     </button>
                   </div>
 
-                  {/* LINE 快速詢問 */}
                   <a
                     href="https://line.me/ti/p/yourlineid"
                     target="_blank"
@@ -334,14 +299,12 @@ export default function ProductDetail({ product, relatedProducts }) {
                     >
                       <path d="M24 10.304c0-5.687-5.373-10.304-12-10.304S0 4.617 0 10.304c0 5.068 4.27 9.306 10.029 10.156.389.085.917.26.917.601 0 .208-.056.783-.184 1.442-.166.857-.765 2.341-.981 2.845-.059.139.017.346.203.346.112 0 .245-.029.393-.076 3.281-1.056 7.155-4.212 8.351-5.79C21.873 17.58 24 14.159 24 10.304z" />
                     </svg>
-                    LINE 快速詢問
+                    {ui.btn_line}
                   </a>
 
-                  {/* 新增：收藏商品 按鈕 */}
                   <button
                     onClick={() => setIsFavorite(!isFavorite)}
-                    className={`w-full border text-center py-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2
-                      ${isFavorite ? "border-[#ef4628] text-[#ef4628] bg-red-50" : "border-gray-300 text-gray-600 hover:border-black hover:text-black"}`}
+                    className={`w-full border text-center py-3 text-sm font-bold uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 ${isFavorite ? "border-[#ef4628] text-[#ef4628] bg-red-50" : "border-gray-300 text-gray-600 hover:border-black hover:text-black"}`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -356,10 +319,9 @@ export default function ProductDetail({ product, relatedProducts }) {
                     >
                       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                     </svg>
-                    {isFavorite ? "已收藏商品" : "收藏商品"}
+                    {isFavorite ? ui.btn_favorited : ui.btn_favorite}
                   </button>
                 </div>
-                {/* 🔥 CTA Buttons Section 修改結束 */}
 
                 <div className="mb-6">
                   <div
@@ -370,7 +332,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                     onClick={() => setIsDescExpanded(!isDescExpanded)}
                     className="text-xs font-bold uppercase tracking-wider text-black mt-2 hover:text-[#ef4628] flex items-center gap-1"
                   >
-                    {isDescExpanded ? "READ LESS" : "READ MORE"}
+                    {isDescExpanded ? ui.btn_read_less : ui.btn_read_more}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="12"
@@ -388,13 +350,12 @@ export default function ProductDetail({ product, relatedProducts }) {
                   </button>
                 </div>
 
-                {/* Specs */}
                 <div className="border-t border-gray-200 py-4">
                   <button
                     onClick={() => setIsSpecsOpen(!isSpecsOpen)}
                     className="flex justify-between items-center w-full text-sm font-bold uppercase tracking-widest mb-4 hover:text-[#ef4628]"
                   >
-                    商品狀況
+                    {ui.specs_title}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -424,8 +385,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                             className="text-[13px] text-gray-600 leading-relaxed mb-4 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>strong]:text-black"
                             dangerouslySetInnerHTML={{
                               __html:
-                                product.specs.conditionText ||
-                                "<p>暫無商品狀況描述。</p>",
+                                product.specs.conditionText || "<p>N/A</p>",
                             }}
                           />
                           <div className="pt-2 mt-2 border-t border-gray-200">
@@ -433,8 +393,8 @@ export default function ProductDetail({ product, relatedProducts }) {
                               className={`block font-medium text-sm ${product.specs.inStoreView ? "text-[#06c755]" : "text-gray-400"}`}
                             >
                               {product.specs.inStoreView
-                                ? "● 可預約現場鑑賞"
-                                : "○ 僅限線上諮詢"}
+                                ? ui.instore_yes
+                                : ui.instore_no}
                             </span>
                           </div>
                         </div>
@@ -469,14 +429,13 @@ export default function ProductDetail({ product, relatedProducts }) {
           </div>
         </div>
 
-        {/* Tabs */}
         <section className="max-w-[1000px] mx-auto px-6 mb-24 border-t border-gray-200 pt-16">
           <div className="flex justify-center border-b border-gray-200 mb-10">
             <button
               onClick={() => setActiveTab("details")}
               className={`pb-4 px-8 text-sm font-bold uppercase tracking-widest transition-all duration-300 relative ${activeTab === "details" ? "text-black" : "text-gray-400 hover:text-gray-600"}`}
             >
-              Details Info
+              {ui.tab_details}
               {activeTab === "details" && (
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black"></span>
               )}
@@ -485,7 +444,7 @@ export default function ProductDetail({ product, relatedProducts }) {
               onClick={() => setActiveTab("shipping")}
               className={`pb-4 px-8 text-sm font-bold uppercase tracking-widest transition-all duration-300 relative ${activeTab === "shipping" ? "text-black" : "text-gray-400 hover:text-gray-600"}`}
             >
-              Shopping & Returns
+              {ui.tab_shipping}
               {activeTab === "shipping" && (
                 <span className="absolute bottom-0 left-0 w-full h-[2px] bg-black"></span>
               )}
@@ -512,7 +471,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                 </div>
                 <div className="prose prose-stone mx-auto text-center max-w-2xl">
                   <h3 className="text-xl font-bold mb-4 uppercase tracking-wide">
-                    關於 {product.title}
+                    {ui.about_product} {product.title}
                   </h3>
                   <div
                     className="text-gray-600 leading-relaxed mb-6 text-sm"
@@ -524,7 +483,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                         {product.specs.material}
                       </h4>
                       <p className="text-xs text-gray-500">
-                        頂級材質，觸感柔軟且耐磨。
+                        {ui.material_desc}
                       </p>
                     </div>
                     <div className="bg-gray-50 p-6">
@@ -532,7 +491,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                         {product.specs.hardware}
                       </h4>
                       <p className="text-xs text-gray-500">
-                        經典五金配件，增添高貴光澤。
+                        {ui.hardware_desc}
                       </p>
                     </div>
                   </div>
@@ -545,28 +504,22 @@ export default function ProductDetail({ product, relatedProducts }) {
                 <div className="space-y-8">
                   <div>
                     <h4 className="text-sm font-bold border-l-4 border-black pl-3 mb-3 uppercase">
-                      購買須知
+                      {ui.tab_notes_title}
                     </h4>
                     <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2">
-                      <li>
-                        所有商品皆為二手或全新閒置精品，請務必確認品況後再行購買。
-                      </li>
-                      <li>
-                        商品照片皆為實物拍攝，因螢幕顯示可能有些微色差，以實品為主。
-                      </li>
-                      <li>我們提供 100% 正品保證，若驗出贗品將全額退款。</li>
+                      <li>{ui.tab_notes_li1}</li>
+                      <li>{ui.tab_notes_li2}</li>
+                      <li>{ui.tab_notes_li3}</li>
                     </ul>
                   </div>
                   <div>
                     <h4 className="text-sm font-bold border-l-4 border-black pl-3 mb-3 uppercase">
-                      退換貨政策
+                      {ui.tab_returns_title}
                     </h4>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      由於精品買賣的特殊性，
-                      <strong>
-                        售出後除真偽問題外，恕不接受任何理由退換貨。
-                      </strong>
-                    </p>
+                    <p
+                      className="text-sm text-gray-600 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: ui.tab_returns_desc }}
+                    />
                   </div>
                 </div>
               </div>
@@ -574,10 +527,9 @@ export default function ProductDetail({ product, relatedProducts }) {
           </div>
         </section>
 
-        {/* Recommendations */}
         <section className="others-products max-w-[1440px] mx-auto px-6 md:px-10 border-t border-gray-200 pt-16">
           <h2 className="text-2xl md:text-[28px] font-normal uppercase tracking-wide mb-10">
-            Recommend Items
+            {ui.recommend_title}
           </h2>
           {relatedProducts && relatedProducts.length > 0 ? (
             <Swiper
@@ -635,11 +587,10 @@ export default function ProductDetail({ product, relatedProducts }) {
               ))}
             </Swiper>
           ) : (
-            <div className="text-gray-400 text-sm">暫無推薦商品</div>
+            <div className="text-gray-400 text-sm">No items found</div>
           )}
         </section>
 
-        {/* Modal */}
         {mounted &&
           createPortal(
             <AnimatePresence>
@@ -660,7 +611,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                   >
                     <div className="flex justify-between items-center mb-8 pb-4 border-b border-gray-200 sticky top-0 bg-white z-20">
                       <h3 className="text-xl font-bold uppercase tracking-widest">
-                        Shopping Guide
+                        {modal.title}
                       </h3>
                       <button
                         onClick={() => setIsPolicyModalOpen(false)}
@@ -685,15 +636,11 @@ export default function ProductDetail({ product, relatedProducts }) {
                     <div className="space-y-8 text-sm text-gray-600 leading-relaxed">
                       <div>
                         <h4 className="font-bold text-black mb-3 uppercase tracking-wide border-l-4 border-black pl-3">
-                          購買須知
+                          {modal.note_title}
                         </h4>
                         <ul className="list-disc pl-5 space-y-2">
-                          <li>
-                            所有商品皆為二手或全新閒置精品，請務必確認品況後再行購買。
-                          </li>
-                          <li>
-                            商品照片皆為實物拍攝，因螢幕顯示可能有些微色差，以實品為主。
-                          </li>
+                          <li>{modal.note_li1}</li>
+                          <li>{modal.note_li2}</li>
                         </ul>
                       </div>
                       <div className="mt-10 pt-6 border-t border-gray-100 text-center">
@@ -701,7 +648,7 @@ export default function ProductDetail({ product, relatedProducts }) {
                           onClick={() => setIsPolicyModalOpen(false)}
                           className="bg-black text-white px-10 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#ef4628] transition-colors"
                         >
-                          I Understand
+                          {modal.btn_understand}
                         </button>
                       </div>
                     </div>
@@ -722,7 +669,6 @@ export async function getStaticPaths() {
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
-  // 為了安全起見，這裡也使用 Header 驗證方式抓取路徑
   const auth = Buffer.from(`${CK}:${CS}`).toString("base64");
   const agent = new https.Agent({ rejectUnauthorized: false });
   const headers = {
@@ -737,10 +683,11 @@ export async function getStaticPaths() {
       `${WC_URL}/wp-json/wc/v3/products?per_page=20&status=publish`,
       { agent, headers },
     );
-
     if (res.ok) {
       const products = await res.json();
       if (Array.isArray(products)) {
+        // 🚨 這裡要留意，如果你有多語系，要看你的 slug 是不是跨語系一致
+        // 如果是，用 fallback: "blocking" 處理動態路由即可。
         paths = products.map((product) => ({
           params: { slug: product.slug },
         }));
@@ -753,15 +700,17 @@ export async function getStaticPaths() {
   return { paths, fallback: "blocking" };
 }
 
-// --- 🔥 ISR: 靜態生成 + 增量更新 (修復圖片抓取) ---
-export async function getStaticProps({ params }) {
+// --- 🔥 ISR: 靜態生成 + 增量更新 ---
+export async function getStaticProps({ params, locale }) {
+  const currentLang = locale || "zh-TW";
+  const wpLang = currentLang === "zh-TW" ? "zh" : currentLang; // 傳給 WP 的語言代碼
+
   const WC_URL = process.env.WC_SITE_URL;
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
   const slug = params.slug;
 
   const agent = new https.Agent({ rejectUnauthorized: false });
-  // 使用 Header 驗證 (解決 401)
   const auth = Buffer.from(`${CK}:${CS}`).toString("base64");
   const headers = {
     "User-Agent": "Mozilla/5.0 (Next.js)",
@@ -770,8 +719,8 @@ export async function getStaticProps({ params }) {
   };
 
   try {
-    // 1. 抓取主要商品
-    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(slug)}`;
+    // 1. 抓取主要商品 (🔥 加入 lang 參數)
+    const apiUrl = `${WC_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(slug)}&lang=${wpLang}`;
     const res = await fetch(apiUrl, { agent, headers });
 
     if (!res.ok) throw new Error("Fetch failed");
@@ -783,8 +732,8 @@ export async function getStaticProps({ params }) {
 
     const p = products[0];
 
-    // 2. 抓取相關商品 (排除自己)
-    const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?exclude=${p.id}&per_page=8&category=${p.categories[0]?.id || ""}`;
+    // 2. 抓取相關商品 (排除自己，並加入 lang 參數)
+    const relatedApiUrl = `${WC_URL}/wp-json/wc/v3/products?exclude=${p.id}&per_page=8&category=${p.categories[0]?.id || ""}&lang=${wpLang}`;
     const relatedRes = await fetch(relatedApiUrl, { agent, headers });
     const relatedData = await relatedRes.json();
 
@@ -797,7 +746,6 @@ export async function getStaticProps({ params }) {
             ? brandAttr.options[0]
             : "KÉSH de¹ Select";
 
-          // 🔥 相關商品圖片處理
           let relatedImg = null;
           if (item.images && item.images.length > 0) {
             relatedImg = item.images[0].src;
@@ -818,7 +766,6 @@ export async function getStaticProps({ params }) {
         })
       : [];
 
-    // Helper functions
     const getAttr = (name) => {
       const attr = p.attributes.find(
         (a) => a.name.toLowerCase() === name.toLowerCase(),
@@ -826,10 +773,6 @@ export async function getStaticProps({ params }) {
       return attr ? attr.options[0] : null;
     };
 
-    const conditionText = p.product_condition || p.description || "";
-    const rawPrice = parseInt(p.price || 0);
-
-    // 🔥 主要商品圖片處理 (建立陣列)
     let productImages = [];
     if (p.images && p.images.length > 0) {
       productImages = p.images.map((img) => {
@@ -843,8 +786,8 @@ export async function getStaticProps({ params }) {
       id: p.id,
       slug: p.slug,
       title: p.name.toUpperCase(),
-      price: `NT$ ${rawPrice.toLocaleString()}`,
-      rawPrice: rawPrice,
+      price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
+      rawPrice: parseInt(p.price || 0),
       brand: getAttr("Brand") || "KÉSH de¹ Select",
       description: p.description || "",
       intro: p.short_description || "",
@@ -853,10 +796,10 @@ export async function getStaticProps({ params }) {
         .slice(0, 150)
         .replace(/\s+/g, " ")
         .trim(),
-      images: productImages, // 傳入處理過的圖片陣列
+      images: productImages,
       specs: {
         rank: getAttr("Rank") || "Rank S",
-        conditionText: conditionText,
+        conditionText: p.product_condition || p.description || "",
         material: getAttr("Material") || "Leather",
         hardware: getAttr("Hardware") || "Gold/Silver",
         inStoreView: p.stock_status === "instock",
@@ -867,6 +810,7 @@ export async function getStaticProps({ params }) {
       props: {
         product: formattedProduct,
         relatedProducts: formattedRelated,
+        ...(await serverSideTranslations(currentLang, ["common"])), // 🔥 注入翻譯
       },
       revalidate: 10,
     };
