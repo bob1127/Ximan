@@ -28,6 +28,7 @@ export const SlideTabsExample = () => {
   const [openMega, setOpenMega] = useState("none");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [mounted, setMounted] = useState(false); // 🔥 新增 mounted 狀態
 
   // 🔥 即時搜尋相關 State
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +50,11 @@ export const SlideTabsExample = () => {
   const navRef = useRef(null);
   const router = useRouter();
   const { t } = useTranslation("common");
+
+  // --- 初始化 mounted 狀態 (解決 Hydration 錯誤) ---
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // --- 滾動偵測 ---
   useEffect(() => {
@@ -334,21 +340,28 @@ export const SlideTabsExample = () => {
                   )}
                 </AnimatePresence>
               </div>
-              <div className="hidden md:flex pl-4 gap-3">
-                {status === "authenticated" && session ? (
+
+              {/* 🔥 解決 Hydration 錯誤：加入 mounted 判斷 */}
+              <div className="hidden md:flex pl-4 gap-3 min-w-[100px] justify-end">
+                {!mounted || status === "loading" ? (
+                  // 佔位符：防止畫面閃爍
+                  <div className="w-full opacity-0">Loading...</div>
+                ) : status === "authenticated" && session ? (
                   <div className="flex items-center gap-3">
                     <Link
                       href="/member"
                       className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
-                      {session.user.image && (
+                      {session.user?.image ? (
                         <img
                           src={session.user.image}
                           alt="avatar"
                           className="w-5 h-5 rounded-full border border-white/50 object-cover"
                         />
+                      ) : (
+                        <User size={16} />
                       )}
-                      <span>Hi, {session.user.name}</span>
+                      <span>Hi, {session.user?.name || "User"}</span>
                     </Link>
                     <span className="text-white/40">|</span>
                     <button
@@ -797,9 +810,11 @@ export const SlideTabsExample = () => {
                     </AnimatePresence>
                   </div>
 
-                  {/* --- 會員與購物車 --- */}
+                  {/* --- 會員與購物車 (手機版也加上 mounted 保護) --- */}
                   <div className="px-6 py-6 border-b border-gray-100 bg-gray-50/50">
-                    {status === "authenticated" && session ? (
+                    {!mounted || status === "loading" ? (
+                      <div className="h-12 w-full animate-pulse bg-gray-200 rounded mb-6"></div>
+                    ) : status === "authenticated" && session ? (
                       <Link
                         href="/member"
                         onClick={() => setIsMenuOpen(false)}
@@ -904,7 +919,7 @@ export const SlideTabsExample = () => {
                     ))}
                   </div>
 
-                  {status === "authenticated" && (
+                  {mounted && status === "authenticated" && (
                     <button
                       onClick={() => {
                         signOut({ callbackUrl: "/" });
