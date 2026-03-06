@@ -5,10 +5,9 @@ import React, { useState, useMemo, useRef, useEffect } from "react";
 import Marquee from "react-fast-marquee";
 import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
-// 🔥 1. 引入伺服器端翻譯載入器
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// --- 3. 快速連結 (靜態行銷用) ---
+// --- 快速連結 (靜態行銷用) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
 // --- 商品卡片組件 ---
@@ -88,7 +87,7 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// --- 🔥 FilterSidebar 組件 ---
+// --- FilterSidebar 組件 ---
 const FilterSidebar = ({
   activeFilter,
   onFilterChange,
@@ -107,17 +106,24 @@ const FilterSidebar = ({
 
   return (
     <div className={`flex ${isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"}`}>
-      {/* 左欄：Collection & Categories */}
+      {/* 左欄：Categories */}
       <div className={isMobile ? "" : "flex-1"}>
-         
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
-        
         <div>
           <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
             Categories
           </h3>
           {dynamicCategories.length > 0 ? (
             <ul className="space-y-2">
+              <li>
+                <Link
+                  href="/category/all"
+                  onClick={() => isMobile && onCloseMobile()}
+                  className={`flex justify-between w-full ${linkClass} ${isActive("all", null)}`}
+                >
+                  <span>All Products</span>
+                </Link>
+              </li>
               {dynamicCategories.map((cat) => (
                 <li key={cat.id}>
                   <Link
@@ -226,13 +232,10 @@ const CompanyLocation = () => {
 export default function CategoryPage({ products, brands, categories, initialFilter }) {
   const router = useRouter();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  
   const [activeFilter, setActiveFilter] = useState(initialFilter || { type: 'all', value: null });
 
   useEffect(() => {
-    if (initialFilter) {
-      setActiveFilter(initialFilter);
-    }
+    if (initialFilter) setActiveFilter(initialFilter);
   }, [initialFilter]);
 
   const handleFilterChange = (type, value) => {
@@ -251,19 +254,96 @@ export default function CategoryPage({ products, brands, categories, initialFilt
     });
   }, [activeFilter, products]);
 
-  if (router.isFallback) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  if (router.isFallback) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
-  const pageTitle = activeFilter.value 
-    ? `${activeFilter.value.charAt(0).toUpperCase() + activeFilter.value.slice(1)} - Category`
-    : "Online Store";
+  // --- 動態獲取易讀的 Title ---
+  const getFilterDisplayName = () => {
+    if (activeFilter.type === 'all' || !activeFilter.value) return "All Products";
+    if (activeFilter.type === 'brand') {
+      const b = brands.find(x => x.slug === activeFilter.value);
+      return b ? b.name : activeFilter.value;
+    }
+    if (activeFilter.type === 'category') {
+      const c = categories.find(x => x.slug === activeFilter.value);
+      return c ? c.name : activeFilter.value;
+    }
+    return activeFilter.value;
+  };
+
+  const displayTitle = getFilterDisplayName();
+  const pageTitle = `${displayTitle} | KÉSH de¹ 凱仕國際精品`;
+  const pageDesc = `探索 KÉSH de¹ 精選 ${displayTitle}。我們專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務，100% 正品保證。`;
+  
+  const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";
+  const currentPath = router.asPath;
+  const currentUrl = `${SITE_URL}${currentPath}`;
+  
+  // 動態抓取第一張商品圖作為社群分享縮圖
+  const ogImage = filteredProducts.length > 0 && filteredProducts[0].image 
+    ? filteredProducts[0].image 
+    : `${SITE_URL}/default-og-image.jpg`;
+
+  // --- 🔥 結構化資料 (分類頁專屬) ---
+  const schemaGraph = {
+    "@context": "https://schema.org",
+    "@graph": [
+      // 1. CollectionPage (宣告這是商品列表頁)
+      {
+        "@type": "CollectionPage",
+        "@id": `${currentUrl}/#webpage`,
+        "url": currentUrl,
+        "name": pageTitle,
+        "description": pageDesc,
+        "isPartOf": { "@id": `${SITE_URL}/#website` }
+      },
+      // 2. ItemList (將目前畫面上的商品餵給搜尋引擎)
+      {
+        "@type": "ItemList",
+        "name": `${displayTitle} Products`,
+        "itemListElement": filteredProducts.map((p, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "url": `${SITE_URL}/product/${p.slug}`
+        }))
+      },
+      // 3. BreadcrumbList (麵包屑)
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+          { "@type": "ListItem", "position": 2, "name": "Online Store", "item": `${SITE_URL}/category/all` },
+          ...(activeFilter.type !== 'all' 
+            ? [{ "@type": "ListItem", "position": 3, "name": displayTitle, "item": currentUrl }] 
+            : [])
+        ]
+      }
+    ]
+  };
 
   return (
     <>
       <Head>
-        <title>{pageTitle} | KÉSH de¹ 凱仕國際精品</title>
-        <meta name="description" content={`選購 ${activeFilter.value || '最新'} 精品，100% 正品保證。`} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDesc} />
+        <link rel="canonical" href={currentUrl} />
+
+        {/* 🔥 OG Tags (加上 key 覆蓋 Layout.js 的預設設定) */}
+        <meta property="og:title" content={pageTitle} key="ogtitle" />
+        <meta property="og:description" content={pageDesc} key="ogdesc" />
+        <meta property="og:url" content={currentUrl} key="ogurl" />
+        <meta property="og:type" content="website" key="ogtype" />
+        <meta property="og:image" content={ogImage} key="ogimage" />
+        <meta property="og:image:secure_url" content={ogImage} key="ogimagesecure" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+
+        <meta name="twitter:card" content="summary_large_image" key="twcard" />
+        <meta name="twitter:title" content={pageTitle} key="twtitle" />
+        <meta name="twitter:description" content={pageDesc} key="twdesc" />
+        <meta name="twitter:image" content={ogImage} key="twimage" />
+
+        {/* 注入 JSON-LD */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }} />
       </Head>
 
       <main className="py-20 bg-white text-black font-sans min-h-screen">
@@ -271,7 +351,7 @@ export default function CategoryPage({ products, brands, categories, initialFilt
           <div className="title">
             <div className="py-6 px-6 md:px-10">
               <h1 className="text-[32px] md:text-[36px] font-normal tracking-wide uppercase">
-                {activeFilter.value || "ONLINE STORE"}
+                {displayTitle}
               </h1>
               <p className="text-xs text-gray-500 mt-2 tracking-wide">
                 嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證
@@ -302,7 +382,7 @@ export default function CategoryPage({ products, brands, categories, initialFilt
           >
             <span className="text-sm font-bold tracking-widest uppercase flex items-center gap-2">
               FILTER & CATEGORIES
-              {activeFilter.type !== "all" && <span className="ml-2 text-[#ef4628] text-xs">({activeFilter.value})</span>}
+              {activeFilter.type !== "all" && <span className="ml-2 text-[#ef4628] text-xs">({displayTitle})</span>}
             </span>
             <span className={`transform transition-transform duration-300 ${isMobileFilterOpen ? "rotate-180" : ""}`}>↓</span>
           </button>
@@ -343,9 +423,9 @@ export default function CategoryPage({ products, brands, categories, initialFilt
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-                <p className="text-lg">該分類下沒有產品</p>
-                <Link href="/category/all" className="mt-4 underline hover:text-black">
-                  看全部商品
+                <p className="text-lg">該分類下目前沒有產品</p>
+                <Link href="/category/all" className="mt-4 text-sm underline hover:text-[#ef4628] transition-colors">
+                  查看全部商品
                 </Link>
               </div>
             )}
@@ -384,7 +464,6 @@ export async function getStaticPaths() {
   }
 }
 
-// 🔥 2. 關鍵修正：接收 locale，並傳給 API，最後返回 serverSideTranslations
 export async function getStaticProps({ params, locale }) {
   const { slug } = params;
   const WC_URL = process.env.WC_SITE_URL;
@@ -392,12 +471,10 @@ export async function getStaticProps({ params, locale }) {
   const CS = process.env.WC_CONSUMER_SECRET;
   const agent = new https.Agent({ rejectUnauthorized: false });
 
-  // 🔥 取得語系 (將 zh-TW 轉成 WP 的 zh)
-  const currentLang = locale || 'en';
+  const currentLang = locale || 'zh-TW';
   const wpLang = currentLang === 'zh-TW' ? 'zh' : currentLang;
 
   try {
-    // 🔥 在 API 網址後方補上 &lang=${wpLang}
     const [productsRes, categoriesRes] = await Promise.all([
       fetch(`${WC_URL}/wp-json/wc/v3/products?consumer_key=${CK}&consumer_secret=${CS}&status=publish&per_page=100&lang=${wpLang}`, { agent }),
       fetch(`${WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${CK}&consumer_secret=${CS}&per_page=100&hide_empty=false&lang=${wpLang}`, { agent })
@@ -406,7 +483,6 @@ export async function getStaticProps({ params, locale }) {
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    // 處理分類樹 (這裡可能因語系不同，slug 會有變，如果是英文可能是 brand-en，依你後台設定為主)
     const brandParent = wcCategories.find(c => c.slug.includes('brand'));
     const typeParent = wcCategories.find(c => c.slug.includes('categories'));
     
@@ -454,7 +530,6 @@ export async function getStaticProps({ params, locale }) {
 
     return {
       props: {
-        // 🔥 最關鍵的一行：把翻譯檔送進去元件
         ...(await serverSideTranslations(currentLang, ['common'])),
         products: formattedProducts,
         brands: brandsList,
