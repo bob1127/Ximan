@@ -585,44 +585,45 @@
   },
   "checkout": {
     "empty_cart": "Your cart is empty",
-    "paypal_success": "PayPal payment successful! Order created.",
     "title": "Checkout",
     "subtitle": "KÉSH de¹ Secure Payment (PayUni)",
     "contact_info": "Contact Information",
     "email_placeholder": "Email",
     "shipping_method": "Shipping Method",
     "home_delivery": "Home Delivery (Fee NT$80)",
-    "cvs_delivery": "7-11 Pickup (Fee NT$1)",
+    "cvs_delivery": "7-11 Store Pickup (Fee NT$80)",
     "cvs_store": "7-11 Store",
     "btn_select_store": "Select Store",
     "store_label": "Store: ",
     "address_label": "Address: ",
     "btn_clear_store": "Clear Store",
-    "no_store_selected": "No store selected, please click 'Select Store'",
+    "no_store_selected": "No store selected. Please click 'Select Store'",
     "shipping_address": "Shipping Address",
-    "name_placeholder": "Recipient Name",
-    "phone_placeholder": "Mobile Number",
+    "name_placeholder": "First & Last Name",
+    "phone_placeholder": "Phone Number",
+    "paypal_success": "PayPal payment successful! Order created.",
     "cities": {
       "taipei": "Taipei City",
       "new_taipei": "New Taipei City",
       "taichung": "Taichung City",
       "kaohsiung": "Kaohsiung City"
     },
-    "address_home_req": "Detailed Address (Required)",
-    "address_cvs_opt": "Delivery Address (Optional)",
-    "postal_code": "Postal Code",
+    "address_home_req": "Full Address (Required)",
+    "address_cvs_opt": "Address (Optional for CVS)",
+    "postal_code": "ZIP / Postal Code",
+    "payment_method": "Payment",
     "btn_processing": "Processing...",
     "btn_pay": "Pay Now",
     "order_summary": "Order Summary",
     "subtotal": "Subtotal",
     "shipping_fee": "Shipping",
     "total": "Total",
-    "note_final_amount": "* Final amount is subject to WooCommerce calculation after order creation.",
+    "note_final_amount": "* The final amount is subject to the calculation after the order is created.",
     "alerts": {
       "missing_fields": "Please fill in all required fields.",
-      "missing_home_address": "Please provide a detailed address for home delivery.",
+      "missing_home_address": "Please provide a full address for home delivery.",
       "missing_cvs_store": "Please select a 7-11 store first.",
-      "order_failed": "Failed to create order: ",
+      "order_failed": "Order creation failed: ",
       "payuni_missing": "PayUni missing fields: ",
       "system_error": "An error occurred, please try again later."
     }
@@ -843,6 +844,20 @@
       "note_li2": "All product photos are taken from the actual item. Slight color differences may occur due to display settings.",
       "btn_understand": "I Understand"
     }
+  },
+  "cart": {
+    "title": "Cart",
+    "continue_shopping": "Continue Shopping",
+    "empty_message": "Your cart is currently empty",
+    "start_shopping": "Start Shopping",
+    "product": "Product",
+    "quantity": "Quantity",
+    "total": "Total",
+    "remove_item": "Remove item",
+    "subtotal": "Subtotal",
+    "tax_shipping_note": "Tax included. Shipping calculated at checkout.",
+    "secure_checkout_note": "Secure checkout powered by KÉSH de¹",
+    "go_to_checkout": "Go to Checkout"
   }
 
 

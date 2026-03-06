@@ -30,7 +30,7 @@ function calcShipping(customer) {
     return { fee: 80, method_id: "flat_rate", method_title: "宅配(單一費率)" };
   }
   if (method === "CVS_711") {
-    return { fee: 1, method_id: "flat_rate", method_title: "7-11 店到店" };
+    return { fee: 80, method_id: "flat_rate", method_title: "7-11 店到店" };
   }
   return { fee: 80, method_id: "flat_rate", method_title: "運送" };
 }

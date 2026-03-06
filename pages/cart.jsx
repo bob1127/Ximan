@@ -2,11 +2,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 // 嘗試從 Context 引入 updateQuantity，如果沒有也沒關係，下方有用 addToCart 做 fallback
 import { useCart } from "../components/context/CartContext";
 import { Trash2, Plus, Minus } from "lucide-react";
 
 export default function CartPage() {
+  const { t } = useTranslation("common");
   // 解構 updateQuantity (如果 Context 有提供的話)
   const { cartItems, removeFromCart, addToCart, updateQuantity } = useCart();
   const [mounted, setMounted] = useState(false);
@@ -51,25 +54,27 @@ export default function CartPage() {
           {/* Header */}
           <div className="flex justify-between items-end mb-10 md:mb-16">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight uppercase">
-              購物車
+              {t("cart.title")}
             </h1>
             <Link
               href="/category"
               className="text-sm underline underline-offset-4 hover:text-[#ef4628] transition-colors"
             >
-              繼續購物
+              {t("cart.continue_shopping")}
             </Link>
           </div>
 
           {cartItems.length === 0 ? (
             /* Empty State */
             <div className="flex flex-col items-center justify-center py-20 border-t border-gray-200">
-              <p className="text-lg text-gray-500 mb-6">您的購物車目前是空的</p>
+              <p className="text-lg text-gray-500 mb-6">
+                {t("cart.empty_message")}
+              </p>
               <Link
                 href="/category"
                 className="bg-black text-white px-8 py-3 text-sm font-bold uppercase tracking-widest hover:bg-[#ef4628] transition-colors"
               >
-                開始購物
+                {t("cart.start_shopping")}
               </Link>
             </div>
           ) : (
@@ -77,9 +82,11 @@ export default function CartPage() {
             <div>
               {/* Desktop Headers */}
               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-gray-200 text-xs text-gray-500 uppercase tracking-widest font-bold">
-                <div className="col-span-6">商品</div>
-                <div className="col-span-3 text-center">數量</div>
-                <div className="col-span-3 text-right">總計</div>
+                <div className="col-span-6">{t("cart.product")}</div>
+                <div className="col-span-3 text-center">
+                  {t("cart.quantity")}
+                </div>
+                <div className="col-span-3 text-right">{t("cart.total")}</div>
               </div>
 
               {/* Items List */}
@@ -105,7 +112,7 @@ export default function CartPage() {
                             src={
                               item.images ? item.images[0] : item.image || ""
                             }
-                            alt={item.title || "Product"}
+                            alt={item.title || t("cart.product")}
                             fill
                             className="object-cover hover:scale-105 transition-transform duration-500"
                           />
@@ -146,6 +153,7 @@ export default function CartPage() {
                             <button
                               onClick={() => removeFromCart(item.id)}
                               className="text-gray-400 hover:text-red-500 ml-4"
+                              title={t("cart.remove_item")}
                             >
                               <Trash2 size={18} />
                             </button>
@@ -182,7 +190,7 @@ export default function CartPage() {
                         <button
                           onClick={() => removeFromCart(item.id)}
                           className="text-gray-400 hover:text-red-600 transition-colors p-2"
-                          title="移除商品"
+                          title={t("cart.remove_item")}
                         >
                           <Trash2 size={18} />
                         </button>
@@ -197,27 +205,27 @@ export default function CartPage() {
                 <div className="w-full md:w-1/3 flex flex-col gap-4">
                   <div className="flex justify-between items-baseline border-b border-gray-100 pb-4">
                     <span className="text-base font-bold text-gray-600 uppercase tracking-widest">
-                      小計
+                      {t("cart.subtotal")}
                     </span>
                     <div className="text-right">
                       <span className="text-2xl font-bold text-black">
                         NT$ {subtotal.toLocaleString()}
                       </span>
                       <p className="text-[10px] text-gray-400 mt-1">
-                        含稅。運費將於結帳步驟計算。
+                        {t("cart.tax_shipping_note")}
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right text-xs text-gray-500 mb-2">
-                    安全結帳由 KÉSH de¹ 提供支援
+                    {t("cart.secure_checkout_note")}
                   </div>
 
                   <Link
                     href="/checkout"
-                    className="w-full bg-black text-white text-center py-4 text-sm font-bold uppercase tracking-widest hover:bg-[#ef4628] transition-colors shadow-lg"
+                    className="w-full bg-black text-white text-center py-4 text-sm font-bold uppercase tracking-widest hover:bg-[#ef4628] transition-colors shadow-lg block"
                   >
-                    前往結帳
+                    {t("cart.go_to_checkout")}
                   </Link>
                 </div>
               </div>
@@ -227,4 +235,12 @@ export default function CartPage() {
       </main>
     </>
   );
+}
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || "zh-TW", ["common"])),
+    },
+  };
 }
