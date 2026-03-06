@@ -115,6 +115,17 @@ const FilterSidebar = ({
           </h3>
           {dynamicCategories.length > 0 ? (
             <ul className="space-y-2">
+              <li>
+                <button
+                  onClick={() => {
+                    onFilterChange("all", null);
+                    if (isMobile) onCloseMobile();
+                  }}
+                  className={`flex justify-between w-full text-left ${linkClass} ${isActive("all", null)}`}
+                >
+                  <span>All Products</span>
+                </button>
+              </li>
               {dynamicCategories.map((cat) => (
                 <li key={cat.id}>
                   <button
@@ -255,7 +266,7 @@ const CompanyLocation = () => {
 };
 
 // --- 🔥 主要頁面 Component ---
-export default function Category({ products, brands, categories }) {
+export default function CategoryOverview({ products, brands, categories }) {
   const router = useRouter();
   const { t } = useTranslation("common");
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -286,7 +297,7 @@ export default function Category({ products, brands, categories }) {
     return products;
   }, [activeFilter, products]);
 
-  // --- 動態獲取易讀的 Title ---
+  // 動態獲取易讀的 Title
   const getFilterDisplayName = () => {
     if (activeFilter.type === "all" || !activeFilter.value)
       return "Online Store";
@@ -316,7 +327,7 @@ export default function Category({ products, brands, categories }) {
       ? filteredProducts[0].image
       : `${SITE_URL}/default-og-image.jpg`;
 
-  // --- 🔥 結構化資料 (分類頁專屬) ---
+  // --- 🔥 結構化資料 (改為 @graph 格式，加入麵包屑) ---
   const schemaGraph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -336,6 +347,18 @@ export default function Category({ products, brands, categories }) {
           position: index + 1,
           url: `${SITE_URL}/product/${p.slug}`,
         })),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Online Store",
+            item: currentUrl,
+          },
+        ],
       },
     ],
   };
@@ -488,7 +511,7 @@ export async function getStaticProps({ locale }) {
   const CK = process.env.WC_CONSUMER_KEY;
   const CS = process.env.WC_CONSUMER_SECRET;
 
-  const currentLang = locale || "en";
+  const currentLang = locale || "zh-TW";
   const wpLang = currentLang === "zh-TW" ? "zh" : currentLang;
 
   if (!WC_URL || !CK || !CS) {
@@ -549,6 +572,7 @@ export async function getStaticProps({ locale }) {
       const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
       const rawPrice = p.price ? parseInt(p.price) : 0;
 
+      // 🔥 直接取 src，拿掉錯誤的 replace 以免破壞 WordPress 參數
       let imageUrl = null;
       if (p.images && p.images.length > 0) {
         imageUrl = p.images[0].src;
@@ -577,7 +601,7 @@ export async function getStaticProps({ locale }) {
         brands: brandsList,
         categories: categoriesList,
       },
-      revalidate: 10,
+      revalidate: 60,
     };
   } catch (error) {
     console.error("❌ [Server Error]:", error);
@@ -588,7 +612,7 @@ export async function getStaticProps({ locale }) {
         brands: [],
         categories: [],
       },
-      revalidate: 10,
+      revalidate: 60,
     };
   }
 }

@@ -7,10 +7,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import https from "https";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-// --- 快速連結 (靜態行銷用) ---
 const QUICK_LINKS = ["最新現貨", "經典包款", "熱門小皮件", "全配頂級收藏"];
 
-// --- 商品卡片組件 ---
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 50, y: 50 });
@@ -23,10 +21,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Link
-      href={`/product/${product.slug}`}
-      className="group border-b border-gray-400 md:border-r border-gray-400 last:border-r-0 relative flex flex-col bg-white"
-    >
+    <Link href={`/product/${product.slug}`} className="group border-b border-gray-400 md:border-r border-gray-400 last:border-r-0 relative flex flex-col bg-white">
       <div
         className="relative w-full aspect-[4/5] bg-[#f4f4f4] overflow-hidden cursor-crosshair"
         onMouseEnter={() => setIsHovered(true)}
@@ -37,149 +32,85 @@ const ProductCard = ({ product }) => {
         onMouseMove={handleMouseMove}
       >
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20 pointer-events-none">
-          {product.tags &&
-            product.tags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-black/80 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-sm font-medium tracking-wide"
-              >
-                {tag}
-              </span>
-            ))}
+          {product.tags && product.tags.map((tag) => (
+            <span key={tag} className="bg-black/80 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-sm font-medium tracking-wide">
+              {tag}
+            </span>
+          ))}
         </div>
         <div className="absolute top-3 right-3 z-20 pointer-events-none">
           <span className="text-[10px] font-bold text-gray-500 border border-gray-400 px-1.5 py-0.5 rounded bg-white/80">
             {product.status}
           </span>
         </div>
-        
         <div
           className="w-full h-full bg-cover bg-center transition-transform duration-500 ease-out"
-          style={{
-            backgroundImage: `url('${product.image || "/images/placeholder.jpg"}')`,
-            transform: isHovered ? "scale(2)" : "scale(1)",
-            transformOrigin: `${cursorPos.x}% ${cursorPos.y}%`,
-          }}
-        ></div>
-        <div
-          className={`absolute inset-0 bg-black/5 transition-opacity duration-300 pointer-events-none ${
-            isHovered ? "opacity-0" : "opacity-0 group-hover:opacity-100"
-          }`}
+          style={{ backgroundImage: `url('${product.image || "/images/placeholder.jpg"}')`, transform: isHovered ? "scale(2)" : "scale(1)", transformOrigin: `${cursorPos.x}% ${cursorPos.y}%` }}
         ></div>
       </div>
       <div className="p-5 bg-white mt-auto flex flex-col gap-1">
-        <div className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-1">
-          {product.brand}
-        </div>
-        <h2 className="text-[14px] font-medium text-gray-900 leading-snug tracking-wide group-hover:text-[#ef4628] transition-colors line-clamp-2">
-          {product.title}
-        </h2>
+        <div className="text-[11px] text-gray-400 font-bold uppercase tracking-widest mb-1">{product.brand}</div>
+        <h2 className="text-[14px] font-medium text-gray-900 leading-snug tracking-wide group-hover:text-[#ef4628] transition-colors line-clamp-2">{product.title}</h2>
         <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
-          <p className="text-[15px] font-bold text-black tracking-wide">
-            {product.price}
-          </p>
-          <span className="text-[10px] text-gray-400 underline decoration-gray-300 underline-offset-2">
-            View Detail
-          </span>
+          <p className="text-[15px] font-bold text-black tracking-wide">{product.price}</p>
+          <span className="text-[10px] text-gray-400 underline decoration-gray-300 underline-offset-2">View Detail</span>
         </div>
       </div>
     </Link>
   );
 };
 
-// --- FilterSidebar 組件 ---
-const FilterSidebar = ({
-  activeFilter,
-  onFilterChange,
-  isMobile = false,
-  onCloseMobile,
-  dynamicBrands = [],     
-  dynamicCategories = []  
-}) => {
+const FilterSidebar = ({ activeFilter, onFilterChange, isMobile = false, onCloseMobile, dynamicBrands = [], dynamicCategories = [] }) => {
   const isActive = (type, value) => {
-    return activeFilter.type === type && activeFilter.value === value
-      ? "text-[#ef4628] font-extrabold" 
-      : "text-gray-600 hover:text-black"; 
+    return activeFilter.type === type && activeFilter.value === value ? "text-[#ef4628] font-extrabold" : "text-gray-600 hover:text-black"; 
   };
-
   const linkClass = "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
 
   return (
     <div className={`flex ${isMobile ? "flex-col p-6 space-y-8" : "flex-row gap-6 p-6 md:p-8"}`}>
-      {/* 左欄：Categories */}
       <div className={isMobile ? "" : "flex-1"}>
         {isMobile && <div className="border-t border-gray-200 mb-8"></div>}
         <div>
-          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">
-            Categories
-          </h3>
+          <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Categories</h3>
           {dynamicCategories.length > 0 ? (
             <ul className="space-y-2">
               <li>
-                <Link
-                  href="/category/all"
-                  onClick={() => isMobile && onCloseMobile()}
-                  className={`flex justify-between w-full ${linkClass} ${isActive("all", null)}`}
-                >
+                <Link href="/category/all" onClick={() => isMobile && onCloseMobile()} className={`flex justify-between w-full ${linkClass} ${isActive("all", null)}`}>
                   <span>All Products</span>
                 </Link>
               </li>
               {dynamicCategories.map((cat) => (
                 <li key={cat.id}>
-                  <Link
-                    href={`/category/${cat.slug}`}
-                    onClick={() => isMobile && onCloseMobile()}
-                    className={`flex justify-between w-full ${linkClass} ${isActive("category", cat.slug)}`}
-                  >
+                  <Link href={`/category/${cat.slug}`} onClick={() => isMobile && onCloseMobile()} className={`flex justify-between w-full ${linkClass} ${isActive("category", cat.slug)}`}>
                     <span>{cat.name}</span>
-                    <span className={`text-[10px] ${activeFilter.value === cat.slug ? "opacity-100 font-bold" : "opacity-60"}`}>
-                      ({cat.count})
-                    </span>
+                    <span className={`text-[10px] ${activeFilter.value === cat.slug ? "opacity-100 font-bold" : "opacity-60"}`}>({cat.count})</span>
                   </Link>
                 </li>
               ))}
             </ul>
-          ) : (
-             <p className="text-[12px] text-gray-400">Loading Categories...</p>
-          )}
+          ) : (<p className="text-[12px] text-gray-400">Loading Categories...</p>)}
         </div>
       </div>
-
       {isMobile && <div className="border-t border-gray-200"></div>}
-      
-      {/* 右欄：Brands */}
       <div className={isMobile ? "" : "flex-1"}>
-        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">
-          Brands
-        </h3>
+        <h3 className="text-lg font-bold mb-4 text-gray-400 md:text-black md:text-lg text-xs md:font-bold uppercase tracking-widest md:tracking-normal md:normal-case">Brands</h3>
         {dynamicBrands.length > 0 ? (
           <ul className={`${isMobile ? "grid grid-cols-2 gap-x-4 gap-y-3" : "space-y-2"}`}>
             {dynamicBrands.map((brand) => (
               <li key={brand.id}>
-                <Link
-                  href={`/category/${brand.slug}`}
-                  onClick={() => isMobile && onCloseMobile()}
-                  className={`flex justify-between items-center w-full text-left ${linkClass} ${isActive("brand", brand.slug)}`}
-                >
-                  <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4 decoration-1">
-                    {brand.name}
-                  </span>
-                  <span className={`text-[10px] ${activeFilter.value === brand.slug ? "opacity-100 font-bold" : "opacity-60"}`}>
-                    ({brand.count})
-                  </span>
+                <Link href={`/category/${brand.slug}`} onClick={() => isMobile && onCloseMobile()} className={`flex justify-between items-center w-full text-left ${linkClass} ${isActive("brand", brand.slug)}`}>
+                  <span className="truncate mr-1 md:underline md:decoration-gray-300 md:underline-offset-4 decoration-1">{brand.name}</span>
+                  <span className={`text-[10px] ${activeFilter.value === brand.slug ? "opacity-100 font-bold" : "opacity-60"}`}>({brand.count})</span>
                 </Link>
               </li>
             ))}
           </ul>
-        ) : (
-          <p className="text-[12px] text-gray-400">Loading Brands...</p>
-        )}
+        ) : (<p className="text-[12px] text-gray-400">Loading Brands...</p>)}
       </div>
     </div>
   );
 };
 
-// --- CompanyLocation 組件 ---
 const CompanyLocation = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
@@ -191,13 +122,7 @@ const CompanyLocation = () => {
       <div className="flex flex-col md:flex-row min-h-[600px]">
         <div className="w-full md:w-1/2 relative overflow-hidden min-h-[400px] md:min-h-full">
           <motion.div className="absolute inset-0 bg-black z-10 pointer-events-none" style={{ opacity: overlayOpacity }}></motion.div>
-          <motion.div
-            className="absolute inset-0 w-full h-full bg-cover bg-center"
-            style={{
-              backgroundImage: "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')",
-              scale: imageScale,
-            }}
-          ></motion.div>
+          <motion.div className="absolute inset-0 w-full h-full bg-cover bg-center" style={{ backgroundImage: "url('/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_6.jpg')", scale: imageScale }}></motion.div>
         </div>
         <div className="w-full md:w-1/2 bg-white p-10 md:p-20 flex flex-col justify-center">
           <h2 className="text-[32px] font-normal uppercase tracking-wide mb-10">STORE INFO</h2>
@@ -205,22 +130,11 @@ const CompanyLocation = () => {
             <div>
               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Address</h4>
               <p className="text-[15px] font-medium leading-relaxed">台灣省台中市北區中清路一段 428 號</p>
-              <a href="https://maps.google.com/?q=台灣省台中市北區中清路一段428號" target="_blank" rel="noopener noreferrer" className="text-[13px] underline decoration-gray-400 underline-offset-4 text-gray-600 hover:text-black mt-2 inline-block">View on Google Maps</a>
             </div>
             <div>
               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Open Hours</h4>
               <p className="text-[15px] font-medium leading-relaxed">13:00 – 20:00 (週一至週六)<br /><span className="text-gray-500 text-[13px]">[定休日: 週日]</span></p>
             </div>
-            <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Contact</h4>
-              <p className="text-[15px] font-medium leading-relaxed">TEL: 0938-535-870</p>
-            </div>
-          </div>
-          <div className="mt-12">
-               <Link href="/contact" className="group relative inline-flex items-center justify-center overflow-hidden rounded-full border-2 border-stone-400 px-8 py-3 font-bold text-black transition-all duration-300 hover:text-white">
-                <span className="absolute inset-0 h-full w-full translate-y-full bg-[#eb4820] transition-all duration-300 group-hover:translate-y-0"></span>
-                <span className="relative">到店前請提前預約</span>
-              </Link>
           </div>
         </div>
       </div>
@@ -228,7 +142,6 @@ const CompanyLocation = () => {
   );
 };
 
-// --- 🔥 Page Component ---
 export default function CategoryPage({ products, brands, categories, initialFilter }) {
   const router = useRouter();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -245,7 +158,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     if (activeFilter.type === "all") return products;
-    
     return products.filter((product) => {
       if (activeFilter.type === "brand") return product.brandSlug === activeFilter.value;
       if (activeFilter.type === "category") return product.categorySlug === activeFilter.value;
@@ -256,7 +168,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
 
   if (router.isFallback) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
 
-  // --- 動態獲取易讀的 Title ---
   const getFilterDisplayName = () => {
     if (activeFilter.type === 'all' || !activeFilter.value) return "All Products";
     if (activeFilter.type === 'brand') {
@@ -272,22 +183,20 @@ export default function CategoryPage({ products, brands, categories, initialFilt
 
   const displayTitle = getFilterDisplayName();
   const pageTitle = `${displayTitle} | KÉSH de¹ 凱仕國際精品`;
-  const pageDesc = `探索 KÉSH de¹ 精選 ${displayTitle}。我們專營 Hermès、Chanel、Louis Vuitton、Dior 等國際精品品牌，提供二手精品買賣、寄賣、置換服務，100% 正品保證。`;
+  const pageDesc = `探索 KÉSH de¹ 精選 ${displayTitle}。我們專營 Hermès、Chanel 等國際精品品牌，提供二手精品買賣、寄賣、置換服務，100% 正品保證。`;
   
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";
   const currentPath = router.asPath;
   const currentUrl = `${SITE_URL}${currentPath}`;
   
-  // 動態抓取第一張商品圖作為社群分享縮圖
   const ogImage = filteredProducts.length > 0 && filteredProducts[0].image 
     ? filteredProducts[0].image 
     : `${SITE_URL}/default-og-image.jpg`;
 
-  // --- 🔥 結構化資料 (分類頁專屬) ---
+  // --- 🔥 結構化資料 (加上麵包屑) ---
   const schemaGraph = {
     "@context": "https://schema.org",
     "@graph": [
-      // 1. CollectionPage (宣告這是商品列表頁)
       {
         "@type": "CollectionPage",
         "@id": `${currentUrl}/#webpage`,
@@ -296,7 +205,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         "description": pageDesc,
         "isPartOf": { "@id": `${SITE_URL}/#website` }
       },
-      // 2. ItemList (將目前畫面上的商品餵給搜尋引擎)
       {
         "@type": "ItemList",
         "name": `${displayTitle} Products`,
@@ -306,7 +214,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
           "url": `${SITE_URL}/product/${p.slug}`
         }))
       },
-      // 3. BreadcrumbList (麵包屑)
       {
         "@type": "BreadcrumbList",
         "itemListElement": [
@@ -327,7 +234,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         <meta name="description" content={pageDesc} />
         <link rel="canonical" href={currentUrl} />
 
-        {/* 🔥 OG Tags (加上 key 覆蓋 Layout.js 的預設設定) */}
         <meta property="og:title" content={pageTitle} key="ogtitle" />
         <meta property="og:description" content={pageDesc} key="ogdesc" />
         <meta property="og:url" content={currentUrl} key="ogurl" />
@@ -342,7 +248,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         <meta name="twitter:description" content={pageDesc} key="twdesc" />
         <meta name="twitter:image" content={ogImage} key="twimage" />
 
-        {/* 注入 JSON-LD */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }} />
       </Head>
 
@@ -353,9 +258,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
               <h1 className="text-[32px] md:text-[36px] font-normal tracking-wide uppercase">
                 {displayTitle}
               </h1>
-              <p className="text-xs text-gray-500 mt-2 tracking-wide">
-                嚴選二手精品・買賣・寄賣・置換｜台中實體門市｜100% 正品保證
-              </p>
             </div>
              <div className="border-t border-gray-400 py-3 bg-stone-50">
               <Marquee gradient={false} speed={40}>
@@ -364,8 +266,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
                     <div key={i} className="px-10 md:px-20 flex flex-row items-center gap-4">
                       <span className="bg-[#1c1c1c] text-white text-[10px] rounded-full py-1 px-3 font-bold tracking-widest">NEWS</span>
                       <p className="text-[13px] font-medium text-gray-800 tracking-wide">凱仕國際精品保證所有商品皆經專業鑑定，僅販售 100% 正品。</p>
-                      <span className="text-gray-300">|</span>
-                      <p className="text-[13px] font-medium text-[#ef4628] tracking-wide">慶祝開幕，來電限時優惠特價，名額有限！</p>
                     </div>
                   ))}
                 </div>
@@ -374,43 +274,22 @@ export default function CategoryPage({ products, brands, categories, initialFilt
           </div>
         </section>
 
-        {/* Mobile Filter */}
         <div className="md:hidden sticky top-[60px] z-40 bg-white border-t border-b border-gray-400 shadow-sm">
-          <button
-            onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-            className="w-full flex justify-between items-center py-4 px-6 bg-white active:bg-gray-50 transition-colors"
-          >
-            <span className="text-sm font-bold tracking-widest uppercase flex items-center gap-2">
-              FILTER & CATEGORIES
-              {activeFilter.type !== "all" && <span className="ml-2 text-[#ef4628] text-xs">({displayTitle})</span>}
-            </span>
+          <button onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)} className="w-full flex justify-between items-center py-4 px-6 bg-white active:bg-gray-50 transition-colors">
+            <span className="text-sm font-bold tracking-widest uppercase flex items-center gap-2">FILTER & CATEGORIES</span>
             <span className={`transform transition-transform duration-300 ${isMobileFilterOpen ? "rotate-180" : ""}`}>↓</span>
           </button>
           <div className={`overflow-hidden transition-all duration-500 ease-in-out bg-[#fdfdfd] ${isMobileFilterOpen ? "max-h-[85vh] border-t border-gray-200" : "max-h-0"}`}>
              <div className="overflow-y-auto max-h-[85vh]">
-              <FilterSidebar
-                activeFilter={activeFilter}
-                onFilterChange={handleFilterChange}
-                isMobile={true}
-                onCloseMobile={() => setIsMobileFilterOpen(false)}
-                dynamicBrands={brands}
-                dynamicCategories={categories}
-              />
+              <FilterSidebar activeFilter={activeFilter} onFilterChange={handleFilterChange} isMobile={true} onCloseMobile={() => setIsMobileFilterOpen(false)} dynamicBrands={brands} dynamicCategories={categories} />
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
         <section className="products-content border-t border-b border-gray-400 flex flex-col md:flex-row">
           <div className="filter hidden md:flex w-full md:w-[25%] border-b md:border-b-0 md:border-r border-gray-400 relative bg-white">
             <div className="sticky top-20 h-auto overflow-y-auto max-h-[calc(100vh-100px)] w-full">
-              <FilterSidebar
-                activeFilter={activeFilter}
-                onFilterChange={handleFilterChange}
-                isMobile={false}
-                dynamicBrands={brands}
-                dynamicCategories={categories}
-              />
+              <FilterSidebar activeFilter={activeFilter} onFilterChange={handleFilterChange} isMobile={false} dynamicBrands={brands} dynamicCategories={categories} />
             </div>
           </div>
           
@@ -424,9 +303,7 @@ export default function CategoryPage({ products, brands, categories, initialFilt
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-gray-500">
                 <p className="text-lg">該分類下目前沒有產品</p>
-                <Link href="/category/all" className="mt-4 text-sm underline hover:text-[#ef4628] transition-colors">
-                  查看全部商品
-                </Link>
+                <Link href="/category/all" className="mt-4 text-sm underline hover:text-[#ef4628] transition-colors">查看全部商品</Link>
               </div>
             )}
              <div className="p-8 md:p-12 bg-stone-50 border-t border-gray-400">
@@ -435,7 +312,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
             </div>
           </div>
         </section>
-
         <CompanyLocation />
       </main>
     </>
@@ -505,11 +381,10 @@ export async function getStaticProps({ params, locale }) {
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
       const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
       
+      // 🔥 直接取 src，拿掉錯誤的 replace 
       let imageUrl = null;
       if (p.images && p.images.length > 0) {
-          let src = p.images[0].src;
-          if (src.startsWith('http://')) src = src.replace('http://', 'https://');
-          imageUrl = src;
+        imageUrl = p.images[0].src;
       }
 
       return {
