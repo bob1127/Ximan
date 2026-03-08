@@ -94,12 +94,10 @@ const FilterSidebar = ({
 }) => {
   const { t } = useTranslation("common");
 
-  const isActive = (type, value) => {
-    return activeFilter.type === type && activeFilter.value === value
+  const isActive = (type, value) =>
+    activeFilter.type === type && activeFilter.value === value
       ? "text-[#ef4628] font-extrabold"
       : "text-gray-600 hover:text-black";
-  };
-
   const linkClass =
     "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
 
@@ -297,7 +295,6 @@ export default function CategoryOverview({ products, brands, categories }) {
     return products;
   }, [activeFilter, products]);
 
-  // 動態獲取易讀的 Title
   const getFilterDisplayName = () => {
     if (activeFilter.type === "all" || !activeFilter.value)
       return "Online Store";
@@ -321,13 +318,11 @@ export default function CategoryOverview({ products, brands, categories }) {
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";
   const currentUrl = `${SITE_URL}${router.asPath}`;
 
-  // 動態抓取第一張商品圖作為社群分享縮圖
   const ogImage =
     filteredProducts.length > 0 && filteredProducts[0].image
       ? filteredProducts[0].image
       : `${SITE_URL}/default-og-image.jpg`;
 
-  // --- 🔥 結構化資料 (改為 @graph 格式，加入麵包屑) ---
   const schemaGraph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -370,7 +365,6 @@ export default function CategoryOverview({ products, brands, categories }) {
         <meta name="description" content={pageDesc} />
         <link rel="canonical" href={currentUrl} />
 
-        {/* 🔥 強制覆蓋 Layout 的預設 SEO */}
         <meta property="og:title" content={pageTitle} key="ogtitle" />
         <meta property="og:description" content={pageDesc} key="ogdesc" />
         <meta property="og:url" content={currentUrl} key="ogurl" />
@@ -539,25 +533,48 @@ export async function getStaticProps({ locale }) {
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
+    // ==========================================
+    // 🔥 語系防呆過濾：強制排除其他語系的商品
+    // 檢查商品的分類ID，若不在當前語系的分類列表中，就直接剃除
+    // ==========================================
+    const validCategoryIds = wcCategories.map((c) => c.id);
+    const localizedWcProducts = Array.isArray(wcProducts)
+      ? wcProducts.filter((p) => {
+          if (!p.categories || p.categories.length === 0) return false;
+          return p.categories.some((c) => validCategoryIds.includes(c.id));
+        })
+      : [];
+
+    // ==========================================
+    // 精準定位當前語系的 Parent 分類
+    // ==========================================
     const brandParent = wcCategories.find(
-      (c) => c.slug.includes("brand") || c.slug.includes("브랜드"),
+      (c) =>
+        c.slug === `brand-${wpLang}` ||
+        c.slug === "brand" ||
+        c.name === "品牌館" ||
+        c.name === "브랜드 파빌리온",
     );
     const typeParent = wcCategories.find(
-      (c) => c.slug.includes("categories") || c.slug.includes("카테고리"),
+      (c) =>
+        c.slug === `categories-${wpLang}` ||
+        c.slug === "categories" ||
+        c.name === "產品類別" ||
+        c.name === "카테고리",
     );
 
     const brandParentId = brandParent ? brandParent.id : null;
     const typeParentId = typeParent ? typeParent.id : null;
 
     const brandsList = wcCategories
-      .filter((c) => c.parent === brandParentId)
+      .filter((c) => c.parent == brandParentId)
       .map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
-
     const categoriesList = wcCategories
-      .filter((c) => c.parent === typeParentId)
+      .filter((c) => c.parent == typeParentId)
       .map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
 
-    const formattedProducts = wcProducts.map((p) => {
+    // 🔥 針對已過濾的 localizedWcProducts 進行地圖映射
+    const formattedProducts = localizedWcProducts.map((p) => {
       const pCatIds = p.categories.map((c) => c.id);
       const matchedBrand = brandsList.find((b) => pCatIds.includes(b.id));
       const matchedCategory = categoriesList.find((c) =>
@@ -572,11 +589,8 @@ export async function getStaticProps({ locale }) {
       const uiCategorySlug = matchedCategory ? matchedCategory.slug : "others";
       const rawPrice = p.price ? parseInt(p.price) : 0;
 
-      // 🔥 直接取 src，拿掉錯誤的 replace 以免破壞 WordPress 參數
       let imageUrl = null;
-      if (p.images && p.images.length > 0) {
-        imageUrl = p.images[0].src;
-      }
+      if (p.images && p.images.length > 0) imageUrl = p.images[0].src;
 
       return {
         id: p.id,

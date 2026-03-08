@@ -25,10 +25,7 @@ const ProductCard = ({ product }) => {
       <div
         className="relative w-full aspect-[4/5] bg-[#f4f4f4] overflow-hidden cursor-crosshair"
         onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-          setCursorPos({ x: 50, y: 50 });
-        }}
+        onMouseLeave={() => { setIsHovered(false); setCursorPos({ x: 50, y: 50 }); }}
         onMouseMove={handleMouseMove}
       >
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-20 pointer-events-none">
@@ -61,9 +58,7 @@ const ProductCard = ({ product }) => {
 };
 
 const FilterSidebar = ({ activeFilter, onFilterChange, isMobile = false, onCloseMobile, dynamicBrands = [], dynamicCategories = [] }) => {
-  const isActive = (type, value) => {
-    return activeFilter.type === type && activeFilter.value === value ? "text-[#ef4628] font-extrabold" : "text-gray-600 hover:text-black"; 
-  };
+  const isActive = (type, value) => activeFilter.type === type && activeFilter.value === value ? "text-[#ef4628] font-extrabold" : "text-gray-600 hover:text-black"; 
   const linkClass = "text-[13px] transition-colors block leading-tight cursor-pointer py-1";
 
   return (
@@ -193,7 +188,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
     ? filteredProducts[0].image 
     : `${SITE_URL}/default-og-image.jpg`;
 
-  // --- 🔥 結構化資料 (加上麵包屑) ---
   const schemaGraph = {
     "@context": "https://schema.org",
     "@graph": [
@@ -233,7 +227,6 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         <title>{pageTitle}</title>
         <meta name="description" content={pageDesc} />
         <link rel="canonical" href={currentUrl} />
-
         <meta property="og:title" content={pageTitle} key="ogtitle" />
         <meta property="og:description" content={pageDesc} key="ogdesc" />
         <meta property="og:url" content={currentUrl} key="ogurl" />
@@ -242,12 +235,10 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         <meta property="og:image:secure_url" content={ogImage} key="ogimagesecure" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-
         <meta name="twitter:card" content="summary_large_image" key="twcard" />
         <meta name="twitter:title" content={pageTitle} key="twtitle" />
         <meta name="twitter:description" content={pageDesc} key="twdesc" />
         <meta name="twitter:image" content={ogImage} key="twimage" />
-
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }} />
       </Head>
 
@@ -255,9 +246,18 @@ export default function CategoryPage({ products, brands, categories, initialFilt
         <section>
           <div className="title">
             <div className="py-6 px-6 md:px-10">
-              <h1 className="text-[32px] md:text-[36px] font-normal tracking-wide uppercase">
-                {displayTitle}
-              </h1>
+              <nav className="text-[11px] font-medium text-gray-400 tracking-widest uppercase mb-4 flex items-center gap-2">
+                <Link href="/" className="hover:text-black transition-colors">Home</Link>
+                <span>/</span>
+                <Link href="/category/all" className="hover:text-black transition-colors">Online Store</Link>
+                {activeFilter.type !== 'all' && displayTitle !== 'Online Store' && (
+                  <>
+                    <span>/</span>
+                    <span className="text-black uppercase">{displayTitle}</span>
+                  </>
+                )}
+              </nav>
+              <h1 className="text-[32px] md:text-[36px] font-normal tracking-wide uppercase">{displayTitle}</h1>
             </div>
              <div className="border-t border-gray-400 py-3 bg-stone-50">
               <Marquee gradient={false} speed={40}>
@@ -359,16 +359,23 @@ export async function getStaticProps({ params, locale }) {
     const wcProducts = await productsRes.json();
     const wcCategories = await categoriesRes.json();
 
-    const brandParent = wcCategories.find(c => c.slug.includes('brand'));
-    const typeParent = wcCategories.find(c => c.slug.includes('categories'));
-    
-    const brandsList = brandParent 
-      ? wcCategories.filter(c => c.parent === brandParent.id).map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }))
-      : [];
-      
-    const categoriesList = typeParent
-      ? wcCategories.filter(c => c.parent === typeParent.id).map(c => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }))
-      : [];
+    // ==========================================
+    // 🔥 語系防呆過濾：強制排除其他語系的商品
+    // ==========================================
+    const validCategoryIds = wcCategories.map(c => c.id);
+    const localizedWcProducts = Array.isArray(wcProducts) ? wcProducts.filter(p => {
+      if (!p.categories || p.categories.length === 0) return false;
+      return p.categories.some(c => validCategoryIds.includes(c.id));
+    }) : [];
+
+    const brandParent = wcCategories.find(c => c.slug === `brand-${wpLang}` || c.slug === 'brand' || c.name === '品牌館' || c.name === '브랜드 파빌리온');
+    const typeParent = wcCategories.find(c => c.slug === `categories-${wpLang}` || c.slug === 'categories' || c.name === '產品類別' || c.name === '카테고리');
+
+    const brandParentId = brandParent ? brandParent.id : null;
+    const typeParentId = typeParent ? typeParent.id : null;
+
+    const brandsList = wcCategories.filter((c) => c.parent == brandParentId).map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
+    const categoriesList = wcCategories.filter((c) => c.parent == typeParentId).map((c) => ({ id: c.id, name: c.name, slug: c.slug, count: c.count }));
 
     let initialFilter = { type: 'all', value: null };
     if (slug !== 'all') {
@@ -376,16 +383,13 @@ export async function getStaticProps({ params, locale }) {
       else if (categoriesList.some(c => c.slug === slug)) initialFilter = { type: 'category', value: slug };
     }
 
-    const formattedProducts = Array.isArray(wcProducts) ? wcProducts.map((p) => {
+    const formattedProducts = localizedWcProducts.map((p) => {
       const pCatIds = p.categories.map(c => c.id);
       const matchedBrand = brandsList.find(b => pCatIds.includes(b.id));
       const matchedCategory = categoriesList.find(c => pCatIds.includes(c.id));
       
-      // 🔥 直接取 src，拿掉錯誤的 replace 
       let imageUrl = null;
-      if (p.images && p.images.length > 0) {
-        imageUrl = p.images[0].src;
-      }
+      if (p.images && p.images.length > 0) imageUrl = p.images[0].src;
 
       return {
         id: p.id,
@@ -401,7 +405,7 @@ export async function getStaticProps({ params, locale }) {
         status: p.stock_status === "instock" ? "RANK S" : "SOLD",
         image: imageUrl,
       };
-    }) : [];
+    });
 
     return {
       props: {
