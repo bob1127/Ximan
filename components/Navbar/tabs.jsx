@@ -97,8 +97,17 @@ export const SlideTabsExample = () => {
       try {
         setLoading(true);
         const wpLang = router.locale === "zh-TW" ? "zh" : router.locale;
-        const res = await fetch(`/api/categories?lang=${wpLang}`);
-        const allCats = res.ok ? await res.json() : [];
+        // 建議在 API 路徑也加上 orderby=menu_order 參數
+        const res = await fetch(
+          `/api/categories?lang=${wpLang}&orderby=menu_order`,
+        );
+        let allCats = res.ok ? await res.json() : [];
+
+        // 🔥 重點：在處理資料前，先依照 menu_order 進行排序
+        // 這樣 Dior (如果 menu_order 較小) 就會排在前面
+        allCats = allCats.sort(
+          (a, b) => (a.menu_order || 0) - (b.menu_order || 0),
+        );
 
         const brandParent = allCats.find(
           (c) => c.slug.includes("brand") || c.slug.includes("브랜드"),
@@ -107,6 +116,7 @@ export const SlideTabsExample = () => {
           (c) => c.slug.includes("categories") || c.slug.includes("카테고리"),
         );
 
+        // 這裡過濾出來的子分類就會繼承上面的排序
         setBrandChildren(
           brandParent ? allCats.filter((c) => c.parent === brandParent.id) : [],
         );
