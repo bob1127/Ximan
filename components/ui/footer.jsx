@@ -19,7 +19,7 @@ export default function Footer() {
       { name: t("footer.links.shop") || "Shop 所有商品", href: "/category" },
       {
         name: t("footer.links.") || " ",
-        href: "/service?tab=",
+        href: " #",
       },
     ],
     info: [
