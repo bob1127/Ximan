@@ -14,15 +14,12 @@ export default function Footer() {
   const footerLinks = {
     explore: [
       { name: t("footer.links.about") || "About 關於我們", href: "/about" },
-      {
-        name: t("footer.links.services") || "Services 服務流程",
-        href: "/service",
-      },
+
       { name: t("footer.links.news") || "News 最新消息", href: "/news" },
       { name: t("footer.links.shop") || "Shop 所有商品", href: "/category" },
       {
-        name: t("footer.links.consignment") || "Consignment 寄賣服務",
-        href: "/service?tab=consignment",
+        name: t("footer.links.") || " ",
+        href: "/service?tab=",
       },
     ],
     info: [

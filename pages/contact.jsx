@@ -255,13 +255,11 @@ export default function Contact() {
                     <option value="商品諮詢">
                       {t("contact.options.product")}
                     </option>
-                    <option value="精品代購">
+                    <option value="精品">
                       {t("contact.options.sourcing")}
                     </option>
-                    <option value="寄賣服務">
-                      {t("contact.options.consignment")}
-                    </option>
-                    <option value="置換服務">
+                    <option value=" ">{t("contact.options.")}</option>
+                    <option value=" 服務">
                       {t("contact.options.trade_in")}
                     </option>
                     <option value="售後服務">

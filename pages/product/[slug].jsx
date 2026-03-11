@@ -386,8 +386,8 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </h3>
                 <div className="space-y-1">
                   <FAQAccordion
-                    question="關於代購品牌"
-                    answer="我們專門提供 Hermès, Chanel, Louis Vuitton, Dior 等國際一線精品代購與寄賣服務。"
+                    question="關於品牌"
+                    answer="我們專門提供 Hermès, Chanel, Louis Vuitton, Dior 等國際一線精品 服務。"
                   />
                   <FAQAccordion
                     question="付款與安全"

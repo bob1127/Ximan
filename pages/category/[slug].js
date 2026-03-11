@@ -178,7 +178,7 @@ export default function CategoryPage({ products, brands, categories, initialFilt
 
   const displayTitle = getFilterDisplayName();
   const pageTitle = `${displayTitle} | KÉSH de¹ 凱仕國際精品`;
-  const pageDesc = `探索 KÉSH de¹ 精選 ${displayTitle}。我們專營 Hermès、Chanel 等國際精品品牌，提供二手精品買賣、寄賣、置換服務，100% 正品保證。`;
+  const pageDesc = `探索 KÉSH de¹ 精選 ${displayTitle}。我們專營 Hermès、Chanel 等國際精品品牌，提供二手精品買賣 ，100% 正品保證。`;
   
   const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";
   const currentPath = router.asPath;

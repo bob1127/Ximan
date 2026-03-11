@@ -46,7 +46,7 @@ export default function Home() {
               KÉSH de¹ 為您呈現經典 Hermès 精品，包含
               Birkin、Kelly、Constance、Lindy、Picotin、Evelyne、24/24 等系列。
               <br></br>
-              所有商品皆經來源確認、品況檢查、配件整理，僅販售值得入手的精品，亦提供收購、寄賣與置換服務。
+              所有商品皆經來源確認、品況檢查、配件整理，僅販售值得入手的精品。
             </p>
           </div>
           <div className="chanel-feature-img"></div>

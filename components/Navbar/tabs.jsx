@@ -154,11 +154,7 @@ export const SlideTabsExample = () => {
           },
           { title: t("navbar.faq") || "常見問題", url: "/faq", type: "Page" },
           { title: t("navbar.news") || "最新消息", url: "/news", type: "Page" },
-          {
-            title: t("navbar.service") || "服務流程",
-            url: "/service",
-            type: "Page",
-          },
+
           {
             title: t("navbar.shipping") || "全球配送",
             url: "/shipping",
@@ -234,11 +230,7 @@ export const SlideTabsExample = () => {
       label: t("navbar.shipping") || "全球配送",
       href: "/shipping",
     },
-    {
-      key: "SERVICE",
-      label: t("navbar.service") || "服務流程",
-      href: "/service",
-    },
+
     { key: "news", label: t("navbar.news") || "最新消息", href: "/news" },
     { key: "FAQ", label: t("navbar.faq") || "常見問題", href: "/faq" },
     {

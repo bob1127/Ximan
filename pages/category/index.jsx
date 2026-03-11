@@ -312,7 +312,7 @@ export default function CategoryOverview({ products, brands, categories }) {
   const displayTitle = getFilterDisplayName();
   const pageTitle = `${displayTitle} | KÉSH de¹ 凱仕國際精品`;
   const pageDesc =
-    "KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品代購、買賣、寄賣服務。台中實體門市，100%正品保證。";
+    "KÉSH de¹ 凱仕國際精品線上商店，提供 Hermès, Chanel, LV 等國際精品 、買賣 。台中實體門市，100%正品保證。";
 
   const SITE_URL =
     process.env.NEXT_PUBLIC_SITE_URL || "https://www.kesh-de1.com";

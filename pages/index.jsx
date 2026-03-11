@@ -70,7 +70,7 @@ export default function Home({ featuredProducts }) {
   const siteTitle =
     "KÉSH de¹ 凱仕國際精品 | Luxury & Pre-Owned Designer Handbags";
   const siteDescription =
-    "涵蓋 Hermès Birkin、Kelly、Chanel Classic Flap、2.55、Louis Vuitton Speedy、Neverfull、Dior Lady Dior、Saddle、Celine Triomphe、Loewe Puzzle、Gucci Jackie 1961 等經典系列。提供收購、寄售、置換及專屬尋款服務。";
+    "涵蓋 Hermès Birkin、Kelly、Chanel Classic Flap、2.55、Louis Vuitton Speedy、Neverfull、Dior Lady Dior、Saddle、Celine Triomphe、Loewe Puzzle、Gucci Jackie 1961 等經典系列。及專屬尋款服務。";
 
   // 社群預覽圖
   const ogImage = `${siteUrl}/images/logo/KESH Logo.png`;

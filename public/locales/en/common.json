@@ -104,7 +104,7 @@
     "care_highlight": "one free basic leather care and cleaning service",
     "care_desc2": ". Let your beloved bag continue its charming luster under professional care.",
     "care_list_1": "This service includes: leather surface dusting, moisturizing care, and basic nursing.",
-    "care_list_2": "Exclusions: Hardware polishing/replacement, leather tear repair, interior replacement, or dyeing services are not included.",
+    "care_list_2": "Exclusions: Hardware polishing/, leather tear repair, interior , or dyeing services are not included.",
     "care_list_3": "How to use: Please make an appointment in advance via Customer Service LINE or online form, and send the item to the designated address.",
     "contact_desc": "If you need to know about the condition of the item or care details, please contact our customer service team.",
     "contact_btn": "Contact Customer Service"
@@ -120,7 +120,7 @@
       "services": "Services",
       "news": "News",
       "shop": "Shop All",
-      "consignment": "Consignment",
+      "": "",
       "authenticity": "Authenticity",
       "shipping": "Global Shipping",
       "faq": "FAQ",
@@ -128,7 +128,7 @@
       "privacy": "Privacy Policy"
     },
     "contact_us": "Contact Us",
-    "contact_desc_1": "For any product inquiries or consignment needs,",
+    "contact_desc_1": "For any product inquiries or  needs,",
     "contact_desc_2": "please feel free to contact us.",
     "get_in_touch": "Get in Touch",
     "designed_by": "Designed by",
@@ -204,9 +204,9 @@
   },
   "services": {
     "seo": {
-      "title": "Buy-in・Consignment・Trade-in・Sourcing | Services",
+      "title": "Buy-in・・Trade-in・Sourcing | Services",
       "desc": "Applicants must provide two valid forms of identification for real-name verification. Information is used strictly for identity verification and legal compliance.",
-      "keywords": "Luxury Buy-in, Consignment, Personal Shopper, Hermes Sourcing, Chanel Buy-in, Trade-in, KESH de1"
+      "keywords": "Luxury Buy-in, , Personal Shopper, Hermes Sourcing, Chanel Buy-in, Trade-in, KESH de1"
     },
     "ui": {
       "header_title": "Our Services",
@@ -224,7 +224,7 @@
       "online_estimation_title": "Online Estimation & Valuation",
       "required_docs_title": "Required Information:",
       "pricing_method_title": "Valuation Method:",
-      "conclusion_title": "Buy-in and Consignment Services:",
+      "conclusion_title": "Buy-in and  Services:",
       "conclusion_desc1": "To ensure an accurate evaluation and a smooth process, <br class=\"hidden md:block\" />please provide clear, complete information and photos reflecting the item's true condition.",
       "conclusion_desc2": "If you need further clarification on any details, <br class=\"hidden md:block\" />feel free to contact us. We are happy to help.",
       "contact_team_btn": "Contact Our Team",
@@ -260,28 +260,28 @@
         ],
         "pricing": "Comprehensive valuation based on brand, model popularity, current second-hand market trends, and actual condition (year, wear and tear, completeness of accessories).",
         "faq": [
-          { "q": "What is Buy-in?", "a": "Buy-in means our company purchases your item outright. Once the price is agreed upon, ownership transfers to us, and it is no longer a consignment or cooperative sale." },
+          { "q": "What is Buy-in?", "a": "Buy-in means our company purchases your item outright. Once the price is agreed upon, ownership transfers to us, and it is no longer a  or cooperative sale." },
           { "q": "How is the buy-in price determined?", "a": "The price is evaluated comprehensively based on market demand, current market rates, and the actual condition of the item (including year, signs of use, and accessories)." },
           { "q": "What happens after the buy-in is confirmed?", "a": "Once agreed, we complete the online documentation and you ship the item to us.\n\nUpon receipt, we inspect the item. If the condition differs significantly from the provided photos, we will contact you immediately to discuss a price adjustment or cancel the process.\n\nOnce verified, payment is transferred within 7 business days." },
           { "q": "What if the item condition does not match the description?", "a": "If there is a significant discrepancy, we will contact you to discuss adjusting the price or terminating the buy-in process." },
           { "q": "Can I cancel or get my item back after the buy-in is complete?", "a": "Once the buy-in is finalized and payment is made, ownership is transferred and we cannot return or cancel the transaction." }
         ]
       },
-      "consignment": {
-        "tab_main": "Consignment",
+      "": {
+        "tab_main": "",
         "tab_sub": "Process",
-        "title": "Consignment Process",
+        "title": " Process",
         "desc": "We help you set a reasonable price for your unused luxury bags. From contract signing to final sale and payout, our process is transparent, ensuring a safe transition to the next collector.",
         "highlight": "Service fee is 20% of the final sale price (Tax included)",
         "steps": [
           { "step": "01", "title": "Set Price", "desc": "We discuss and agree on a reasonable listing price." },
-          { "step": "02", "title": "Sign Contract", "desc": "Confirm the consignment period (usually 3-6 months) and care terms." },
+          { "step": "02", "title": "Sign Contract", "desc": "Confirm the  period (usually 3-6 months) and care terms." },
           { "step": "03", "title": "Professional Listing", "desc": "Item cleaning, professional photography, and exposure on our website and social media." },
           { "step": "04", "title": "Sale & Payout", "desc": "After sale, the 20% fee is deducted, and the balance is transferred to you within the agreed timeframe." }
         ],
         "pricing": "We provide a suggested retail price, but you have the final say. If a high price leads to slow sales, we will discuss potential adjustments with you.",
         "faq": [
-          { "q": "Can I take my item back during the consignment period?", "a": "Yes. Retrieving it during the contract period may incur a small maintenance fee. If unsold after the contract expires, retrieval is free." },
+          { "q": "Can I take my item back during the  period?", "a": "Yes. Retrieving it during the contract period may incur a small maintenance fee. If unsold after the contract expires, retrieval is free." },
           { "q": "When will I receive payment after it sells?", "a": "Once the transaction is complete and the return period expires without issue, payout occurs within 7-14 days. We will notify you proactively when it sells." },
           { "q": "What does the platform service fee cover?", "a": "The fee covers valuation, photography, listing exposure, sales handling, shipping, and after-sales support. There are no hidden fees." },
           { "q": "Is my item guaranteed to be listed?", "a": "Not necessarily. We only accept items in good condition from legitimate sources. Our team reviews all items for market suitability before listing." },
@@ -376,8 +376,8 @@
   },
   "faq": {
     "seo": {
-      "title": "FAQ | KÉSH de¹ - Authentication & Consignment Services",
-      "description": "KÉSH de¹ Frequently Asked Questions. Complete guide on luxury trading, authentication process (S/A/B grading), consignment fees (20%), international shipping, and return policies. Shop Hermès, Chanel, and LV with peace of mind."
+      "title": "FAQ | KÉSH de¹ - Authentication &  Services",
+      "description": "KÉSH de¹ Frequently Asked Questions. Complete guide on luxury trading, authentication process (S/A/B grading),  fees (20%), international shipping, and return policies. Shop Hermès, Chanel, and LV with peace of mind."
     },
     "ui": {
       "title": "FAQ",
@@ -400,8 +400,8 @@
     "schema": [
       { "q": "Are your products authentic?", "a": "Yes. We only sell luxury goods from strict, reliable sources. Professional appraisers conduct multiple verifications using international-grade equipment for a 100% authenticity guarantee. Inspections include leather grain, hardware engravings, stitching, and serial numbers." },
       { "q": "Can I return or exchange my purchase?", "a": "Pre-owned luxury goods are unique; therefore, all sales are final. We fully disclose the item's condition upon listing and record photos/videos prior to shipping to protect both parties." },
-      { "q": "What is the consignment fee?", "a": "All consigned items are subject to a flat 20% fee on the final sale price. This covers invoicing, business tax, service fees, and shipping. We do not charge separate listing, photography, or storage fees." },
-      { "q": "Which brands do you accept for consignment?", "a": "We primarily accept Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard, and Prada." },
+      { "q": "What is the  fee?", "a": "All  items are subject to a flat 20% fee on the final sale price. This covers invoicing, business tax, service fees, and shipping. We do not charge separate listing, photography, or storage fees." },
+      { "q": "Which brands do you accept for ?", "a": "We primarily accept Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard, and Prada." },
       { "q": "How is the condition grading defined?", "a": "We use international grading standards: S (Like New), A (Minor Wear), AB (Regular Wear), B (Noticeable Wear). Condition is fully disclosed in photos and descriptions." },
       { "q": "Do you offer international shipping?", "a": "Yes. KÉSH de¹ ships worldwide, including Japan, Korea, Singapore, Hong Kong, Macau, Europe, and the US. Duties are the responsibility of the recipient based on local regulations." }
     ],
@@ -417,13 +417,13 @@
         ]
       },
       {
-        "category": "2. Consignment Services",
-        "description": "KÉSH offers consignment services, helping collectors list luxury items safely and exposing them to global buyers through our platform.",
+        "category": "2.  Services",
+        "description": "KÉSH offers  services, helping collectors list luxury items safely and exposing them to global buyers through our platform.",
         "items": [
-          { "q": "Q6: Do you still offer consignment services?", "a": "Yes, we do. Currently, we only accept luxury items in good preservation condition with intact structures." },
-          { "q": "Q7: Which brands can be consigned?", "a": "<div><p>We primarily accept: Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard, Prada, and other luxury brands.</p><p class=\"mt-2 text-gray-500 text-sm\">For other brands, please consult customer service first.</p><a href=\"/contact\" class=\"inline-flex items-center gap-1 mt-3 text-[#ef4628] font-bold border-b border-[#ef4628] pb-0.5 hover:opacity-80 transition-opacity\">Click here to contact us <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></div>" },
-          { "q": "Q8: What is the consignment fee?", "a": "<div><p>All consigned items are subject to a flat fee:</p><p class=\"text-lg font-bold text-gray-900 my-2\">👉 20% of the final sale price</p><p class=\"text-sm text-gray-500\">This fee covers invoicing, taxes, service, and logistics for receiving/shipping.</p><p class=\"mt-1 font-medium text-gray-700\">No extra charges for listing, photography, exposure, or storage.</p></div>" },
-          { "q": "Q9: How does the consignment process work?", "a": "<ol class=\"list-decimal pl-5 space-y-2 text-gray-700\"><li>Submit photos online (fill out consignment form)</li><li>Specialist provides a suggested price</li><li>Sign the consignment contract</li><li>KÉSH arranges pickup from your home</li><li>KÉSH shoots, lists, and promotes globally</li><li>Receive payout notification after sale</li></ol>" },
+          { "q": "Q6: Do you still offer  services?", "a": "Yes, we do. Currently, we only accept luxury items in good preservation condition with intact structures." },
+          { "q": "Q7: Which brands can be ?", "a": "<div><p>We primarily accept: Hermès, Chanel, Louis Vuitton, Dior, Gucci, Loewe, Celine, YSL, Goyard, Prada, and other luxury brands.</p><p class=\"mt-2 text-gray-500 text-sm\">For other brands, please consult customer service first.</p><a href=\"/contact\" class=\"inline-flex items-center gap-1 mt-3 text-[#ef4628] font-bold border-b border-[#ef4628] pb-0.5 hover:opacity-80 transition-opacity\">Click here to contact us <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></div>" },
+          { "q": "Q8: What is the  fee?", "a": "<div><p>All  items are subject to a flat fee:</p><p class=\"text-lg font-bold text-gray-900 my-2\">👉 20% of the final sale price</p><p class=\"text-sm text-gray-500\">This fee covers invoicing, taxes, service, and logistics for receiving/shipping.</p><p class=\"mt-1 font-medium text-gray-700\">No extra charges for listing, photography, exposure, or storage.</p></div>" },
+          { "q": "Q9: How does the  process work?", "a": "<ol class=\"list-decimal pl-5 space-y-2 text-gray-700\"><li>Submit photos online (fill out  form)</li><li>Specialist provides a suggested price</li><li>Sign the  contract</li><li>KÉSH arranges pickup from your home</li><li>KÉSH shoots, lists, and promotes globally</li><li>Receive payout notification after sale</li></ol>" },
           { "q": "Q10: Can I take my item back early?", "a": "Yes. The minimum period is 1 month, maximum 6 months. To retrieve early, please notify customer service 3–7 days in advance." }
         ]
       },
@@ -473,12 +473,12 @@
   },"contact": {
     "seo": {
       "title": "Contact Us | KÉSH de¹",
-      "description": "Brand new item sourcing, pre-owned luxury sales, and consignment services. For pre-sales and after-sales support, please contact us via the official form or email.",
+      "description": "Brand new item sourcing, pre-owned luxury sales, and  services. For pre-sales and after-sales support, please contact us via the official form or email.",
       "schema_name": "Contact KÉSH de¹"
     },
     "left": {
       "title": "Contact Us",
-      "desc1": "Brand new item sourcing, pre-owned luxury sales, and consignment.",
+      "desc1": "Brand new item sourcing, pre-owned luxury sales, and .",
       "desc2": "For any inquiries or after-sales service, please reach out via our online form or email.",
       "email_label": "Email",
       "social_label": "Social Media",
@@ -499,7 +499,7 @@
     "options": {
       "product": "Product Inquiry",
       "sourcing": "Sourcing Request",
-      "consignment": "Consignment",
+      "": "",
       "trade_in": "Trade-in",
       "after_sales": "After-sales",
       "other": "Other"
@@ -521,7 +521,7 @@
       "hero_title": "Experience the Elegance<br />and Sincerity of KÉSH de¹",
       "story_title": "KÉSH de¹ Luxury",
       "story_p1": "Established in Taichung and legally registered, KÉSH de¹ is committed to building a trustworthy international luxury trading platform.",
-      "story_p2": "Specializing in Hermès, Chanel, Louis Vuitton, Dior, Loewe, Celine, and other renowned brands, <span class=\"text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5\">our services cover the sales of brand new and curated pre-owned luxury goods, customer consignments, and specific style sourcing. With global shipping available, our clients can easily acquire their desired pieces anywhere in the world.</span>",
+      "story_p2": "Specializing in Hermès, Chanel, Louis Vuitton, Dior, Loewe, Celine, and other renowned brands, <span class=\"text-[#F6F1EB] font-medium border-b border-gray-300 pb-0.5\">our services cover the sales of brand new and curated pre-owned luxury goods, customer s, and specific style sourcing. With global shipping available, our clients can easily acquire their desired pieces anywhere in the world.</span>",
       "story_p3": "The KÉSH team holds international luxury appraiser certifications. All items are personally inspected by our professional appraisal team and cross-verified using advanced authentication equipment. Each item comes with an exclusive authenticity certificate, providing the highest level of guarantee.",
       "story_quote": "Every item purchased at KÉSH comes with an internationally recognized authenticity guarantee, ensuring that every transaction is secure, transparent, and trustworthy.",
       "btn_contact": "CONTACT",
@@ -743,7 +743,7 @@
         "id": "return-policy",
         "title": "Return Policy",
         "enTitle": "Returns",
-        "content_html": "<div class=\"space-y-4\"><p>According to Taiwan's Consumer Protection Act, second-hand goods (not brand new items mass-produced and sold by business operators) <strong>are not subject to the 7-day unconditional return period</strong>.</p><p>However, we will accept unconditional returns in the following situations:</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>The item is proven to be unauthentic by third-party appraisal (see Authenticity Guarantee).</li><li>The received item differs significantly from the website description or photos (e.g., listed as Grade S but has obvious damage).</li></ul><p class=\"mt-4 text-gray-500 text-sm\">* If you wish to return an item for personal reasons (e.g., dislike, wrong size, color difference), please contact customer service within 24 hours of receiving the item. We can assist you in converting it to a \"consignment\" arrangement.</p></div>"
+        "content_html": "<div class=\"space-y-4\"><p>According to Taiwan's Consumer Protection Act, second-hand goods (not brand new items mass-produced and sold by business operators) <strong>are not subject to the 7-day unconditional return period</strong>.</p><p>However, we will accept unconditional returns in the following situations:</p><ul class=\"list-disc pl-5 space-y-2 text-gray-600\"><li>The item is proven to be unauthentic by third-party appraisal (see Authenticity Guarantee).</li><li>The received item differs significantly from the website description or photos (e.g., listed as Grade S but has obvious damage).</li></ul><p class=\"mt-4 text-gray-500 text-sm\">* If you wish to return an item for personal reasons (e.g., dislike, wrong size, color difference), please contact customer service within 24 hours of receiving the item. We can assist you in converting it to a \"\" arrangement.</p></div>"
       },
       {
         "id": "privacy",
@@ -769,11 +769,11 @@
     "sections": [
       {
         "title": "1. Introduction",
-        "content_html": "<p class=\"mb-2\">Welcome to KÉSH de¹ Luxury (hereinafter referred to as \"the Website\"), operated by KESH LUXURY CO., LTD (hereinafter referred to as \"the Company\"). We highly value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.</p><p>By using the Website's services (including but not limited to browsing products, registering an account, or using our sourcing/consignment services), you agree to the terms described in this policy.</p>"
+        "content_html": "<p class=\"mb-2\">Welcome to KÉSH de¹ Luxury (hereinafter referred to as \"the Website\"), operated by KESH LUXURY CO., LTD (hereinafter referred to as \"the Company\"). We highly value your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.</p><p>By using the Website's services (including but not limited to browsing products, registering an account, or using our sourcing/ services), you agree to the terms described in this policy.</p>"
       },
       {
         "title": "2. Data We Collect",
-        "content_html": "<p class=\"mb-2\">To provide complete luxury trading and authentication services, we may collect the following types of data:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>Personal Identification:</strong> Name, email address, phone number, date of birth (for membership benefits).</li><li><strong>Transaction & Shipping Data:</strong> Shipping address, billing address, credit card info (processed only through encrypted payment gateways; we do not store card numbers), purchase history.</li><li><strong>Consignment & Authentication Data:</strong> If using consignment, we may need a copy of your ID or bank account info to comply with regulations and process payouts.</li><li><strong>Digital Footprint:</strong> IP address, browser type, device information, Cookies, and usage behavior data.</li></ul>"
+        "content_html": "<p class=\"mb-2\">To provide complete luxury trading and authentication services, we may collect the following types of data:</p><ul class=\"list-disc list-inside ml-2 space-y-1 text-gray-700\"><li><strong>Personal Identification:</strong> Name, email address, phone number, date of birth (for membership benefits).</li><li><strong>Transaction & Shipping Data:</strong> Shipping address, billing address, credit card info (processed only through encrypted payment gateways; we do not store card numbers), purchase history.</li><li><strong> & Authentication Data:</strong> If using , we may need a copy of your ID or bank account info to comply with regulations and process payouts.</li><li><strong>Digital Footprint:</strong> IP address, browser type, device information, Cookies, and usage behavior data.</li></ul>"
       },
       {
         "title": "3. Purpose of Data Usage",
