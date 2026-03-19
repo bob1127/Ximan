@@ -288,7 +288,7 @@ export const SlideTabsExample = () => {
                 href="tel:+886901055624"
                 className="flex items-center gap-2 hover:opacity-80"
               >
-                <Phone size={14} /> +886 912-345-678
+                <Phone size={14} /> +886 901-055-624
               </a>
               <a
                 href="mailto:contact@kesh-de1.com"

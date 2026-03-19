@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
   // 替換為您的實際聯絡資訊
   const CONTACT_INFO = {
     email: "contact@kesh-de1.com",
-    phone: "+886 912-345-678", // ⚠️ 請確認這是否為真實電話
+    phone: "+886 901-055-624", // ⚠️ 請確認這是否為真實電話
     companyName: "KESH LUXURY CO., LTD",
     siteName: "KÉSH de¹ 凱仕國際精品",
   };
