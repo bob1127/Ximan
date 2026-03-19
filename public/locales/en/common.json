@@ -125,7 +125,8 @@
       "shipping": "Global Shipping",
       "faq": "FAQ",
       "contact": "Contact Us",
-      "privacy": "Privacy Policy"
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
     },
     "contact_us": "Contact Us",
     "contact_desc_1": "For any product inquiries or  needs,",
@@ -858,6 +859,123 @@
     "tax_shipping_note": "Tax included. Shipping calculated at checkout.",
     "secure_checkout_note": "Secure checkout powered by KÉSH de¹",
     "go_to_checkout": "Go to Checkout"
+  },
+  "terms": {
+    "seo_title": "Terms of Service & Policies | KÉSH de¹ Luxury Boutique",
+    "seo_desc": "Thank you for choosing KÉSH de¹. We are committed to providing a transparent, professional, and trustworthy luxury shopping experience. Please read our service policies carefully before purchasing.",
+    "page_tag": "KÉSH de¹ Service Policies",
+    "page_title": "Terms of Service & Policies",
+    "page_subtitle": "Thank you for choosing KÉSH de¹. We are committed to providing a transparent, professional, and trustworthy luxury shopping experience. To ensure a smooth and secure transaction, please read the following terms of service carefully before making a purchase.",
+    "toc_title": "Table of Contents",
+    "sections": [
+      {
+        "id": "section-1",
+        "title": "I. Authenticity Guarantee & Statement",
+        "intro": "KÉSH de¹ understands that trust is the core of luxury trading. Every item sold on our website undergoes rigorous authentication and multiple inspection procedures to verify its authenticity.",
+        "items": [
+          { "subtitle": "Professional Authentication", "content": "The KÉSH team holds internationally recognized luxury authenticator certificates. All items undergo multiple physical inspections before entering our inventory to ensure their source, quality, and authenticity." },
+          { "subtitle": "Dual Verification Mechanism", "content": "In addition to internal authentication, every item is digitally re-verified through international authentication platforms, combining professional experience with database analysis for multiple layers of verification." },
+          { "subtitle": "Exclusive Identification System", "content": "All dispatched items are equipped with a KÉSH de¹ exclusive anti-counterfeit tag, an international authenticity certificate, and a security seal, ensuring that the appraisal report perfectly matches the physical item. Complete records are kept during the dispatch process." },
+          { "subtitle": "Lifetime Authenticity Guarantee", "content": "We take full responsibility for the authenticity of our products. If an item is deemed inauthentic by a credible third-party authentication institution, we provide a full refund guarantee." },
+          { "subtitle": "Non-Official Authorization Statement", "content": "KÉSH de¹ is an independently operated luxury boutique platform and has no affiliation, authorization, or partnership with the original brand manufacturers. All brand names and trademarks mentioned on this website belong to their respective rightful owners." }
+        ]
+      },
+      {
+        "id": "section-2",
+        "title": "II. Membership System",
+        "intro": "To provide a complete shopping experience and order management, this website operates on a membership basis:",
+        "items": [
+          { "subtitle": "Registration Obligation", "content": "Customers must complete member registration before purchasing to manage order information, track delivery progress, and handle after-sales services." },
+          { "subtitle": "Privacy Protection", "content": "Member personal data is used solely for order processing, delivery, and customer service communication. We employ encryption technology and security measures and will not provide your data to third parties unrelated to order fulfillment without your consent." }
+        ]
+      },
+      {
+        "id": "section-3",
+        "title": "III. Payment Methods",
+        "intro": "This website offers diverse and secure payment methods. All transactions are processed through encrypted mechanisms:",
+        "items": [
+          { "subtitle": "Credit / Debit Cards", "content": "We support VISA, MasterCard, JCB, and UnionPay (lump-sum and installment payments available)." },
+          { "subtitle": "Mobile Payments", "content": "We support PayPal, Apple Pay, Google Pay, and LINE Pay." },
+          { "subtitle": "Convenience Store Payment", "content": "Payment via convenience store codes and barcodes is supported (Taiwan only)." },
+          { "subtitle": "Bank Transfer", "content": "Bank Name: E.SUN BANK (Taichung Branch)\nBank Code: 808\nAccount Name: KÉSH LUXURY CO. LTD.\nAccount Number: 1366940044179\n(Please indicate your order number or purchasing name in the memo field for verification.)" }
+        ],
+        "outro": "This website does not provide any form of stored value, third-party payment collection, or financial transaction services."
+      },
+      {
+        "id": "section-4",
+        "title": "IV. Logistics & Shipping",
+        "items": [
+          { "subtitle": "Dispatch Schedule", "content": "Once order payment is completed, the item will undergo final quality re-inspection and authentication. Upon confirmation, it will be dispatched within 24 hours (excluding Taiwanese national holidays)." },
+          { "subtitle": "Domestic Shipping (Taiwan)", "content": "Delivered by our designated professional logistics partner (Black Cat Takkyubin). Delivery to urban areas in Taiwan typically takes 1–2 business days after dispatch." },
+          { "subtitle": "International Shipping (Global)", "content": "Designated Logistics: Cross-border orders are uniformly entrusted to DHL Express for professional luxury logistics, ensuring the highest standard of transport security." },
+          { "subtitle": "Delivery Time", "content": "Actual delivery time depends on the destination country's customs clearance speed and DHL's local operational efficiency." },
+          { "subtitle": "Order Tracking", "content": "Once the order is dispatched, the system will provide an exclusive tracking code so you can monitor your package in real-time." },
+          { "subtitle": "International Duties & Taxes", "content": "Import duties, value-added taxes (VAT), or related fees levied by the destination country are the sole responsibility of the recipient (buyer). Tax rates vary by country; we recommend consulting local customs regulations before purchasing." },
+          { "subtitle": "Security Records", "content": "The packaging process for every item is recorded entirely on video before dispatch. To protect the rights of both parties, we recommend that customers record a video while unboxing. All high-value items undergo stringent packaging and shipping procedures to ensure transit safety and item integrity." }
+        ]
+      },
+      {
+        "id": "section-5",
+        "title": "V. Return & Exchange Policy",
+        "items": [
+          { "subtitle": "Appreciation Period Rights", "content": "In accordance with the Consumer Protection Act, customers are entitled to a 7-day appreciation period starting from the day after the item is delivered. Please note that the appreciation period is not a trial period; it is solely for confirming the item's appearance, specifications, and authenticated condition." },
+          { "subtitle": "Item Condition Requirements", "content": "The item and its related accessories must remain in their original condition, and the anti-counterfeit seal must be intact and unremoved." },
+          { "subtitle": "Accessory Completeness", "content": "When returning an item, original dust bags, authenticity cards, packaging boxes, manuals, and related accessories (e.g., straps, locks) must be fully retained. Missing or damaged accessories will affect the acceptance of the return." },
+          { "subtitle": "Anti-Counterfeit Seal Mechanism (Core Clause)", "content": "Every item is equipped with a KÉSH de¹ exclusive numbered anti-counterfeit seal. This seal serves as part of our item verification mechanism. If you wish to process a return during the appreciation period, the item must remain in its complete state (including the unremoved seal). If the seal is removed or damaged, the return may be rejected." }
+        ],
+        "outro": "During the appreciation period, consumers may apply for a return under the Consumer Protection Act. Our company will process and review returns in accordance with this policy and relevant regulations."
+      },
+      {
+        "id": "section-6",
+        "title": "VI. Product Characteristics",
+        "intro": "The items sold on this website are predominantly pre-owned luxury goods or unused items in pristine condition. They may exhibit reasonable signs of use or material characteristics:",
+        "items": [
+          { "subtitle": "Natural Materials", "content": "Natural textures, pores, vein marks, or slight wrinkles on the leather surface." },
+          { "subtitle": "Craftsmanship Details", "content": "Asymmetrical hand-stitching, hairline scratches on hardware, slightly uneven glazing, or varying depths of embossing." },
+          { "subtitle": "Visual Discrepancies", "content": "Reasonable color differences caused by ambient lighting, shooting angles, or screen settings." },
+          { "subtitle": "Signs of Use", "content": "Normal signs of use noted on the product page (e.g., creases, slight wear)." }
+        ],
+        "outro": "The above situations are normal phenomena and do not constitute defects. The product pages will fully present the condition of each item."
+      },
+      {
+        "id": "section-7",
+        "title": "VII. Return & Refund Process",
+        "items": [
+          { "subtitle": "Contact Customer Service", "content": "We recommend completing your inspection within 3 days of delivery. If you need to make a return, please contact customer service at contact@kesh-de1.com and provide your order number along with relevant photos or unboxing videos." },
+          { "subtitle": "Inspection & Refund", "content": "Upon confirming that the item and anti-counterfeit seal meet the return conditions, the refund will be processed." },
+          { "subtitle": "Bank Transfer Refunds", "content": "Funds will be remitted to the designated account within 3–7 business days." },
+          { "subtitle": "Online Card Refunds", "content": "An online chargeback will be processed. The time it takes for the funds to appear depends on your bank's processing time (approximately 3–14 business days)." },
+          { "subtitle": "Handling Fees", "content": "Refund-related handling fees will be borne by our company." }
+        ]
+      },
+      {
+        "id": "section-8",
+        "title": "VIII. Invoice Issuance",
+        "intro": "Our company issues invoices in compliance with Taiwan (ROC) tax regulations. Customers may choose between a cloud e-invoice, physical invoice, or corporate invoice at checkout.",
+        "outro": "If an order is returned or canceled, the issued invoice will be voided or subjected to sales return allowances according to relevant regulations."
+      },
+      {
+        "id": "section-9",
+        "title": "IX. Transaction & Compliance",
+        "intro": "TRANSACTION & COMPLIANCE",
+        "items": [
+          { "subtitle": "", "content": "KÉSH de¹ is a boutique curation and sales platform dedicated to luxury goods. All transactions are e-commerce sales of physical items." },
+          { "subtitle": "", "content": "The services provided on this website are limited to product display, ordering, and delivery fulfillment. All orders are dispatched and supported by our company." },
+          { "subtitle": "", "content": "To maintain transaction transparency and security, this website does not provide any form of financial services, including but not limited to stored value, prepaid balances, third-party payment collection, or third-party fund management mechanisms." },
+          { "subtitle": "", "content": "All items are obtained from lawful sources and are listed for sale only after undergoing physical inspection and professional authentication by our company." },
+          { "subtitle": "", "content": "KÉSH de¹ is committed to providing a secure and traceable trading environment. For abnormal orders or transactions that do not conform to general consumer behavior, our company will conduct necessary verifications and actions according to relevant regulations to protect the rights of both parties.\nAn order is considered established once payment is completed and confirmed by our company." }
+        ]
+      },
+      {
+        "id": "section-10",
+        "title": "Company Contact Information",
+        "items": [
+          { "subtitle": "Company Name", "content": "KÉSH LUXURY CO. LTD." },
+          { "subtitle": "Tax ID", "content": "60329329" },
+          { "subtitle": "Customer Service Email", "content": "contact@kesh-de1.com" }
+        ]
+      }
+    ]
   }
 
 

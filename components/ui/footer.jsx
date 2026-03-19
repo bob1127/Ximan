@@ -10,16 +10,16 @@ export default function Footer() {
   // 🔥 2. 啟用翻譯 Hook
   const { t } = useTranslation("common");
 
-  // --- 修改重點：使用 t() 替換原本寫死的名稱 ---
+  // --- 修改重點：修正陣列結構，並加入服務條款連結 ---
   const footerLinks = {
     explore: [
       { name: t("footer.links.about") || "About 關於我們", href: "/about" },
-
       { name: t("footer.links.news") || "News 最新消息", href: "/news" },
       { name: t("footer.links.shop") || "Shop 所有商品", href: "/category" },
+      // 寄賣服務或其他連結 (保留您原本預留的位置)
       {
-        name: t("footer.links.") || " ",
-        href: " #",
+        name: t("footer.links.services") || "Services 服務流程",
+        href: "/services",
       },
     ],
     info: [
@@ -39,6 +39,11 @@ export default function Footer() {
       {
         name: t("footer.links.privacy") || "Privacy Policy 隱私權政策",
         href: "/privacy",
+      },
+      // 🔥 新增：服務條款與政策 (放在隱私權下方)
+      {
+        name: t("footer.links.terms") || "Terms of Service 服務條款",
+        href: "/service",
       },
     ],
   };
@@ -67,19 +72,21 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col items-start">
             <Image
               src="/images/logo/KESH-Logo-white.png"
-              alt="company-logo"
-              placeholder="empty"
-              loading="lazy"
-              width={400}
-              height={300}
-              className="max-w-[140px]"
-            ></Image>
-            <div className="text-gray-400 text-sm leading-loose font-light tracking-wide">
+              alt="KÉSH de¹ Logo"
+              width={140}
+              height={50}
+              className="max-w-[140px] h-auto object-contain"
+              priority // Logo 建議加上 priority
+            />
+            <div className="text-gray-400 text-sm leading-loose font-light tracking-wide mt-6">
               <p className="italic mb-2 opacity-80">
-                {t("footer.slogan_1")} <br />
-                {t("footer.slogan_2")}
+                {t("footer.slogan_1") || "A Value of Priority."} <br />
+                {t("footer.slogan_2") || "A Beginning of Dreams."}
               </p>
-              <p className="text-xs mt-4 opacity-60">{t("footer.slogan_3")}</p>
+              <p className="text-xs mt-4 opacity-60">
+                {t("footer.slogan_3") ||
+                  "Professional Authentication & Worldwide Shipping."}
+              </p>
             </div>
           </div>
 
@@ -88,7 +95,7 @@ export default function Footer() {
             {/* Column A: Explore */}
             <div>
               <h3 className="text-xs font-bold tracking-[0.2em] text-gray-500 mb-6 uppercase">
-                {t("footer.explore_title")}
+                {t("footer.explore_title") || "Explore"}
               </h3>
               <ul className="flex flex-col gap-4">
                 {footerLinks.explore.map((link) => (
@@ -107,7 +114,7 @@ export default function Footer() {
             {/* Column B: Info / Support */}
             <div>
               <h3 className="text-xs font-bold tracking-[0.2em] text-gray-500 mb-6 uppercase">
-                {t("footer.support_title")}
+                {t("footer.support_title") || "Support"}
               </h3>
               <ul className="flex flex-col gap-4">
                 {footerLinks.info.map((link) => (
@@ -128,12 +135,12 @@ export default function Footer() {
           <div className="lg:col-span-3">
             <div className="bg-[#1f1f1f] p-8 md:p-10 rounded-sm h-full flex flex-col justify-center items-start">
               <p className="text-2xl md:text-3xl font-serif mb-2 text-white">
-                {t("footer.contact_us")}
+                {t("footer.contact_us") || "Contact Us"}
               </p>
               <p className="text-xs text-gray-400 mb-8 tracking-widest leading-relaxed">
-                {t("footer.contact_desc_1")}
+                {t("footer.contact_desc_1") || "若有任何商品諮詢或寄賣需求，"}
                 <br />
-                {t("footer.contact_desc_2")}
+                {t("footer.contact_desc_2") || "歡迎隨時聯繫我們。"}
               </p>
 
               <Link
@@ -142,7 +149,7 @@ export default function Footer() {
               >
                 <span className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-100 to-white opacity-0 group-hover:opacity-100"></span>
                 <span className="relative text-xs font-bold tracking-widest uppercase">
-                  {t("footer.get_in_touch")}
+                  {t("footer.get_in_touch") || "Get in Touch"}
                 </span>
               </Link>
             </div>
@@ -156,23 +163,31 @@ export default function Footer() {
             {t("footer.rights") || "KÉSH de¹ Boutique. All rights reserved."}
           </p>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6 flex-wrap justify-center">
+            {/* 底部小選單也補上 Terms */}
+            <Link
+              href="/service"
+              className="hover:text-white transition-colors"
+            >
+              Terms
+            </Link>
+            <span className="w-[1px] h-3 bg-gray-700"></span>
             <Link
               href="/privacy"
               className="hover:text-white transition-colors"
             >
               Privacy
             </Link>
-            <span className="w-[1px] h-3 bg-gray-700"></span>
-            <p>
-              {t("footer.designed_by")}{" "}
+            <span className="w-[1px] h-3 bg-gray-700 hidden md:block"></span>
+            <p className="w-full md:w-auto text-center mt-2 md:mt-0">
+              {t("footer.designed_by") || "Designed by"}{" "}
               <a
                 href="https://www.jeek-webdesign.com.tw"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white underline decoration-gray-600 underline-offset-4 transition-colors"
               >
-                {t("footer.geek_design")}
+                {t("footer.geek_design") || "極客網頁設計"}
               </a>
             </p>
           </div>
