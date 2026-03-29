@@ -812,40 +812,64 @@
     "try_again": "다른 키워드나 영문 브랜드명으로 다시 검색해 주세요."
   }
   ,
-  "product_detail": {
+ "product_detail": {
     "ui": {
-      "toast_success": "장바구니에 추가되었습니다",
-      "breadcrumb_home": "HOME",
-      "breadcrumb_store": "ONLINE STORE",
-      "urgency_msg": "단일 상품, 품절 시 판매 종료",
-      "btn_buy": "지금 구매하기",
-      "btn_line": "LINE 빠른 문의",
-      "btn_favorite": "위시리스트에 추가",
-      "btn_favorited": "저장된 상품",
-      "btn_read_more": "더 보기",
-      "btn_read_less": "접기",
-      "specs_title": "상품 상태 세부 정보",
-      "instore_yes": "● 매장 방문 확인 가능",
-      "instore_no": "○ 온라인 문의만 가능",
-      "tab_details": "상세 정보",
-      "tab_shipping": "쇼핑 및 반품 안내",
-      "about_product": "상품 소개:",
-      "material_desc": "부드러운 촉감과 내구성을 갖춘 최고급 소재입니다.",
-      "hardware_desc": "클래식한 하드웨어로 고급스러운 광택을 더합니다.",
-      "tab_notes_title": "구매 전 유의사항",
-      "tab_notes_li1": "모든 상품은 중고 또는 미사용 명품입니다. 구매 전 상태를 반드시 확인해 주세요.",
-      "tab_notes_li2": "모든 사진은 실물 촬영본이며 모니터 설정에 따라 약간의 색상 차이가 있을 수 있습니다.",
-      "tab_notes_li3": "100% 정품을 보장하며, 가품으로 판명 시 전액 환불해 드립니다.",
-      "tab_returns_title": "교환 및 반품 정책",
-      "tab_returns_desc": "명품 거래의 특성상 <strong>정품 여부 문제를 제외하고는 어떠한 이유로도 교환 및 반품이 불가합니다.</strong>",
-      "recommend_title": "추천 상품"
+      "btn_buy": "장바구니 담기",
+      "reviews": "리뷰",
+      "condition_title": "상품 상태 (Item Condition)",
+      "details_title": "상품 세부 정보 (Product Details)",
+      "faq_title": "쇼핑 가이드 및 FAQ",
+      "tab_features": "제품 특징",
+      "tab_shipping": "교환/반품 및 배송 안내",
+      "related_title": "추천 상품 (You May Also Like)",
+      "related_subtitle": "고객님을 위한 추천 상품",
+      "view_all": "전체 보기"
     },
-    "modal": {
-      "title": "쇼핑 안내",
-      "note_title": "구매 전 유의사항",
-      "note_li1": "모든 상품은 중고 또는 미사용 명품입니다. 구매 전 상태를 반드시 확인해 주세요.",
-      "note_li2": "모든 사진은 실물 촬영본이며 모니터 설정에 따라 약간의 색상 차이가 있을 수 있습니다.",
-      "btn_understand": "확인했습니다"
+    "faqs": [
+      {
+        "q": "브랜드 소개",
+        "a": "저희는 에르메스(Hermès), 샤넬(Chanel), 루이비통(Louis Vuitton), 디올(Dior) 등 글로벌 럭셔리 브랜드를 전문으로 취급합니다."
+      },
+      {
+        "q": "결제 및 보안",
+        "a": "VISA, MasterCard, JCB, Apple Pay, PayPal 등 다양한 결제 수단을 지원하며 안전한 거래를 보장합니다."
+      },
+      {
+        "q": "배송 및 배송비",
+        "a": "기본 배송비는 NT$80입니다. 명품의 경우 운송 안전을 위해 보험이 적용되는 택배 이용을 적극 권장합니다."
+      }
+    ],
+    "slider": {
+      "slide1": "KÉSH de¹ 프리미엄 품질 보증",
+      "slide2": "모든 제품은 전문 감정사의 엄격한 검수를 거칩니다."
+    },
+    "shipping_info": {
+      "delivery_title": "배송 방법 및 기간",
+      "delivery_items": [
+        {
+          "label": "재고 보유 상품: ",
+          "desc": "결제 확인 후 1~3 영업일 이내에 안전하게 포장하여 발송됩니다."
+        },
+        {
+          "label": "예약 구매 상품: ",
+          "desc": "브랜드 및 모델에 따라 입고까지 약 14~30 영업일이 소요됩니다."
+        },
+        {
+          "label": "고가 상품: ",
+          "desc": "안전을 위해 NT$50,000 이상의 상품은 보험 택배를 이용하거나 직접 수령을 권장합니다."
+        }
+      ],
+      "return_title": "교환/반품 정책",
+      "return_items": [
+        {
+          "label": "중고/빈티지 상품: ",
+          "desc": "상품의 고유한 특성상, 가품으로 판명된 경우를 제외하고 단순 변심(사이즈 불만, 미세한 사용감 등)으로 인한 교환 및 반품은 불가합니다."
+        },
+        {
+          "label": "새 상품: ",
+          "desc": "7일의 청약 철회 기간이 적용됩니다 (사용 목적 아님). 반품 시 상품은 새 제품 상태여야 하며, 택을 자르지 않고 위조 방지 씰이 훼손되지 않아야 합니다."
+        }
+      ]
     }
   },
   "cart": {

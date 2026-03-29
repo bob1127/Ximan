@@ -26,7 +26,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-// 🔥 引入自定義的 HeroSlider
+// 🔥 引入自定義的 HeroSlider (請確認路徑是否正確)
 import HeroSlider from "../../components/HeroSlider";
 
 // --- 共用商品卡片組件 (用於推薦輪播) ---
@@ -125,7 +125,10 @@ const FAQAccordion = ({ question, answer }) => {
 export default function ProductDetail({ product, relatedProducts = [] }) {
   const router = useRouter();
   const { t } = useTranslation("common");
-  const ui = t("product_detail.ui", { returnObjects: true });
+
+  // 🔥 安全防護：讀取多語系 JSON 資料，若無則提供空物件作為預設值
+  const pdT = t("product_detail", { returnObjects: true }) || {};
+  const ui = pdT.ui || {};
 
   const [quantity, setQuantity] = useState(1);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -316,7 +319,7 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                     ))}
                   </div>
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
-                    ({product.ratingCount || 1} REVIEWS)
+                    ({product.ratingCount || 1} {ui.reviews || "REVIEWS"})
                   </span>
                 </div>
 
@@ -325,14 +328,15 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </p>
               </div>
 
+              {/* 🔥 商品狀況區塊 (含強力 CSS 防破版重置) */}
               {product.productCondition && (
                 <div className="bg-gray-50 border border-gray-100 p-5 mb-8 rounded-sm">
                   <h4 className="text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2 text-gray-800">
-                    <CheckCircle2 size={16} className="text-[#ef4628]" /> Item
-                    Condition (商品狀況)
+                    <CheckCircle2 size={16} className="text-[#ef4628]" />
+                    {ui.condition_title || "Item Condition (商品狀況)"}
                   </h4>
                   <div
-                    className="text-[13px] text-gray-600 leading-relaxed [&>p]:mb-2 font-medium"
+                    className="text-[13px] text-gray-600 leading-relaxed font-medium whitespace-pre-line break-words [&_p]:mb-2 [&_*]:!w-auto [&_*]:!max-w-full [&_*]:!whitespace-normal"
                     dangerouslySetInnerHTML={{
                       __html: product.productCondition,
                     }}
@@ -340,6 +344,7 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </div>
               )}
 
+              {/* 數量與購買按鈕 */}
               <div className="mb-10 space-y-4">
                 <div className="flex gap-4">
                   <div className="flex border border-gray-300 w-28 justify-between items-center px-3">
@@ -366,10 +371,11 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </div>
               </div>
 
+              {/* 商品細節 */}
               {product.description && (
                 <div className="mb-10">
                   <h3 className="text-xs font-black uppercase tracking-[0.3em] mb-4 pb-2 border-b border-gray-100">
-                    Product Details (商品細節)
+                    {ui.details_title || "Product Details (商品細節)"}
                   </h3>
                   <div
                     className="text-[13px] text-gray-700 leading-8 tracking-wide [&>p]:mb-4 [&>ul]:list-disc [&>ul]:pl-5 [&>ul]:mb-4 [&>h3]:font-bold [&>h3]:mb-2 [&>strong]:text-black"
@@ -378,25 +384,17 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </div>
               )}
 
-              {/* FAQ 區塊 */}
+              {/* 🔥 FAQ 區塊 (多語系支援) */}
               <div className="pt-8 border-t border-black">
                 <h3 className="text-xs font-black uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                  <Info size={14} className="text-[#ef4628]" /> Shopping Guide &
-                  FAQ
+                  <Info size={14} className="text-[#ef4628]" />
+                  {ui.faq_title || "Shopping Guide & FAQ"}
                 </h3>
                 <div className="space-y-1">
-                  <FAQAccordion
-                    question="關於品牌"
-                    answer="我們專門提供 Hermès, Chanel, Louis Vuitton, Dior 等國際一線精品 服務。"
-                  />
-                  <FAQAccordion
-                    question="付款與安全"
-                    answer="支援 VISA, MasterCard, JCB, Apple Pay 以及 PayPal 等多種支付方式，交易安全有保障。"
-                  />
-                  <FAQAccordion
-                    question="配送與運費"
-                    answer="宅配或 7-11 店到店運費為 NT$80，精品類強烈建議採用宅配以確保運輸安全。"
-                  />
+                  {Array.isArray(pdT.faqs) &&
+                    pdT.faqs.map((faq, idx) => (
+                      <FAQAccordion key={idx} question={faq.q} answer={faq.a} />
+                    ))}
                 </div>
               </div>
             </div>
@@ -406,11 +404,12 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
         {/* ===================== 下半部：Tabs 內容切換區塊 ===================== */}
         <div className="max-w-[1440px] mx-auto px-6 md:px-10 mt-20 pt-10 border-t border-gray-200">
           <div className="flex justify-center gap-8 md:gap-16 border-b border-gray-200 mb-10">
+            {/* 🔥 Tab 按鈕多語系 */}
             <button
               onClick={() => setActiveTab("features")}
               className={`pb-4 text-sm md:text-base font-bold uppercase tracking-widest transition-colors relative ${activeTab === "features" ? "text-black" : "text-gray-400 hover:text-gray-700"}`}
             >
-              產品特色
+              {ui.tab_features || "產品特色"}
               {activeTab === "features" && (
                 <motion.div
                   layoutId="activeTabIndicator"
@@ -422,7 +421,7 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
               onClick={() => setActiveTab("shipping")}
               className={`pb-4 text-sm md:text-base font-bold uppercase tracking-widest transition-colors relative ${activeTab === "shipping" ? "text-black" : "text-gray-400 hover:text-gray-700"}`}
             >
-              退換貨及運送須知
+              {ui.tab_shipping || "退換貨及運送須知"}
               {activeTab === "shipping" && (
                 <motion.div
                   layoutId="activeTabIndicator"
@@ -434,7 +433,7 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
 
           <div className="min-h-[400px]">
             <AnimatePresence mode="wait">
-              {/* 特色 Tab 內容 */}
+              {/* 🔥 特色 Tab 內容 (多語系支援) */}
               {activeTab === "features" && (
                 <motion.div
                   key="features"
@@ -447,12 +446,14 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                     <HeroSlider
                       carouselSlides={[
                         {
-                          title: "KÉSH de¹ 嚴選品質保證",
+                          title: pdT.slider?.slide1 || "KÉSH de¹ 嚴選品質保證",
                           image:
                             "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251124_7.jpg",
                         },
                         {
-                          title: "每一件商品皆由專業鑑定師嚴格把關",
+                          title:
+                            pdT.slider?.slide2 ||
+                            "每一件商品皆由專業鑑定師嚴格把關",
                           image:
                             "/images/Premium_Handbags/LINE_ALBUM_美圖素材20251124_251125_10.jpg",
                         },
@@ -462,7 +463,7 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 </motion.div>
               )}
 
-              {/* 退換貨及運送須知 Tab 內容 */}
+              {/* 🔥 退換貨及運送須知 Tab 內容 (多語系支援) */}
               {activeTab === "shipping" && (
                 <motion.div
                   key="shipping"
@@ -474,36 +475,28 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
                 >
                   <section>
                     <h3 className="text-lg font-bold text-black mb-3">
-                      運送方式與時間
+                      {pdT.shipping_info?.delivery_title || "運送方式與時間"}
                     </h3>
                     <ul className="list-disc pl-5 space-y-2">
-                      <li>
-                        <strong>現貨商品：</strong>確認付款後，將於 1-3
-                        個工作天內為您妥善包裝並寄出。
-                      </li>
-                      <li>
-                        <strong>預購商品：</strong>依品牌及款式不同，約需 14-30
-                        個工作天到貨。
-                      </li>
-                      <li>
-                        <strong>高單價精品：</strong>為確保安全，NT$50,000
-                        以上商品一律採用保值快遞或建議面交。
-                      </li>
+                      {Array.isArray(pdT.shipping_info?.delivery_items) &&
+                        pdT.shipping_info.delivery_items.map((item, idx) => (
+                          <li key={idx}>
+                            <strong>{item.label}</strong> {item.desc}
+                          </li>
+                        ))}
                     </ul>
                   </section>
                   <section>
                     <h3 className="text-lg font-bold text-black mb-3">
-                      退換貨政策
+                      {pdT.shipping_info?.return_title || "退換貨政策"}
                     </h3>
                     <ul className="list-disc pl-5 space-y-2">
-                      <li>
-                        <strong>二手/古董商品：</strong>
-                        因商品具有唯一性，除經鑑定為仿冒品外，恕不接受個人因素（如尺寸不合、微小使用痕跡）退換貨。
-                      </li>
-                      <li>
-                        <strong>全新品：</strong>
-                        享有七天鑑賞期（非試用期）。退回商品必須維持「全新未剪標、防偽扣環未拆」。
-                      </li>
+                      {Array.isArray(pdT.shipping_info?.return_items) &&
+                        pdT.shipping_info.return_items.map((item, idx) => (
+                          <li key={idx}>
+                            <strong>{item.label}</strong> {item.desc}
+                          </li>
+                        ))}
                     </ul>
                   </section>
                 </motion.div>
@@ -519,17 +512,17 @@ export default function ProductDetail({ product, relatedProducts = [] }) {
               <div className="flex justify-between items-end mb-10">
                 <div>
                   <h2 className="text-2xl md:text-3xl font-normal tracking-wide uppercase mb-2">
-                    You May Also Like
+                    {ui.related_title || "You May Also Like"}
                   </h2>
                   <p className="text-sm text-gray-500 tracking-widest uppercase">
-                    為您推薦其他嚴選商品
+                    {ui.related_subtitle || "為您推薦其他嚴選商品"}
                   </p>
                 </div>
                 <Link
                   href="/category/all"
                   className="hidden md:inline-block text-xs font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-[#ef4628] hover:border-[#ef4628] transition-colors"
                 >
-                  View All
+                  {ui.view_all || "View All"}
                 </Link>
               </div>
 
@@ -580,34 +573,69 @@ export async function getStaticProps({ params, locale }) {
   const agent = new https.Agent({ rejectUnauthorized: false });
 
   try {
-    let targetSlug = params.slug;
+    let targetProduct = null;
+    const urlSlug = params.slug;
 
-    // 🔥 智慧 Slug 轉換邏輯
-    // 假設您的後台設定是：中文(沒後綴), 英文(-en), 韓文(-ko)
-    if (wpLang === "en" && !targetSlug.endsWith("-en")) {
-      targetSlug = `${targetSlug}-en`;
-    } else if (wpLang === "ko" && !targetSlug.endsWith("-ko")) {
-      targetSlug = `${targetSlug}-ko`;
-    } else if (wpLang === "zh") {
-      // 如果切回中文，把 -en 或 -ko 拔掉
-      targetSlug = targetSlug.replace(/-en$/, "").replace(/-ko$/, "");
+    // 🔥 步驟 1：先嘗試用網址上的 Slug 直接抓取 (加上語系)
+    const directUrl = `${WC_SITE_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(urlSlug)}&lang=${wpLang}`;
+    const directRes = await fetch(directUrl, { agent, headers });
+    const directProducts = await directRes.json();
+
+    if (Array.isArray(directProducts) && directProducts.length > 0) {
+      targetProduct = directProducts[0];
+    } else {
+      // 🔥 步驟 2：啟動 SKU 終極救援機制
+      console.log(`[SKU 救援啟動] 找不到語系 ${wpLang} 的 slug: ${urlSlug}`);
+      const rawRes = await fetch(
+        `${WC_SITE_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(urlSlug)}`,
+        { agent, headers },
+      );
+      const rawProducts = await rawRes.json();
+
+      if (Array.isArray(rawProducts) && rawProducts.length > 0) {
+        const sku = rawProducts[0].sku;
+        if (sku) {
+          console.log(
+            `[SKU 救援] 找到 SKU: ${sku}，正在尋找 ${wpLang} 版本...`,
+          );
+          const skuRes = await fetch(
+            `${WC_SITE_URL}/wp-json/wc/v3/products?sku=${encodeURIComponent(sku)}&lang=${wpLang}`,
+            { agent, headers },
+          );
+          const skuProducts = await skuRes.json();
+          if (Array.isArray(skuProducts) && skuProducts.length > 0) {
+            targetProduct = skuProducts[0];
+          }
+        } else {
+          console.warn(
+            `[警告] 商品 (Slug: ${urlSlug}) 沒有設定 SKU，SKU 救援機制無法運作。`,
+          );
+        }
+      }
     }
 
-    // 用轉換後的 slug 去跟 API 拿資料
-    const productUrl = `${WC_SITE_URL}/wp-json/wc/v3/products?slug=${encodeURIComponent(targetSlug)}&lang=${wpLang}`;
-    const res = await fetch(productUrl, { agent, headers });
-    const products = await res.json();
-
-    if (!Array.isArray(products) || products.length === 0) {
+    // 如果找不到，回傳 404
+    if (!targetProduct) {
       console.warn(
-        `[Warning] 找不到商品。嘗試請求的 Slug: ${targetSlug}, 語系: ${wpLang}`,
+        `[徹底失敗] 無法找到商品。Slug: ${urlSlug}, 語系: ${wpLang}`,
       );
-      // 如果智慧轉換失敗，為了不讓頁面白屏，您可以選擇回傳 notFound: true
-      // 或者 fallback 去抓沒有後綴的原始 slug (視您後台實際設定而定)
       return { notFound: true };
     }
 
-    const p = products[0];
+    // 🔥 步驟 3：智慧重定向 (Redirect) - 若 Slug 不符則強制跳轉
+    if (targetProduct.slug !== urlSlug) {
+      console.log(
+        `[自動導向] 網址 Slug (${urlSlug}) 不正確，導向至真實 Slug (${targetProduct.slug})`,
+      );
+      return {
+        redirect: {
+          destination: `/${locale === "zh-TW" ? "" : locale + "/"}product/${targetProduct.slug}`,
+          permanent: false,
+        },
+      };
+    }
+
+    const p = targetProduct;
 
     // --- 抓取其他推薦商品 ---
     let relatedProducts = [];
@@ -617,7 +645,6 @@ export async function getStaticProps({ params, locale }) {
     if (categoryId) relatedUrl += `&category=${categoryId}`;
 
     const relatedRes = await fetch(relatedUrl, { agent });
-
     if (relatedRes.ok) {
       const rawRelated = await relatedRes.json();
       if (Array.isArray(rawRelated)) {
@@ -642,7 +669,7 @@ export async function getStaticProps({ params, locale }) {
     // --- 格式化主商品資料 ---
     const formattedProduct = {
       id: p.id,
-      slug: p.slug, // 這裡拿到的會是加上後綴的真正 slug
+      slug: p.slug,
       sku: p.sku || `KESH-${p.id}`,
       title: p.name || "",
       price: `NT$ ${parseInt(p.price || 0).toLocaleString()}`,
@@ -654,7 +681,12 @@ export async function getStaticProps({ params, locale }) {
         /<p>(&nbsp;|<br\s*\/?>|\s)*<\/p>/gi,
         "",
       ),
-      productCondition: p.product_condition || "",
+
+      // 🔥 關鍵修正：清除後台視覺編輯器可能帶入的 style 屬性
+      productCondition: (p.product_condition || "")
+        .replace(/style="[^"]*"/gi, "")
+        .replace(/style='[^']*'/gi, ""),
+
       shortDescHtml: p.short_description || "",
       shortDescPlain:
         p.short_description

@@ -812,38 +812,62 @@
   },
   "product_detail": {
     "ui": {
-      "toast_success": "Successfully added to cart",
-      "breadcrumb_home": "HOME",
-      "breadcrumb_store": "ONLINE STORE",
-      "urgency_msg": "Unique piece, gone once sold out",
-      "btn_buy": "BUY NOW",
-      "btn_line": "Quick Inquiry via LINE",
-      "btn_favorite": "Add to Wishlist",
-      "btn_favorited": "Saved in Wishlist",
-      "btn_read_more": "READ MORE",
-      "btn_read_less": "READ LESS",
-      "specs_title": "Condition Details",
-      "instore_yes": "● Available for In-Store Viewing",
-      "instore_no": "○ Online Inquiry Only",
-      "tab_details": "Details Info",
-      "tab_shipping": "Shopping & Returns",
-      "about_product": "About",
-      "material_desc": "Premium material, soft touch and durable.",
-      "hardware_desc": "Classic hardware, adding a noble luster.",
-      "tab_notes_title": "Purchase Notes",
-      "tab_notes_li1": "All items are pre-owned or unused luxury goods. Please confirm the condition before purchasing.",
-      "tab_notes_li2": "All product photos are taken from the actual item. Slight color differences may occur due to display settings.",
-      "tab_notes_li3": "We provide a 100% authenticity guarantee. Full refund if proven counterfeit.",
-      "tab_returns_title": "Return Policy",
-      "tab_returns_desc": "Due to the nature of luxury trading, <strong>all sales are final except for authenticity issues.</strong>",
-      "recommend_title": "Recommend Items"
+      "btn_buy": "ADD TO CART",
+      "reviews": "REVIEWS",
+      "condition_title": "Item Condition",
+      "details_title": "Product Details",
+      "faq_title": "Shopping Guide & FAQ",
+      "tab_features": "Features",
+      "tab_shipping": "Shipping & Returns",
+      "related_title": "You May Also Like",
+      "related_subtitle": "Recommended for you",
+      "view_all": "View All"
     },
-    "modal": {
-      "title": "Shopping Guide",
-      "note_title": "Purchase Notes",
-      "note_li1": "All items are pre-owned or unused luxury goods. Please confirm the condition before purchasing.",
-      "note_li2": "All product photos are taken from the actual item. Slight color differences may occur due to display settings.",
-      "btn_understand": "I Understand"
+    "faqs": [
+      {
+        "q": "About Brands",
+        "a": "We specialize in international luxury brands such as Hermès, Chanel, Louis Vuitton, and Dior."
+      },
+      {
+        "q": "Payment & Security",
+        "a": "We support multiple payment methods including VISA, MasterCard, JCB, Apple Pay, and PayPal, ensuring secure transactions."
+      },
+      {
+        "q": "Shipping & Fees",
+        "a": "Standard delivery fee is NT$80. We strongly recommend insured courier delivery for luxury items to ensure transport safety."
+      }
+    ],
+    "slider": {
+      "slide1": "KÉSH de¹ Premium Quality Guarantee",
+      "slide2": "Every item is strictly inspected by professional authenticators"
+    },
+    "shipping_info": {
+      "delivery_title": "Shipping Methods & Times",
+      "delivery_items": [
+        {
+          "label": "In-Stock Items: ",
+          "desc": "Dispatched within 1-3 business days after payment confirmation."
+        },
+        {
+          "label": "Pre-Order Items: ",
+          "desc": "Arrival typically takes 14-30 business days, depending on the brand and model."
+        },
+        {
+          "label": "High-Value Items: ",
+          "desc": "For security, items over NT$50,000 are shipped via insured courier or recommended for in-person pickup."
+        }
+      ],
+      "return_title": "Return Policy",
+      "return_items": [
+        {
+          "label": "Pre-owned/Vintage Items: ",
+          "desc": "Due to their unique nature, returns or exchanges for personal reasons (e.g., sizing, minor signs of use) are not accepted unless the item is deemed inauthentic."
+        },
+        {
+          "label": "Brand New Items: ",
+          "desc": "A 7-day appreciation period applies (not a trial period). Returned items must be brand new with original tags and unbroken anti-counterfeit seals."
+        }
+      ]
     }
   },
   "cart": {
